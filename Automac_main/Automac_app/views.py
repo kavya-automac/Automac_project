@@ -1,5 +1,6 @@
 import datetime
 import json
+from pathlib import Path
 
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -21,8 +22,11 @@ class Dashboard(ViewSet):
     @action(detail=False, methods=['get'])
 
     def dashboard(self, request):
+        BASE_DIR = Path(__file__).resolve().parent.parent
 
-        data = json.load(open("/Automac_app/dashboard.json"))
+        print('BASE_DIR', type(BASE_DIR))
+
+        data = json.load(open(str(BASE_DIR)+"Automac_app/dashboard.json"))
         return  JsonResponse(data)
 
 class Machines_view(ViewSet):
@@ -124,7 +128,7 @@ class Reports(ViewSet):
 
 
 
-
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 
 
