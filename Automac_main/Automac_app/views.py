@@ -26,7 +26,7 @@ class Dashboard(ViewSet):
 
         print('BASE_DIR', type(BASE_DIR))
 
-        data = json.load(open(str(BASE_DIR)+"Automac_app/dashboard.json"))
+        data = json.load(open(str(BASE_DIR)+"/Automac_app/dashboard.json"))
         return  JsonResponse(data)
 
 class Machines_view(ViewSet):
