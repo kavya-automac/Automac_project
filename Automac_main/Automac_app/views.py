@@ -32,13 +32,18 @@ class Dashboard(ViewSet):
 class Machines_view(ViewSet):
     @action(detail=False,methods=['get'])
     def machine(self,request):
+        BASE_DIR = Path(__file__).resolve().parent.parent
+
+
         print('in manchines')
-        machines=json.load(open("Automac_app/machines.json"))
+        machines=json.load(open(str(BASE_DIR)+"/Automac_app/machines.json"))
         return JsonResponse(machines)
         # return redirect(Machine_Details)
 
     @action(detail=False, method=["get"])
     def machine_details(self, request):
+        BASE_DIR = Path(__file__).resolve().parent.parent
+
 
         # current_datetime = datetime.datetime.now()
         # print("m_details")
@@ -57,13 +62,13 @@ class Machines_view(ViewSet):
             #     ]
             if module == "Details":
                 # file
-                data = json.load(open("Automac_app/machine_details.json"))
+                data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
 
             elif module == "kpis":
-                data = json.load(open("Automac_app/machine_details(kpis).json"))
+                data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
 
             elif module == "iostatus":
-                data = json.load(open("Automac_app/machine_details(io_status).json"))
+                data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(io_status).json"))
             else:
                 data = {
                     'response': 'please enter correct module name'
@@ -100,12 +105,16 @@ class Machines_view(ViewSet):
 class Reports(ViewSet):
     @action(detail=False, method=['get'])
     def reports(self,request):
-        data= json.load(open("Automac_app/reports.json"))
+        BASE_DIR = Path(__file__).resolve().parent.parent
+
+        data= json.load(open(str(BASE_DIR)+"/Automac_app/reports.json"))
         return JsonResponse(data)
 
     @action(detail=False, method=['get'])
     def reportsmachine(self, request):
-        machine_data = json.load(open("Automac_app/machines.json"))
+        BASE_DIR = Path(__file__).resolve().parent.parent
+
+        machine_data = json.load(open(str(BASE_DIR)+"/Automac_app/machines.json"))
         # print('request',request.method,request.GET)
         # data = json.load(open("figmaapp/reports_selectmachine.json"))
         # print(data["Result"][0]["machine_id"])
@@ -120,7 +129,7 @@ class Reports(ViewSet):
             #     if request.GET['id'] == machine_data["machines"][i]["id"]:
             #         print(request.GET['id'])
             #         print(machine_data["machines"][i]["id"])
-            data = json.load(open("Automac_app/machines.json"))
+            data = json.load(open(str(BASE_DIR)+"/Automac_app/machines.json"))
         else:
             data={"msg":"enter machine id"}
 
