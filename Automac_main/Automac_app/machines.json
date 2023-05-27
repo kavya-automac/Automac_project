@@ -1,0 +1,25 @@
+{
+
+            "machine_data":
+                [
+            {
+                "plant_name":"plant name1",
+                "machine_name":"NF35353",
+                "machine_id":1,
+                "model":"White Classic"
+            },
+            {
+                "plant_name": "plant name1",
+                "machine_name": "NF35353",
+                "machine_id": 2,
+                "model": "White Classic"
+            },
+            {
+                "plant_name": "plant name1",
+                "machine_name": "NF35353",
+                "machine_id": 3,
+                "model": "White Classic"
+            }
+
+        ]
+        }

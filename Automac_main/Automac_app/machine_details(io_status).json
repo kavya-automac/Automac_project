@@ -1,0 +1,11 @@
+
+{
+
+                "digital":[ {"label":"sensor_name1","value": "input"},{"label":"sensor_name1","value": "input"}],
+
+
+                "analog":
+                        [ {"label":"sensor_name1","value": 250,"units": "rmp"},{"label":"sensor_name1","value": 250,"units": "rmp"}
+                        ]
+
+}

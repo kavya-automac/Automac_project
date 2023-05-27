@@ -1,0 +1,73 @@
+{
+            "dashboard_details":[
+             {
+                "Machine_name": "machine_1",
+                "machine_state": "Broke",
+                 "KPI": [
+                     {
+                         "label": "daily_water_generated",
+                         "value": 540,
+                         "units": "ltr"
+                     },
+                     {
+
+                         "label": "Dosing_Solution_Level",
+                         "value": 540,
+                         "units": "ltr"
+                     },
+                     {
+
+                         "label": "machine_status",
+                         "value": "Normal"
+                     }
+                 ]
+            },
+
+            {
+                "Machine_name": "machine_2",
+                "machine_state": "Active",
+                "KPI": [
+                    {
+                        "label": "daily_water_generated",
+                        "value": 540,
+                        "units": "ltr"
+                    },
+                    {
+
+                        "label": "Dosing_Solution_Level",
+                        "value": 540,
+                        "units": "ltr"
+                    },
+                    {
+
+                        "label": "machine_status",
+                        "value": "Normal"
+                    }
+                ]
+            },
+
+            {
+                "Machine_name": "machine_3",
+                "machine_state": "In_Active",
+                "KPI": [
+                    {
+                        "label": "daily_water_generated",
+                        "value": 540,
+                        "units": "ltr"
+                    },
+                    {
+
+                        "label": "Dosing_Solution_Level",
+                        "value": 540,
+                        "units": "ltr"
+                    },
+                    {
+
+                        "label": "machine_status",
+                        "value": "Normal"
+                    }
+                ]
+            }
+
+        ]
+        }

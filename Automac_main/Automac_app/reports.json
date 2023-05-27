@@ -1,0 +1,10 @@
+{
+
+            "Reports":[
+              {"label_name":"Report Type","label_type":"dropdown","dropdown_data":["dosing level","daily water generated"]},
+              {"label_name":"Machine","label_type":"dropdown","dropdown_data":["NF35353","NF35353"]},
+              {"label_name":"Date", "label_type": "date_range", "label_icon": "calendar" }
+            ]
+
+
+}
