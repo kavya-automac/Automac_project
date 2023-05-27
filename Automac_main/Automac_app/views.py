@@ -22,7 +22,7 @@ class Dashboard(ViewSet):
 
     def dashboard(self, request):
 
-        data = json.load(open("dashboard.json"))
+        data = json.load(open("/Automac_app/dashboard.json"))
         return  JsonResponse(data)
 
 class Machines_view(ViewSet):
