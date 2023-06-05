@@ -54,7 +54,7 @@ def login_view(request):
     serializer = LoginSerializer(data=request.data)
     print('serializer:', serializer)
     print('serializer_type:', type(serializer))
-    if serializer.is_valid(raise_exception=True):
+    if serializer.is_valid():
         print('serializer:', serializer)
         username = serializer.data.get('username')
         # print('serializer_username:', username)
