@@ -2,7 +2,7 @@ from django.urls import path
 from . views import *
 
 from django.urls import path
-from .views import Dashboard
+# from . import views
 
 
     # Add more URL patterns as needed
@@ -17,6 +17,10 @@ urlpatterns = [
     path('machine_details/', Machines_view.as_view({'get': 'machine_details'}), name='machine_details'),
     path('reports/', Reports.as_view({'get':'reports'}), name='reports'),
     path('reportsmachine/', Reports.as_view({'get': 'reportsmachine'}), name='reportsmachine'),
+    path('login/',login_view,name='login'),
+    # path('username/', views.my_data_view_username, name='username'),
+    path('logout/', logout_view, name='logout'),
+    path('register/', register, name='register'),
 
 
 
