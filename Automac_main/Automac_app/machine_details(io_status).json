@@ -1,7 +1,7 @@
 
 {
 
-                "digital":[ {"label":"sensor_name1","value": "input"},{"label":"sensor_name1","value": "input"}],
+                "digital":[ {"label":"sensor_name1","value": "input"},{"label":"sensor_name1","value": "output"}],
 
 
                 "analog":

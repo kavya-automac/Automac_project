@@ -4,13 +4,13 @@
          "machine_name": "machine1",
          "model": "white",
           "Date_of_installation": "2020 Spring",
-          "Detail 1": 2770,
-          "Detail 2": 79.00
+          "Detail_1": 2770,
+          "Detail_2": 79.00
       },
           "Manuals_and_docs":[
               {
-                "icon": "pdf icon",
-                "name": "Electrical Drawing",
+                "icon": "pdf_icon",
+                "name": "Electrical_Drawing",
                 "posted_by": "harsha",
                 "time":"",
                 "image": "download"
