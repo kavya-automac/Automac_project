@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ["65.2.3.42","127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Automac_main.wsgi.application'
+ASGI_APPLICATION = 'Automac_main.asgi.application'
 
 
 # Database
@@ -126,3 +129,14 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+CHANNEL_LAYERS ={
+    "default":{
+        "BACKEND":"channels_redis.core.RedisChannelLayer",
+        "CONFIG":{
+            # "hosts":[{"65.2.3.42",6379}],
+            "hosts": ["redis://65.2.3.42:6379"],
+
+
+        },
+    },
+}

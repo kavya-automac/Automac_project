@@ -13,9 +13,9 @@ from django.db import models
 
 class machine_data(models.Model):
     objects = models.Manager()
+    timestamp= models.DateTimeField(auto_now_add=True)
     machine_id = models.CharField(max_length=150)
     machine_location= models.CharField(max_length=250)
-    timestamp= models.DateTimeField(auto_now_add=True)
     digital_input= models.BooleanField(default=False)
     digital_output= models.BooleanField(default=False)
     analog_input= models.IntegerField()
