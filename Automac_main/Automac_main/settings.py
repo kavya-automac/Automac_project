@@ -81,7 +81,7 @@ ASGI_APPLICATION = 'Automac_main.asgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'amac_db',
+        'NAME': 'amac_new_db',
         'USER': 'vivek_aws',
         'PASSWORD':'Am@c1502',
         'HOST':'65.2.3.42',
