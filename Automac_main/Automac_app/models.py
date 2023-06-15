@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 # Create your models here.
@@ -16,8 +17,8 @@ class machine_data(models.Model):
     timestamp= models.DateTimeField(auto_now_add=True)
     machine_id = models.CharField(max_length=150)
     machine_location= models.CharField(max_length=250)
-    digital_input= models.BooleanField(default=False)
-    digital_output= models.BooleanField(default=False)
+    digital_input= ArrayField(models.CharField(max_length=250))
+    digital_output=ArrayField(models.CharField(max_length=250))
     analog_input= models.IntegerField()
     analog_output= models.IntegerField()
 
