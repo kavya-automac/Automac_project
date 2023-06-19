@@ -31,8 +31,8 @@ ALLOWED_HOSTS = ["65.2.3.42","127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
-    'channels',
+    # 'daphne',
+    # 'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'Automac_app',
+    'Automac_machines_app',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Automac_main.wsgi.application'
-ASGI_APPLICATION = 'Automac_main.asgi.application'
+# ASGI_APPLICATION = 'Automac_main.asgi.application'
 
 
 # Database
