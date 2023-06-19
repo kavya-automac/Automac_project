@@ -7,7 +7,7 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter,URLRouter
 # from ..app import routing
-from Automac_app import routing
+from Automac_machines_app import routing
 # from * import app
 # from ..app import *
 

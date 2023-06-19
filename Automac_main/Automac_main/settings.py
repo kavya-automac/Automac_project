@@ -31,8 +31,8 @@ ALLOWED_HOSTS = ["65.2.3.42","127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    # 'daphne',
-    # 'channels',
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,7 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Automac_main.wsgi.application'
-# ASGI_APPLICATION = 'Automac_main.asgi.application'
+ASGI_APPLICATION = 'Automac_main.asgi.application'
 
 
 # Database
@@ -141,3 +141,10 @@ CHANNEL_LAYERS ={
         },
     },
 }
+
+
+MQTT_SERVER = 'broker.hivemq.com'
+MQTT_PORT = 1883
+MQTT_KEEPALIVE = 60
+MQTT_USER = ''
+MQTT_PASSWORD = ''
