@@ -256,7 +256,18 @@ for i in range(0, len(model_data)):
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 class Machines_view(ViewSet):
+    @action(detail=False, methods=['get'])
+    def machine_form(self, request):
+        query = ['line', 'plant', 'machine']
+        data = {'company': company_names, 'plant': plant_names, 'line': line_names, 'model':model_names , 'machine':  machines_name}
+        # print(data['c'])
+        form_values = []
+        for i in query:
+            form_values.append(data[i])
 
+        resultant_form_values = dict(zip(query, form_values))
+        print(resultant_form_values)
+        return JsonResponse(resultant_form_values)
 
     # def machine_forms(self,request):
 
