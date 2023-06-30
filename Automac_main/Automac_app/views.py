@@ -17,6 +17,9 @@ from django.dispatch import receiver
 from . models import *
 # from . serializers import *
 # from.signals import *
+
+
+
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import api_view, permission_classes
@@ -191,18 +194,89 @@ class Dashboard(ViewSet):
             print("else")
             return JsonResponse({"status":"login_required"})
 
+
+machine_data = Machines_List.objects.all()
+machine_data1=Machines_List.objects.get(id=1)
+print('machine_data',machine_data1)
+machine_data_serializer = usermachineSerializer(machine_data, many=True)
+serialized_machine_data = machine_data_serializer.data
+print('serialized_machine_data', serialized_machine_data)
+
+plant_data = Plant_List.objects.all()
+plant_data_serializer = plantSerializer(plant_data, many=True)
+serialized_plant_data = plant_data_serializer.data
+print('serialized_plant_data', serialized_plant_data)
+
+model_data = Model_List.objects.all()
+model_data_serializer = modelSerializer(model_data, many=True)
+serialized_model_data = model_data_serializer.data
+print('serialized_model_data', serialized_model_data)
+
+company_data = Company_List.objects.all()
+company_data_serializer = companySerializer(company_data, many=True)
+serialized_company_data = company_data_serializer.data
+
+line_data = Line_List.objects.all()
+line_data_serializer = companySerializer(line_data, many=True)
+serialized_line_data = line_data_serializer.data
+
+company_names = []
+for i in range(0, len(company_data)):
+    data1 = serialized_company_data[i]['company_name']
+    print('data1', data1)
+    company_names.append(data1)
+
+plant_names = []
+for i in range(0, len(plant_data)):
+    data2 = serialized_plant_data[i]['plant_name']
+    print('data2', data2)
+    plant_names.append(data2)
+
+line_names = []
+for i in range(0, len(line_data)):
+    data3 = serialized_line_data[i]['line_name']
+    print('data3', data3)
+    line_names.append(data3)
+
+machines_name = []
+for i in range(0, len(machine_data)):
+    data4 = serialized_machine_data[i]['machine_name']
+    print('data4', data4)
+    machines_name.append(data4)
+
+# print('plant_names',plant_names)
+
+model_names = []
+for i in range(0, len(model_data)):
+    data5 = serialized_model_data[i]['model_name']
+    print('data5', data5)
+    model_names.append(data5)
+
+
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 class Machines_view(ViewSet):
+
+
     @action(detail=False,methods=['get'])
     def machine(self,request):
+
         if request.user.is_authenticated:
             print("if")
+
             BASE_DIR = Path(__file__).resolve().parent.parent
 
 
             print('in machines')
-            machines=json.load(open(str(BASE_DIR)+"/Automac_app/machines.json"))
+
+            machines={
+                'plant_names':plant_names,
+                'model_names':model_names,
+                'machines_name':machines_name
+
+
+            }
+            # machines=json.load(open(str(BASE_DIR)+"/Automac_app/machines.json"))
             return JsonResponse(machines)
         else:
             print("else")
@@ -212,6 +286,12 @@ class Machines_view(ViewSet):
 
     @action(detail=False, method=["get"])
     def machine_details(self, request):
+        # id=request.query_params.get('id')
+        # queryset = Machines_List.objects.filter(id=id)
+        # print('queryset',queryset)
+        # serializer = usermachineSerializer(queryset,many=True)
+        # serializer_data=serializer.data
+        # print('serializer', serializer_data)
         if request.user.is_authenticated:
             print("if")
             BASE_DIR = Path(__file__).resolve().parent.parent
@@ -222,7 +302,12 @@ class Machines_view(ViewSet):
             print("request", request.method, request.POST, request.GET)
             # print("request.method",request.GET['id'])
 
+
             if "id" in request.GET and "module" in request.GET:
+            # if "module" in request.GET:
+
+                # return Response(serializer.data)
+
                 module = request.GET["module"]
 
                 # @action(detail=False, method=["get"])
@@ -233,14 +318,84 @@ class Machines_view(ViewSet):
                 #         }
                 #     ]
                 if module == "Details":
+
                     # file
+
+                    # for i in range(0,len(machine_data)):
+                    #     print('i',i)
+                    #     details={
+                    #         'general' : [
+                    #             {
+                    #             'id':serializer_data[i]['id'],
+                    #             'machine_image':serializer_data[i]['machine_image'],
+                    #             'machine_name': serializer_data[i]['machine_name'],
+                    #             'date_of_installation':serializer_data[i]['date_of_installation'],
+                    #         }
+                    #         ],
+                    #         'manuals_anad_docs':[],
+                    #         'techincal_details':[
+                    #
+                    #         ],
+                    #
+                    #     }
+                    #
+                    #     data=details
+                    # data=json.dumps(serializer_data)
+
+
+
+                    # print(zip(*serializer_data))
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
 
                 elif module == "kpis":
+                    # kpis_data=Machine_Kpi_List.objects.all()
+                    # kpis_data_serializer=kpiSerializer(kpis_data,many=True)
+                    # kpis_serialized_data=kpis_data_serializer.data
+                    # print('kpis_serialized_data',kpis_serialized_data)
+                    # machine_id=serialized_machine_data[0]['id']
+                    # machine_name=serialized_machine_data[0]['machine_name']
+                    # machine_state=serialized_machine_data[0]['machine_state']
+                    # kpi_name=kpis_serialized_data[0]['kpi_name']
+                    # kpi_value=kpis_serialized_data[0]['kpi_data']
+                    # kpi_unit=kpis_serialized_data[0]['kpi_unit']
+                    #
+                    # data={
+                    #     'machine_id':machine_id,
+                    #     'machine_name':machine_name,
+                    #     'machine_state':machine_state,
+                    #     'kpi_name':kpi_name,
+                    #     'kpi_value':kpi_value,
+                    #     'kpi_unit':kpi_unit
+                    # }
+                    #
+                    #
+
+                    #machine_id
+                    #machine_name,machine_status,kpi_name,kpi_value,kpi_unit
+
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
 
                 elif module == "iostatus":
-                    data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(io_status).json"))
+                    machine_data = Machines_List.objects.all()
+                    machine_data_serializer = usermachineSerializer(machine_data, many=True)
+                    serialized_machine_data = machine_data_serializer.data
+                    print('serialized_machine_data', serialized_machine_data)
+
+                    d_input_keys=serialized_machine_data[0]['digital_input']
+                    d_output_keys=serialized_machine_data[0]['digital_output']
+                    a_input_keys=serialized_machine_data[0]['analog_input']
+                    a_output_keys=serialized_machine_data[0]['analog_output']
+                    print('d',serialized_machine_data[0]['analog_input'])
+
+                    data={
+                        'digital_input':d_input_keys,
+                        'digital_output':d_output_keys,
+                        'analog_input':a_input_keys,
+                        'analog_output':a_output_keys
+                    }
+
+
+                    # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(io_status).json"))
                 else:
                     data = {
                         'status': 'please_enter_correct_module_name'
@@ -269,9 +424,6 @@ class Machines_view(ViewSet):
             return JsonResponse(data)
         else:
             return JsonResponse({"status":"login_required"})
-
-
-
 
 
 
@@ -406,7 +558,6 @@ class Reports(ViewSet):
 
 
 
-
 # class Machine_Details(ViewSet):
 #     @action(detail=False, methods=['get'])
 #     def details(self, request):
@@ -498,6 +649,7 @@ class Reports(ViewSet):
 #                 ]
 #         }
 #         return Response(data)
+
 
 
 

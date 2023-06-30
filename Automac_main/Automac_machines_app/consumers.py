@@ -1,3 +1,5 @@
+import json
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 
@@ -25,10 +27,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "chat.message",
             "text": text_data  # Send the processed data as the message
         })
+        # print('receive text_data',text_data)
         # await asyncio.sleep(5)
 
     async def chat_message(self, event):
         # Send the received data to the WebSocket connection
         await self.send(text_data=event["text"])
+        # print(event)
+        # await self.send(text_data=json.dumps(event["text"]))
         # await asyncio.sleep(2)
 

@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import *
 
 # class UserSerializer(serializers.ModelSerializer):
 #     password = serializers.CharField(write_only=True)
@@ -138,3 +139,44 @@ class LoginSerializer(serializers.ModelSerializer):
 
 # raise serializers.ValidationError("password no way")
 
+
+
+
+class usermachineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Machines_List
+        fields = "__all__"
+
+
+
+class kpiSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Machine_Kpi_List
+        fields = "__all__"
+
+class plantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plant_List
+        fields="__all__"
+
+
+class modelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Model_List
+        fields="__all__"
+
+
+
+
+
+class companySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company_List
+        fields="__all__"
+
+
+
+class lineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Line_List
+        fields="__all__"

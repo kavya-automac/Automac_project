@@ -11,13 +11,11 @@ class MachineDetails(models.Model):
     digital_output = ArrayField(models.BooleanField())
     analog_input = ArrayField(models.DecimalField(max_digits=10, decimal_places=2))
     analog_output = ArrayField(models.DecimalField(max_digits=10, decimal_places=2))
-
+    other = ArrayField(models.CharField(max_length=100, default=True))
 
     class Meta:
         app_label = 'Automac_machines_app'
         db_table = 'machines_schema"."machinedetails_table'
-
-
 
     def __str__(self):
         return "%s,%s" % (self.db_timestamp, self.machine_id)
