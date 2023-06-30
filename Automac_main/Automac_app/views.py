@@ -196,8 +196,8 @@ class Dashboard(ViewSet):
 
 
 machine_data = Machines_List.objects.all()
-machine_data1=Machines_List.objects.get(id=1)
-print('machine_data',machine_data1)
+# machine_data1=Machines_List.objects.get(id=1)
+# print('machine_data',machine_data1)
 machine_data_serializer = usermachineSerializer(machine_data, many=True)
 serialized_machine_data = machine_data_serializer.data
 print('serialized_machine_data', serialized_machine_data)
@@ -244,7 +244,7 @@ for i in range(0, len(machine_data)):
     print('data4', data4)
     machines_name.append(data4)
 
-# print('plant_names',plant_names)
+print('machines_name',machines_name)
 
 model_names = []
 for i in range(0, len(model_data)):
@@ -258,8 +258,13 @@ for i in range(0, len(model_data)):
 class Machines_view(ViewSet):
 
 
+    # def machine_forms(self,request):
+
+
+
     @action(detail=False,methods=['get'])
     def machine(self,request):
+        
 
         if request.user.is_authenticated:
             print("if")
