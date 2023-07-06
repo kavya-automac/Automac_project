@@ -4,6 +4,7 @@ from django.db import models
 
 
 class Line_List(models.Model):
+    objects = models.Manager()
     line_name=models.CharField(max_length=100)
 
     class Meta:
@@ -15,6 +16,8 @@ class Line_List(models.Model):
 
 
 class Model_List(models.Model):
+    objects = models.Manager()
+
     model_name=models.CharField(max_length=100)
 
     class Meta:
@@ -26,6 +29,7 @@ class Model_List(models.Model):
 
 
 class Plant_List(models.Model):
+    objects = models.Manager()
     plant_name=models.CharField(max_length=100)
     plant_location=models.CharField(max_length=100)
 
@@ -38,6 +42,7 @@ class Plant_List(models.Model):
 
 
 class Company_List(models.Model):
+    objects = models.Manager()
     company_name=models.CharField(max_length=100)
     company_location=models.CharField(max_length=100)
 
@@ -50,6 +55,7 @@ class Company_List(models.Model):
 
 
 class Machine_Kpi_List(models.Model):
+    objects = models.Manager()
     kpi_name=models.CharField(max_length=100)
     kpi_data=models.IntegerField()
     kpi_unit=models.CharField(max_length=10,blank=True)
@@ -65,14 +71,15 @@ class Machine_Kpi_List(models.Model):
 
 
 class Machines_List(models.Model):
+    objects = models.Manager()
     machine_image=models.ImageField(upload_to='images',blank=True)
     machine_name=models.CharField(max_length=100)
     machine_location=models.CharField(max_length=100)
-    digital_input= ArrayField(models.CharField(max_length=100,null=True))
-    digital_output= ArrayField(models.CharField(max_length=100,null=True))
-    analog_input = ArrayField(models.CharField(max_length=100,null=True))
-    analog_output = ArrayField(models.CharField(max_length=100,null=True))
-    date_of_installation=models.CharField(max_length=100,null=True)
+    digital_input= ArrayField(models.CharField(max_length=100,blank=True))
+    digital_output= ArrayField(models.CharField(max_length=100,blank=True))
+    analog_input = ArrayField(models.CharField(max_length=100,blank=True))
+    analog_output = ArrayField(models.CharField(max_length=100,blank=True))
+    date_of_installation=models.CharField(max_length=100,blank=True)
     machine_state=models.CharField(max_length=100)
 
     class Meta:

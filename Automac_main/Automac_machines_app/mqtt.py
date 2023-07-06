@@ -13,6 +13,7 @@ def on_connect(client, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully')
        client.subscribe('maithri/abu_dabhi')
+       client.subscribe('Topic_name')
    else:
        print('Bad connection. Code:', rc)
 
@@ -28,9 +29,9 @@ def on_message(client, userdata, msg):
 
     multi_topic_file.all_topics(payload1)
 
-    from . import test_file
+    from . import physical_keys_values
 
-    data=test_file.test_fun(payload1)
+    data=physical_keys_values.test_fun(payload1)
 
 
     channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])

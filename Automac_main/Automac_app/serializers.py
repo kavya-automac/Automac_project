@@ -149,6 +149,21 @@ class usermachineSerializer(serializers.ModelSerializer):
 
 
 
+class generalmachineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Machines_List
+        fields = ('id', 'machine_name', 'machine_location', 'date_of_installation')
+
+
+class IostatusmachineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Machines_List
+        fields = ('id', 'machine_name', 'digital_input','digital_output','analog_input','analog_output')
+
+
+
+
+
 class kpiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Machine_Kpi_List
@@ -180,3 +195,9 @@ class lineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line_List
         fields="__all__"
+
+
+
+class DropdownSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'

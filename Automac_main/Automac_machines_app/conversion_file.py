@@ -1,5 +1,4 @@
 import json
-from django.utils import timezone
 from django.apps import apps
 
 
@@ -12,9 +11,9 @@ def store_data(payload1):
     timestamp = payload['timestamp']
     machine_id = payload['info']['mid']
     machine_location = payload['info']['location']
-    digital_input =[payload['Temperature'],payload['Humidity'],payload['LP1'],payload['LP2'],payload['HP1'],payload['HP2'],payload['Dosing'],payload['3PhasePreventer']]
+    digital_input =[payload['LP1'],payload['LP2'],payload['HP1'],payload['HP2'],payload['Dosing'],payload['3PhasePreventer']]
     digital_output =[payload['Compressor_1'],payload['Compressor_2'],payload['Pump1'],payload['Pump2'],payload['Pump3']]
-    analog_input = []
+    analog_input = [payload['Temperature'],payload['Humidity']]
     analog_output = [payload['Flow']]
     other=[
         payload['Water_Level'],
