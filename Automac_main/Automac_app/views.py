@@ -4,6 +4,7 @@ from pathlib import Path
 # from django.shortcuts import render, redirect
 # from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 # from rest_framework.response import Response
@@ -331,7 +332,7 @@ def testing_sessions(request):
         dummy = request.session.get('dummy_data')
         json_data = request.session.get('json_data')
         print("Dummy Data:", dummy)
-        print("json data:", type(json_data))
+        print("json data:", json_data)
 
         # messages.warning(request, 'warning.')
 
@@ -390,14 +391,14 @@ class Reports(ViewSet):
 
 
 
-
 class test(ViewSet):
     def post(self,request):
         serializer=plantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            messages.success(request,'data added')
-            return Response({'message':'success'})
+            msg=messages.success(request,'data added successfullyyyy')
+            print('msg',msg)
+            return Response({'message': 'success'})
         else:
             pass
 
@@ -410,7 +411,3 @@ class test(ViewSet):
         data2=user_serializer.data
 
         return Response(data2)
-
-
-
-
