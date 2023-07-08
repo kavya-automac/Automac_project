@@ -25,11 +25,11 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    print("on_message")
+    # print("on_message")
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
     payload1 = msg.payload.decode()  # Assuming the payload is a string
-    print('payload1',payload1)
+    # print('payload1',payload1)
 
     multi_topic_file.all_topics(payload1)
 
