@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'amac_new_db',
         'USER': 'vivek_aws',
         'PASSWORD':'Am@c1502',
-        'HOST':'65.2.3.42',
+        'HOST':'3.110.119.196',
         'PORT':'5432',
     }
 }
