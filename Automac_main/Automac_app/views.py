@@ -341,9 +341,9 @@ def testing_sessions(request):
 
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
-class Reports(ViewSet):
+class Trails(ViewSet):
     @action(detail=False, method=['get'])
-    def reports(self,request):
+    def Trail_details(self,request):
         if request.user.is_authenticated:
             print("if")
             data_session=testing_sessions(request)
@@ -353,12 +353,13 @@ class Reports(ViewSet):
 
 
             machine_id = request.GET.get('machine_id')
-            start_datetime = request.GET.get('start_datetime')
-            end_datetime = request.GET.get('end_datetime')
+            date = request.GET.get('date')
+            # end_datetime = request.GET.get('end_datetime')
             print('request',request.method,request.GET)
 
-            reports_data = history_fun(machine_id,start_datetime,end_datetime)
-            return JsonResponse({"history": reports_data})
+            trail_detail_data = history_fun(machine_id,date)
+            # reports_data = history_fun(machine_id,start_datetime,end_datetime)
+            return JsonResponse({"history": trail_detail_data})
 
         else:
             print("else")
@@ -367,7 +368,7 @@ class Reports(ViewSet):
 
 
     @action(detail=False, method=['get'])
-    def reportsmachine(self, request):
+    def Trail_machine(self, request):
         if request.user.is_authenticated:
             print("if")
 
@@ -388,6 +389,7 @@ class Reports(ViewSet):
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 
 
 
