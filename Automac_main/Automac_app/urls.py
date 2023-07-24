@@ -20,7 +20,6 @@ urlpatterns = [
     path('Trail_details/', Trails.as_view({'get': 'Trail_details'}), name='Trail_details'),
     path('Trail_machine/', Trails.as_view({'get': 'Trail_machine'}), name='Trail_machine'),
     path('login/',login_view,name='login'),
-    # path('username/', views.my_data_view_username, name='username'),
     path('logout/', logout_view, name='logout'),
     path('register/', register, name='register'),
     path('test/', test.as_view({'get': 'get'}), name='test'),
