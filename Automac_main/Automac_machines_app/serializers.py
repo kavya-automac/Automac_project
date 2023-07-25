@@ -10,3 +10,9 @@ class machineSerializer_two(serializers.ModelSerializer):
         model=MachineDetails
         fields=('id','timestamp','machine_id','machine_location')
 
+
+class analog_ip_op_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=MachineDetails
+        fields=('id','timestamp','machine_id','machine_location','analog_input','analog_output')
+

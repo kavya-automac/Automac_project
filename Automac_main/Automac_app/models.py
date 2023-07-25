@@ -74,6 +74,8 @@ class Machines_List(models.Model):
     objects = models.Manager()
     machine_image=models.ImageField(upload_to='images',blank=True)
     machine_name=models.CharField(max_length=100)
+    machine_id=models.CharField(max_length=100,blank=True)
+
     machine_location=models.CharField(max_length=100)
     digital_input= ArrayField(models.CharField(max_length=100,blank=True))
     digital_output= ArrayField(models.CharField(max_length=100,blank=True))

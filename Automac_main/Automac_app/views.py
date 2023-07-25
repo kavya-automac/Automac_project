@@ -27,7 +27,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.apps import apps
 from . history import history_fun
-from Automac_machines_app.serializers import machineSerializer
+from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,machineSerializer_two
 from Automac_machines_app.models import MachineDetails
 
 # from .Automac_machines_app.models import MachineDetails
@@ -171,8 +171,8 @@ class Dashboard(ViewSet):
 
 
 machine_data = Machines_List.objects.all()
-machine_data_serializer = usermachineSerializer(machine_data, many=True)
-serialized_machine_data = machine_data_serializer.data
+# machine_data_serializer = usermachineSerializer(machine_data, many=True)
+# serialized_machine_data = machine_data_serializer.data
 # print('serialized_machine_data', serialized_machine_data)
 
 plant_data = Plant_List.objects.all()
@@ -211,13 +211,13 @@ for i in range(0, len(line_data)):
     # print('data3', l_data)
     line_names.append(l_data)
 
-machines_name = []
-for i in range(0, len(machine_data)):
-    m_data = serialized_machine_data[i]['machine_name']
-    # print('data4', m_data)
-    machines_name.append(m_data)
-
-print('machines_name', machines_name)
+# machines_name = []
+# for i in range(0, len(machine_data)):
+#     m_data = serialized_machine_data[i]['machine_name']
+#     # print('data4', m_data)
+#     machines_name.append(m_data)
+#
+# print('machines_name', machines_name)
 
 model_names = []
 for i in range(0, len(model_data)):
@@ -231,7 +231,9 @@ for i in range(0, len(model_data)):
 
 def forms_data():
     data = {'company': company_names, 'plant': plant_names, 'line': line_names, 'model': model_names,
-            'machine': machines_name}
+            }
+    # data = {'company': company_names, 'plant': plant_names, 'line': line_names, 'model': model_names,
+    #         'machine': machines_name}
 
     query = ['line', 'model', 'machine']
     # query = ['machine']
@@ -265,15 +267,15 @@ class MachinesView(ViewSet):
             print("if")
             BASE_DIR = Path(__file__).resolve().parent.parent
 
-            id=request.query_params.get('id')
-            d=Machines_List.objects.filter(id=id)
+            machine_id=request.query_params.get('machine_id')
+            d=Machines_List.objects.filter(machine_id=machine_id)
 
             print("request", request.method, request.POST, request.GET)
             # print("request.method",request.GET['id'])
             # q=Machines_List.objects.filter(id=id).values('id','machine_name','machine_location','date_of_installation')
             # print('q',q)
 
-            if "id" in request.GET and "module" in request.GET:
+            if "machine_id" in request.GET and "module" in request.GET:
                 module = request.GET["module"]
 
                 # @action(detail=False, method=["get"])
@@ -285,25 +287,47 @@ class MachinesView(ViewSet):
                 #     ]
                 if module == "Details":
                     # id = request.query_params.get('id')
-                    general_data = Machines_List.objects.filter(id=id)
+                    general_data = Machines_List.objects.filter(machine_id=machine_id)
                     general_serialzer=generalmachineSerializer(general_data,many=True)
                     general_serialzer_data=general_serialzer.data
                     print('general_serialzer_data',general_serialzer_data)
-                    data = {'general_details':general_serialzer_data}
+                    Manuals_and_Docs=[]
+                    Techincal_Details=[]
+                    data = {'general_details':general_serialzer_data,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
                     # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
 
                 elif module == "kpis":
 
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
-
                 elif module == "iostatus":
-                    io_data = Machines_List.objects.filter(id=id)
-                    io_serializer=IostatusmachineSerializer(io_data,many=True)
-                    io_serializer_data=io_serializer.data
-                    # print('kpi_serializer_data',io_serializer_data)
-                    print('io_serializer_data',io_serializer_data)
+                    io_data = Machines_List.objects.filter(machine_id=machine_id)
+                    io_serializer = IostatusmachineSerializer(io_data, many=True)
+                    io_serializer_data = io_serializer.data
+                    print('io_serializer_data', io_serializer_data)
 
-                    data={'iostatus':io_serializer_data}
+                    machine_values_data = MachineDetails.objects.filter(machine_id=machine_id).order_by('-id').first()
+                    print('machine_values_data', machine_values_data)
+
+                    last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
+
+                    for i in range(len(io_serializer_data)):
+                        print('i', i)
+                        io_serializer_data[i]['db_timestamp'] = last_valies_data.get('db_timestamp', None)
+
+                        di = dict(zip(io_serializer_data[i]['digital_input'], last_valies_data.get('digital_input', [])))
+                        print('di',di)
+                        print(' last_valies_data.get', last_valies_data.get('digital_input', []))
+                        do = dict(zip(io_serializer_data[i]['digital_output'], last_valies_data.get('digital_output', [])))
+                        ai = dict(zip(io_serializer_data[i]['analog_input'], last_valies_data.get('analog_input', [])))
+                        ao = dict(zip(io_serializer_data[i]['analog_output'], last_valies_data.get('analog_output', [])))
+
+                        io_serializer_data[i]['digital_input'] = di
+                        io_serializer_data[i]['digital_output'] = do
+                        io_serializer_data[i]['analog_input'] = ai
+                        io_serializer_data[i]['analog_output'] = ao
+
+                    data = {'iostatus': io_serializer_data}
+
                     # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(io_status).json"))
                 else:
                     data = {
@@ -390,6 +414,30 @@ class Trails(ViewSet):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
+@authentication_classes([SessionAuthentication])
+# @permission_classes([IsAuthenticated])
+class Reports_UI(ViewSet):
+    @action(detail=False, method=['get'])
+    def Reports(self,request):
+        machine_id=request.GET.get('machine_id')
+        start_datetime=request.GET.get('start_datetime')
+        end_datetime=request.GET.get('end_datetime')
+
+
+        r_selected_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])
+        # print('details',details)
+        r_serializer = analog_ip_op_Serializer(r_selected_data, many=True)
+
+        r_s_d = r_serializer.data
+        print('r_s_d',r_s_d)
+        return JsonResponse({"data":r_s_d})
+
+
+
+
+
+
+
 
 
 
@@ -413,3 +461,6 @@ class test(ViewSet):
         data2=user_serializer.data
 
         return Response(data2)
+
+
+
