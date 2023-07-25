@@ -171,9 +171,9 @@ class Dashboard(ViewSet):
 
 
 machine_data = Machines_List.objects.all()
-# machine_data_serializer = usermachineSerializer(machine_data, many=True)
-# serialized_machine_data = machine_data_serializer.data
-# print('serialized_machine_data', serialized_machine_data)
+machine_data_serializer = usermachineSerializer(machine_data, many=True)
+serialized_machine_data = machine_data_serializer.data
+print('serialized_machine_data', serialized_machine_data)
 
 plant_data = Plant_List.objects.all()
 plant_data_serializer = plantSerializer(plant_data, many=True)
@@ -211,13 +211,13 @@ for i in range(0, len(line_data)):
     # print('data3', l_data)
     line_names.append(l_data)
 
-# machines_name = []
-# for i in range(0, len(machine_data)):
-#     m_data = serialized_machine_data[i]['machine_name']
-#     # print('data4', m_data)
-#     machines_name.append(m_data)
-#
-# print('machines_name', machines_name)
+machines_name = []
+for i in range(0, len(machine_data)):
+    m_data = serialized_machine_data[i]['machine_name']
+    # print('data4', m_data)
+    machines_name.append(m_data)
+
+print('machines_name', machines_name)
 
 model_names = []
 for i in range(0, len(model_data)):
@@ -230,10 +230,9 @@ for i in range(0, len(model_data)):
 
 
 def forms_data():
+
     data = {'company': company_names, 'plant': plant_names, 'line': line_names, 'model': model_names,
-            }
-    # data = {'company': company_names, 'plant': plant_names, 'line': line_names, 'model': model_names,
-    #         'machine': machines_name}
+            'machine': machines_name}
 
     query = ['line', 'model', 'machine']
     # query = ['machine']
