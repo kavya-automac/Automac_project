@@ -201,3 +201,16 @@ class lineSerializer(serializers.ModelSerializer):
 class DropdownSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
+
+
+
+class all_Machine_data_Serializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+
+
+class ReportEntrySerializer(serializers.Serializer):
+    machine_id = serializers.CharField(max_length=10)
+    start_datetime = serializers.DateTimeField()
+    end_datetime = serializers.DateTimeField()
+    report_type = serializers.CharField(max_length=50)

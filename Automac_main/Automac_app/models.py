@@ -90,3 +90,25 @@ class Machines_List(models.Model):
 
     def __str__(self):
         return self.machine_name
+
+
+
+class all_Machine_data(models.Model):
+    objects = models.Manager()
+    plant_name=models.CharField(max_length=100)
+    machine_id=models.CharField(max_length=100,blank=True)
+    model_name=models.CharField(max_length=100)
+
+    class Meta:
+        app_label = 'Automac_app'
+        db_table = 'users_schema"."all_Machine_data'
+
+    def __str__(self):
+        return self.machine_id
+
+
+
+
+
+
+

@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["65.0.154.172","127.0.0.1"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -56,6 +55,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
+
+CSRF_COOKIE_NAME = "csrftoken"
 
 CORS_ORIGIN_ALLOW_ALL = True
 

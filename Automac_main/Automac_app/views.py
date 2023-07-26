@@ -5,6 +5,7 @@ from pathlib import Path
 # from django.shortcuts import render, redirect
 # from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -415,16 +416,37 @@ class Trails(ViewSet):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
+# @authentication_classes([SessionAuthentication])
+# # @permission_classes([IsAuthenticated])
+# @csrf_exempt
+# @action(detail=False, method=['post'])
+# # @api_view(['POST'])
+
+@csrf_exempt
+@api_view(['POST'])
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
-class Reports_UI(ViewSet):
-    @action(detail=False, method=['get'])
-    def Reports(self,request):
+def Reports(request):
+    if request.user.is_authenticated:
+        report_type = request.POST.get('report_type')
+        machine_id = request.POST.get('machine_id')
+        start_datetime = request.POST.get('start_datetime')
+        end_datetime = request.POST.get('end_datetime')
 
-        report_type = request.GET.get('report_type')
-        machine_id = request.GET.get('machine_id')
-        start_datetime = request.GET.get('start_datetime')
-        end_datetime = request.GET.get('end_datetime')
+        # try:
+        #     request_data = json.loads(request.body)
+        # except json.JSONDecodeError:
+        #     return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # report_type = request_data.get('report_type')
+        # machine_id = request_data.get('machine_id')
+        # start_datetime = request_data.get('start_datetime')
+        # end_datetime = request_data.get('end_datetime')
+
+        if not start_datetime or not end_datetime:
+            return JsonResponse({"error": "start_datetime and end_datetime are required."},
+                                status=status.HTTP_400_BAD_REQUEST)
+
         try:
             # Convert the start_datetime and end_datetime strings to datetime objects
             start_datetime = datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
@@ -445,6 +467,12 @@ class Reports_UI(ViewSet):
         )
         filtered_data_s=analog_ip_op_Serializer(filtered_data,many=True)
         filtered_data_s_data=filtered_data_s.data
+
+        plant_model_data = all_Machine_data.objects.get(machine_id=machine_id)
+
+        print('plant_model_data_s',plant_model_data)
+
+
         response_data = []
         for entry in filtered_data_s_data:
             timestamp = entry['timestamp']
@@ -458,16 +486,23 @@ class Reports_UI(ViewSet):
             else:
                 relevant_data = {}
 
+
+
             response_data.append({
+
                 'timestamp': timestamp,
                 'machine_id': machine_id,
+                'plant':plant_model_data.plant_name,
+                'model':plant_model_data.model_name,
                 'machine_location': machine_location,
                 'data': relevant_data,
             })
         print('len',len(response_data))
 
         return JsonResponse({"data": response_data})
-
+    else:
+        print("else")
+        return JsonResponse({"status": "login_required"})
 
 
 class test(ViewSet):
