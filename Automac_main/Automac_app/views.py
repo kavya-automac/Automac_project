@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 # from django.contrib.auth.decorators import login_required
 # from django.http import JsonResponse
@@ -27,7 +28,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.apps import apps
 from . history import history_fun
-from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,machineSerializer_two
+from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,machineSerializer_two,analog_ip_op_Serializer
+# from Automac_machines_app.serializers import *
 from Automac_machines_app.models import MachineDetails
 
 # from .Automac_machines_app.models import MachineDetails
@@ -173,7 +175,7 @@ class Dashboard(ViewSet):
 machine_data = Machines_List.objects.all()
 machine_data_serializer = usermachineSerializer(machine_data, many=True)
 serialized_machine_data = machine_data_serializer.data
-print('serialized_machine_data', serialized_machine_data)
+# print('serialized_machine_data', serialized_machine_data)
 
 plant_data = Plant_List.objects.all()
 plant_data_serializer = plantSerializer(plant_data, many=True)
@@ -217,7 +219,7 @@ for i in range(0, len(machine_data)):
     # print('data4', m_data)
     machines_name.append(m_data)
 
-print('machines_name', machines_name)
+# print('machines_name', machines_name)
 
 model_names = []
 for i in range(0, len(model_data)):
@@ -418,25 +420,53 @@ class Trails(ViewSet):
 class Reports_UI(ViewSet):
     @action(detail=False, method=['get'])
     def Reports(self,request):
-        machine_id=request.GET.get('machine_id')
-        start_datetime=request.GET.get('start_datetime')
-        end_datetime=request.GET.get('end_datetime')
 
+        report_type = request.GET.get('report_type')
+        machine_id = request.GET.get('machine_id')
+        start_datetime = request.GET.get('start_datetime')
+        end_datetime = request.GET.get('end_datetime')
+        try:
+            # Convert the start_datetime and end_datetime strings to datetime objects
+            start_datetime = datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
+            end_datetime = datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return Response({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        r_selected_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])
-        # print('details',details)
-        r_serializer = analog_ip_op_Serializer(r_selected_data, many=True)
+        # Fetch the machine from Machines_List model
+        machine = Machines_List.objects.filter(machine_id=machine_id).first()
+        if not machine:
+            return Response({"error": "Machine not found"}, status=400)
 
-        r_s_d = r_serializer.data
-        print('r_s_d',r_s_d)
-        return JsonResponse({"data":r_s_d})
+        # Fetch relevant data from MachineDetails model for the given machine_id and date range
+        filtered_data = MachineDetails.objects.filter(
+            machine_id=machine_id,
+            timestamp__range=[start_datetime, end_datetime],
+        )
+        filtered_data_s=analog_ip_op_Serializer(filtered_data,many=True)
+        filtered_data_s_data=filtered_data_s.data
+        response_data = []
+        for entry in filtered_data_s_data:
+            timestamp = entry['timestamp']
+            machine_location = entry['machine_location']
 
+            # Determine the relevant data based on the selected report_type
+            if report_type in machine.analog_input:
+                relevant_data = {report_type: entry['analog_input'][machine.analog_input.index(report_type)]}
+            elif report_type in machine.analog_output:
+                relevant_data = {report_type: entry['analog_output'][machine.analog_output.index(report_type)]}
+            else:
+                relevant_data = {}
 
+            response_data.append({
+                'timestamp': timestamp,
+                'machine_id': machine_id,
+                'machine_location': machine_location,
+                'data': relevant_data,
+            })
+        print('len',len(response_data))
 
-
-
-
-
+        return JsonResponse({"data": response_data})
 
 
 
@@ -463,3 +493,6 @@ class test(ViewSet):
 
 
 
+# 2023-07-19 05:31:23  start_datetime
+# end_datetime 2023-07-19 05:32:19
+# report_type  Flow  Temperature,Humidity
