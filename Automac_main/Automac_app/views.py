@@ -293,8 +293,28 @@ class MachinesView(ViewSet):
                     general_serialzer=generalmachineSerializer(general_data,many=True)
                     general_serialzer_data=general_serialzer.data
                     print('general_serialzer_data',general_serialzer_data)
-                    Manuals_and_Docs=[]
-                    Techincal_Details=[]
+                    Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
+                                       "Uploaded_by":"harsha",
+                                       "Date":"27/07/2023",
+                                       "Url":"http://127.0.0.1:8000/media/images/KRESUME.png"}]
+                    Techincal_Details=[{
+                        "Date":"27/07/2023",
+                        "Device_name":"Compressor",
+                        "Make":"ELGI",
+                        "Model_No":"ELGI001",
+                        "Label":"label"
+                    },{
+                        "Date": "27/07/2023",
+                        "Device_name": "Cooler",
+                        "Make": "CROMPTON",
+                        "Model_No": "CRMP234",
+                        "Label": "label"
+
+                    }
+                    ]
+
+
+
                     data = {'general_details':general_serialzer_data,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
                     # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
 
@@ -375,9 +395,6 @@ class Trails(ViewSet):
             data_session=testing_sessions(request)
             # print('data_session',data_session)
 
-
-
-
             machine_id = request.GET.get('machine_id')
             date = request.GET.get('date')
             # end_datetime = request.GET.get('end_datetime')
@@ -414,95 +431,170 @@ class Trails(ViewSet):
             return JsonResponse({"status":"login_required"})
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-# @authentication_classes([SessionAuthentication])
-# # @permission_classes([IsAuthenticated])
-# @csrf_exempt
-# @action(detail=False, method=['post'])
-# # @api_view(['POST'])
 
-@csrf_exempt
-@api_view(['POST'])
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
-def Reports(request):
-    if request.user.is_authenticated:
-        report_type = request.POST.get('report_type')
-        machine_id = request.POST.get('machine_id')
-        start_datetime = request.POST.get('start_datetime')
-        end_datetime = request.POST.get('end_datetime')
+class Reports_view(ViewSet):
+    @action(detail=False, method=['get'])
+    def Reports(self,request):
+        if request.user.is_authenticated:
+            # report_type = request.POST.get('report_type')
+            # machine_id = request.POST.get('machine_id')
+            # start_datetime = request.POST.get('start_datetime')
+            # end_datetime = request.POST.get('end_datetime')
 
-        # try:
-        #     request_data = json.loads(request.body)
-        # except json.JSONDecodeError:
-        #     return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # report_type = request_data.get('report_type')
-        # machine_id = request_data.get('machine_id')
-        # start_datetime = request_data.get('start_datetime')
-        # end_datetime = request_data.get('end_datetime')
+            try:
+                request_data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not start_datetime or not end_datetime:
-            return JsonResponse({"error": "start_datetime and end_datetime are required."},
+            report_type = request_data.get('report_type')
+            machine_id = request_data.get('machine_id')
+            start_datetime = request_data.get('start_datetime')
+            end_datetime = request_data.get('end_datetime')
+
+            if not start_datetime or not end_datetime:
+                return JsonResponse({"error": "start_datetime and end_datetime are required."},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                # Convert the start_datetime and end_datetime strings to datetime objects
+                start_datetime = datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
+                end_datetime = datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                return Response({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            # Convert the start_datetime and end_datetime strings to datetime objects
-            start_datetime = datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
-            end_datetime = datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
-        except ValueError:
-            return Response({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            # Fetch the machine from Machines_List model
+            machine = Machines_List.objects.filter(machine_id=machine_id).first()
+            if not machine:
+                return Response({"error": "Machine not found"}, status=400)
 
-        # Fetch the machine from Machines_List model
-        machine = Machines_List.objects.filter(machine_id=machine_id).first()
-        if not machine:
-            return Response({"error": "Machine not found"}, status=400)
+            # Fetch relevant data from MachineDetails model for the given machine_id and date range
+            filtered_data = MachineDetails.objects.filter(
+                machine_id=machine_id,
+                timestamp__range=[start_datetime, end_datetime],
+            )
+            filtered_data_s = analog_ip_op_Serializer(filtered_data, many=True)
+            filtered_data_s_data = filtered_data_s.data
 
-        # Fetch relevant data from MachineDetails model for the given machine_id and date range
-        filtered_data = MachineDetails.objects.filter(
-            machine_id=machine_id,
-            timestamp__range=[start_datetime, end_datetime],
-        )
-        filtered_data_s=analog_ip_op_Serializer(filtered_data,many=True)
-        filtered_data_s_data=filtered_data_s.data
+            plant_model_data = all_Machine_data.objects.get(machine_id=machine_id)
 
-        plant_model_data = all_Machine_data.objects.get(machine_id=machine_id)
+            print('plant_model_data_s', plant_model_data)
 
-        print('plant_model_data_s',plant_model_data)
+            response_data = []
+            for entry in filtered_data_s_data:
+                timestamp = entry['timestamp']
+                machine_location = entry['machine_location']
 
+                # Determine the relevant data based on the selected report_type
+                if report_type in machine.analog_input:
+                    relevant_data = {report_type: entry['analog_input'][machine.analog_input.index(report_type)]}
+                elif report_type in machine.analog_output:
+                    relevant_data = {report_type: entry['analog_output'][machine.analog_output.index(report_type)]}
+                else:
+                    relevant_data = {}
 
-        response_data = []
-        for entry in filtered_data_s_data:
-            timestamp = entry['timestamp']
-            machine_location = entry['machine_location']
+                response_data.append({
 
-            # Determine the relevant data based on the selected report_type
-            if report_type in machine.analog_input:
-                relevant_data = {report_type: entry['analog_input'][machine.analog_input.index(report_type)]}
-            elif report_type in machine.analog_output:
-                relevant_data = {report_type: entry['analog_output'][machine.analog_output.index(report_type)]}
-            else:
-                relevant_data = {}
+                    'timestamp': timestamp,
+                    'machine_id': machine_id,
+                    'plant': plant_model_data.plant_name,
+                    'model': plant_model_data.model_name,
+                    'machine_location': machine_location,
+                    'data': relevant_data,
+                })
+            print('len', len(response_data))
 
+            return JsonResponse({"data": response_data})
+        else:
+            print("else")
+            return JsonResponse({"status": "login_required"})
 
-
-            response_data.append({
-
-                'timestamp': timestamp,
-                'machine_id': machine_id,
-                'plant':plant_model_data.plant_name,
-                'model':plant_model_data.model_name,
-                'machine_location': machine_location,
-                'data': relevant_data,
-            })
-        print('len',len(response_data))
-
-        return JsonResponse({"data": response_data})
-    else:
-        print("else")
-        return JsonResponse({"status": "login_required"})
+#
+# @csrf_exempt
+# @api_view(['POST'])
+# @authentication_classes([SessionAuthentication])
+# # @permission_classes([IsAuthenticated])
+# def Reports(request):
+#     if request.user.is_authenticated:
+#         report_type = request.POST.get('report_type')
+#         machine_id = request.POST.get('machine_id')
+#         start_datetime = request.POST.get('start_datetime')
+#         end_datetime = request.POST.get('end_datetime')
+#
+#         # try:
+#         #     request_data = json.loads(request.body)
+#         # except json.JSONDecodeError:
+#         #     return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
+#
+#         # report_type = request_data.get('report_type')
+#         # machine_id = request_data.get('machine_id')
+#         # start_datetime = request_data.get('start_datetime')
+#         # end_datetime = request_data.get('end_datetime')
+#
+#         if not start_datetime or not end_datetime:
+#             return JsonResponse({"error": "start_datetime and end_datetime are required."},
+#                                 status=status.HTTP_400_BAD_REQUEST)
+#
+#         try:
+#             # Convert the start_datetime and end_datetime strings to datetime objects
+#             start_datetime = datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
+#             end_datetime = datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
+#         except ValueError:
+#             return Response({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
+#                             status=status.HTTP_400_BAD_REQUEST)
+#
+#         # Fetch the machine from Machines_List model
+#         machine = Machines_List.objects.filter(machine_id=machine_id).first()
+#         if not machine:
+#             return Response({"error": "Machine not found"}, status=400)
+#
+#         # Fetch relevant data from MachineDetails model for the given machine_id and date range
+#         filtered_data = MachineDetails.objects.filter(
+#             machine_id=machine_id,
+#             timestamp__range=[start_datetime, end_datetime],
+#         )
+#         filtered_data_s=analog_ip_op_Serializer(filtered_data,many=True)
+#         filtered_data_s_data=filtered_data_s.data
+#
+#         plant_model_data = all_Machine_data.objects.get(machine_id=machine_id)
+#
+#         print('plant_model_data_s',plant_model_data)
+#
+#
+#         response_data = []
+#         for entry in filtered_data_s_data:
+#             timestamp = entry['timestamp']
+#             machine_location = entry['machine_location']
+#
+#             # Determine the relevant data based on the selected report_type
+#             if report_type in machine.analog_input:
+#                 relevant_data = {report_type: entry['analog_input'][machine.analog_input.index(report_type)]}
+#             elif report_type in machine.analog_output:
+#                 relevant_data = {report_type: entry['analog_output'][machine.analog_output.index(report_type)]}
+#             else:
+#                 relevant_data = {}
+#
+#
+#
+#             response_data.append({
+#
+#                 'timestamp': timestamp,
+#                 'machine_id': machine_id,
+#                 'plant':plant_model_data.plant_name,
+#                 'model':plant_model_data.model_name,
+#                 'machine_location': machine_location,
+#                 'data': relevant_data,
+#             })
+#         print('len',len(response_data))
+#
+#         return JsonResponse({"data": response_data})
+#     else:
+#         print("else")
+#         return JsonResponse({"status": "login_required"})
 
 
 class test(ViewSet):
@@ -527,7 +619,8 @@ class test(ViewSet):
         return Response(data2)
 
 
-
-# 2023-07-19 05:31:23  start_datetime
-# end_datetime 2023-07-19 05:32:19
-# report_type  Flow  Temperature,Humidity
+# Machine_id :ABD2
+# Start_datetime : 2023-07-19 05:31:23
+# End_datetime : 2023-07-19 05:32:19
+# report_type : Temperature
+#
