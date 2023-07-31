@@ -292,7 +292,10 @@ class MachinesView(ViewSet):
                     general_data = Machines_List.objects.filter(machine_id=machine_id)
                     general_serialzer=generalmachineSerializer(general_data,many=True)
                     general_serialzer_data=general_serialzer.data
-                    print('general_serialzer_data',general_serialzer_data)
+                    general_serialzer_data_1=dict(general_serialzer_data[0])
+                    print('general_serialzer_data_1',general_serialzer_data_1)
+                    # print('general_serialzer_data',dict(general_serialzer_data[0]))
+
                     Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
                                        "Uploaded_by":"harsha",
                                        "Date":"27/07/2023",
@@ -315,7 +318,7 @@ class MachinesView(ViewSet):
 
 
 
-                    data = {'general_details':general_serialzer_data,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
+                    data = {'general_details':general_serialzer_data_1,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
                     # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
 
                 elif module == "kpis":
@@ -334,21 +337,64 @@ class MachinesView(ViewSet):
 
                     for i in range(len(io_serializer_data)):
                         print('i', i)
-                        io_serializer_data[i]['db_timestamp'] = last_valies_data.get('db_timestamp', None)
+                        io_data = io_serializer_data[i]
+                        io_data['db_timestamp'] = last_valies_data.get('db_timestamp', None)
 
-                        di = dict(zip(io_serializer_data[i]['digital_input'], last_valies_data.get('digital_input', [])))
-                        print('di',di)
-                        print(' last_valies_data.get', last_valies_data.get('digital_input', []))
-                        do = dict(zip(io_serializer_data[i]['digital_output'], last_valies_data.get('digital_output', [])))
-                        ai = dict(zip(io_serializer_data[i]['analog_input'], last_valies_data.get('analog_input', [])))
-                        ao = dict(zip(io_serializer_data[i]['analog_output'], last_valies_data.get('analog_output', [])))
+                        # Create a new list of dictionaries with the desired format for digital_input
+                        # ###### digital_input
+                        digital_input_data = []
+                        for key, value in zip(io_data['digital_input'], last_valies_data.get('digital_input', [])):
+                            digital_input_data.append({"name": key, "value": str(value)})
+                        print('digital_input_data',digital_input_data)
+                        io_data['digital_input'] = digital_input_data
 
-                        io_serializer_data[i]['digital_input'] = di
-                        io_serializer_data[i]['digital_output'] = do
-                        io_serializer_data[i]['analog_input'] = ai
-                        io_serializer_data[i]['analog_output'] = ao
+                        # ###### digital_output
+
+                        digital_output_data = []
+                        for key, value in zip(io_data['digital_output'], last_valies_data.get('digital_output', [])):
+                            digital_output_data.append({"name": key, "value": str(value)})
+                        print('digital_output_data', digital_output_data)
+                        io_data['digital_output'] = digital_output_data
+
+                        # ###### analog_input
+
+                        analog_input_data = []
+                        for key, value in zip(io_data['analog_input'], last_valies_data.get('analog_input', [])):
+                            analog_input_data.append({"name": key, "value": str(value)})
+                        print('analog_input_data', analog_input_data)
+                        io_data['analog_input'] = analog_input_data
+
+                        # ###### analog_output
+
+                        analog_output_data = []
+                        for key, value in zip(io_data['analog_output'], last_valies_data.get('analog_output', [])):
+                            analog_output_data.append({"name": key, "value": str(value)})
+                        print('analog_input_data', analog_output_data)
+                        io_data['analog_output'] = analog_output_data
+
 
                     data = {'iostatus': io_serializer_data}
+
+                    # for i in range(len(io_serializer_data)):
+                    #     print('i', i)
+                    #     io_serializer_data[i]['db_timestamp'] = last_valies_data.get('db_timestamp', None)
+                    #
+                    #     di = dict(zip(io_serializer_data[i]['digital_input'], last_valies_data.get('digital_input', [])))
+                    #     print('di',di)
+                    #     print(' last_valies_data.get', last_valies_data.get('digital_input', []))
+                    #     name=io_serializer_data[i]['digital_output']
+                    #     value= last_valies_data.get('digital_output', [])
+                    #
+                    #     do = dict(zip(io_serializer_data[i]['digital_output'], last_valies_data.get('digital_output', [])))
+                    #     ai = dict(zip(io_serializer_data[i]['analog_input'], last_valies_data.get('analog_input', [])))
+                    #     ao = dict(zip(io_serializer_data[i]['analog_output'], last_valies_data.get('analog_output', [])))
+                    #
+                    #     io_serializer_data[i]['digital_input'] = di
+                    #     io_serializer_data[i]['digital_output'] = do
+                    #     io_serializer_data[i]['analog_input'] = ai
+                    #     io_serializer_data[i]['analog_output'] = ao
+                    #
+                    # data = {'iostatus': io_serializer_data}
 
                     # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(io_status).json"))
                 else:
