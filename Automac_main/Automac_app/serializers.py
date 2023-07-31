@@ -198,15 +198,16 @@ class lineSerializer(serializers.ModelSerializer):
 
 
 
-class DropdownSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = '__all__'
-
-
+# class DropdownSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         fields = '__all__'
+#
+#
 
 class all_Machine_data_Serializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        model=all_Machine_data
+        fields = ('plant_name','model_name')
 
 
 class ReportEntrySerializer(serializers.Serializer):

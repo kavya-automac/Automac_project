@@ -292,9 +292,18 @@ class MachinesView(ViewSet):
                     general_data = Machines_List.objects.filter(machine_id=machine_id)
                     general_serialzer=generalmachineSerializer(general_data,many=True)
                     general_serialzer_data=general_serialzer.data
+                    plant_line_data=all_Machine_data.objects.filter(machine_id=machine_id)
+                    plant_line_data_s=all_Machine_data_Serializer(plant_line_data,many=True)
+                    # print('plant_line_data',plant_line_data)
+                    # print('plant_line_data_s',plant_line_data_s.data)
+
+                    plant_data=dict(plant_line_data_s.data[0])
+                    # print('plant_data',plant_data)
                     general_serialzer_data_1=dict(general_serialzer_data[0])
-                    print('general_serialzer_data_1',general_serialzer_data_1)
-                    # print('general_serialzer_data',dict(general_serialzer_data[0]))
+                    general_serialzer_data_1.update(plant_data)
+
+                    # print('general_serialzer_data_1',general_serialzer_data_1)
+
 
                     Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
                                        "Uploaded_by":"harsha",
