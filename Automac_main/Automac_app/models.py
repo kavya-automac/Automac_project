@@ -95,9 +95,13 @@ class Machines_List(models.Model):
 
 class all_Machine_data(models.Model):
     objects = models.Manager()
-    plant_name=models.CharField(max_length=100)
+    user_name=models.CharField(max_length=50,blank=True)
+    company_name=models.CharField(max_length=50,blank=True)
+    plant_name=models.CharField(max_length=100,blank=True)
     machine_id=models.CharField(max_length=100,blank=True)
-    model_name=models.CharField(max_length=100)
+    machine_name=models.CharField(max_length=100,blank=True)
+    model_name=models.CharField(max_length=100,blank=True)
+    line_name=models.CharField(max_length=50,blank=True)
 
     class Meta:
         app_label = 'Automac_app'

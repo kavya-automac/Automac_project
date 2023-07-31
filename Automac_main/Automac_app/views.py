@@ -242,7 +242,6 @@ def forms_data():
     # print(data['c'])
 
     form_values = []
-
     for item in query:
         form_values.append(data[item])
 
