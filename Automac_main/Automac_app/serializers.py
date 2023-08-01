@@ -158,10 +158,12 @@ class generalmachineSerializer(serializers.ModelSerializer):
 class IostatusmachineSerializer(serializers.ModelSerializer):
     class Meta:
         model=Machines_List
-        fields = ('machine_id', 'machine_name', 'digital_input','digital_output','analog_input','analog_output')
+        fields = ('id', 'machine_name', 'digital_input','digital_output','analog_input','analog_output')
 
-
-
+class Machines_List_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Machines_List
+        fields = ('machine_name','machine_location',)
 
 
 class kpiSerializer(serializers.ModelSerializer):
@@ -173,6 +175,12 @@ class plantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plant_List
         fields="__all__"
+
+class plantSerializerr(serializers.ModelSerializer):
+    class Meta:
+        model = Plant_List
+        fields=('plant_name',)
+
 
 
 class modelSerializer(serializers.ModelSerializer):
@@ -187,7 +195,7 @@ class modelSerializer(serializers.ModelSerializer):
 class companySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company_List
-        fields="__all__"
+        fields=('company_name',)
 
 
 
@@ -207,7 +215,23 @@ class lineSerializer(serializers.ModelSerializer):
 class all_Machine_data_Serializer(serializers.ModelSerializer):
     class Meta:
         model=all_Machine_data
-        fields = ('plant_name','model_name')
+        fields = ('plant_name','model_name','line_name')
+
+
+
+class all_Machine_data_Serializer2(serializers.ModelSerializer):
+    class Meta:
+        model=all_Machine_data
+        # fields = '__all__'
+        fields = ('company_name','plant_name','machine_id','model_name','line_name')
+
+
+
+
+
+
+
+
 
 
 class ReportEntrySerializer(serializers.Serializer):

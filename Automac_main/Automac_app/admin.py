@@ -29,7 +29,7 @@ class Machine_Kpi_ListAdmin(admin.ModelAdmin):
 
 @admin.register(Machines_List)
 class Machines_ListAdmin(admin.ModelAdmin):
-    list_display = ['id','machine_id','machine_image','machine_name',
+    list_display = ['machine_id','machine_image','machine_name',
                     'machine_location','digital_input','digital_output','analog_input',
                     'analog_output','date_of_installation','machine_state']
 
@@ -43,7 +43,7 @@ class Company_ListAdmin(admin.ModelAdmin):
 
 @admin.register(all_Machine_data)
 class all_Machine_dataAdmin(admin.ModelAdmin):
-    list_display = ['id','user_name','company_name','plant_name','machine_id','machine_name','model_name','line_name']
+    list_display = ['id','user_name','company_name','plant_name','machine_id','model_name']
 
-
+# admin.site.register(all_Machine_data)
 

@@ -173,91 +173,33 @@ class Dashboard(ViewSet):
             return JsonResponse({"status": "login_required"})
 
 
-machine_data = Machines_List.objects.all()
-machine_data_serializer = usermachineSerializer(machine_data, many=True)
-serialized_machine_data = machine_data_serializer.data
-# print('serialized_machine_data', serialized_machine_data)
-
-plant_data = Plant_List.objects.all()
-plant_data_serializer = plantSerializer(plant_data, many=True)
-serialized_plant_data = plant_data_serializer.data
-# print('serialized_plant_data', serialized_plant_data)
-
-model_data = Model_List.objects.all()
-model_data_serializer = modelSerializer(model_data, many=True)
-serialized_model_data = model_data_serializer.data
-# print('serialized_model_data', serialized_model_data)
-
-company_data = Company_List.objects.all()
-company_data_serializer = companySerializer(company_data, many=True)
-serialized_company_data = company_data_serializer.data
-
-line_data = Line_List.objects.all()
-line_data_serializer = companySerializer(line_data, many=True)
-serialized_line_data = line_data_serializer.data
-
-company_names = []
-for i in range(0, len(company_data)):
-    c_data = serialized_company_data[i]['company_name']
-    # print('data1', c_data)
-    company_names.append(c_data)
-
-plant_names = []
-for i in range(0, len(plant_data)):
-    p_data = serialized_plant_data[i]['plant_name']
-    # print('data2', p_data)
-    plant_names.append(p_data)
-
-line_names = []
-for i in range(0, len(line_data)):
-    l_data = serialized_line_data[i]['line_name']
-    # print('data3', l_data)
-    line_names.append(l_data)
-
-machines_name = []
-for i in range(0, len(machine_data)):
-    m_data = serialized_machine_data[i]['machine_name']
-    # print('data4', m_data)
-    machines_name.append(m_data)
-
-# print('machines_name', machines_name)
-
-model_names = []
-for i in range(0, len(model_data)):
-    data5 = serialized_model_data[i]['model_name']
-    # print('data5', data5)
-    model_names.append(data5)
-
-
-
-
-
-def forms_data():
-
-    data = {'company': company_names, 'plant': plant_names, 'line': line_names, 'model': model_names,
-            'machine': machines_name}
-
-    query = ['line', 'model', 'machine']
-    # query = ['machine']
-    # print(data['c'])
-
-    form_values = []
-    for item in query:
-        form_values.append(data[item])
-
-    resultant_form_values = dict(zip(query, form_values))
-    print(resultant_form_values)
-    return resultant_form_values
-
-
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 class MachinesView(ViewSet):
     @action(detail=False, methods=['get'])
-    def machine_form(self, request):
+    def machine_list(self, request):
         if request.user.is_authenticated:
-            form_fun = forms_data()
-            return JsonResponse(form_fun)
+            print('userssss', request.user)
+            get_user_data= all_Machine_data.objects.filter(user_name=request.user)
+            # print('get_user_data',get_user_data[0].company_name.company_name)
+            get_user_data_s= all_Machine_data_Serializer2(get_user_data,many=True)
+            get_user_data_s_data= get_user_data_s.data
+
+            print('get_user_data_s_data',get_user_data_s_data)
+            for i in range(0,len(get_user_data_s_data)):
+                get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
+                get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
+                get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
+                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
+                # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
+                get_user_data_s_data[i].update(line_name=get_user_data[i].line_name)
+            print('get_user_data_s_data',get_user_data_s_data)
+
+
+
+            return JsonResponse({"machine_list": get_user_data_s_data})
+
+            # form_fun = forms_data()
         else:
             print("else")
             return JsonResponse({"status": "login_required"})
@@ -269,7 +211,7 @@ class MachinesView(ViewSet):
             BASE_DIR = Path(__file__).resolve().parent.parent
 
             machine_id=request.query_params.get('machine_id')
-            d=Machines_List.objects.filter(machine_id=machine_id)
+            # d=Machines_List.objects.filter(machine_id=machine_id)
 
             print("request", request.method, request.POST, request.GET)
             # print("request.method",request.GET['id'])
@@ -288,21 +230,33 @@ class MachinesView(ViewSet):
                 #     ]
                 if module == "Details":
                     # id = request.query_params.get('id')
-                    general_data = Machines_List.objects.filter(machine_id=machine_id)
-                    general_serialzer=generalmachineSerializer(general_data,many=True)
-                    general_serialzer_data=general_serialzer.data
-                    plant_line_data=all_Machine_data.objects.filter(machine_id=machine_id)
-                    plant_line_data_s=all_Machine_data_Serializer(plant_line_data,many=True)
-                    # print('plant_line_data',plant_line_data)
-                    # print('plant_line_data_s',plant_line_data_s.data)
 
-                    plant_data=dict(plant_line_data_s.data[0])
-                    # print('plant_data',plant_data)
-                    general_serialzer_data_1=dict(general_serialzer_data[0])
-                    general_serialzer_data_1.update(plant_data)
+                    general_data = Machines_List.objects.get(machine_id=machine_id)
+                    print('general_data',general_data)
+                    general_serialzer=generalmachineSerializer(general_data)
+                    general_serialzer_data_1=general_serialzer.data
+                    print('general_serialzer',general_serialzer_data_1)
 
-                    # print('general_serialzer_data_1',general_serialzer_data_1)
+                    plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
+                    print('plant_line_data',plant_line_data)
 
+                    if not plant_line_data.exists():
+                        # If the plant_line_data is empty, return a response indicating that the user doesn't have access.
+                        return JsonResponse({"message": "User does not have access to this machine."}, status=403)
+
+
+                    s_data=all_Machine_data_Serializer(plant_line_data,many=True)
+                    s_data_d=s_data.data
+                    print('plant_line_data',plant_line_data[0].plant_name,type(plant_line_data))
+                    for f_names in range(0,len(plant_line_data)):
+                        s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
+                        s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
+                        s_data_d[f_names].update(line_name=plant_line_data[f_names].line_name)
+                        print('s_data',s_data_d)
+                        general_serialzer_data_1.update(dict(s_data_d[0]))
+                        # general_serialzer_data_1=dict(s_data_d)
+                    if not s_data_d:
+                        return JsonResponse({"general_data": general_serialzer_data_1})
 
                     Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
                                        "Uploaded_by":"harsha",
@@ -522,7 +476,8 @@ class Reports_view(ViewSet):
                                 status=status.HTTP_400_BAD_REQUEST)
 
             # Fetch the machine from Machines_List model
-            machine = Machines_List.objects.filter(machine_id=machine_id).first()
+            machine = Machines_List.objects.get(machine_id=machine_id)
+            print('machine',machine)
             if not machine:
                 return Response({"error": "Machine not found"}, status=400)
 
@@ -533,10 +488,12 @@ class Reports_view(ViewSet):
             )
             filtered_data_s = analog_ip_op_Serializer(filtered_data, many=True)
             filtered_data_s_data = filtered_data_s.data
+            # print('filtered_data_s_data',filtered_data_s_data)
 
-            plant_model_data = all_Machine_data.objects.get(machine_id=machine_id)
+            plant_model_data = all_Machine_data.objects.filter(machine_id=machine.id,user_name=request.user)
 
-            print('plant_model_data_s', plant_model_data)
+            print('plant_model_data_s', plant_model_data[0].plant_name)
+
 
             response_data = []
             for entry in filtered_data_s_data:
@@ -553,12 +510,12 @@ class Reports_view(ViewSet):
 
                 response_data.append({
 
-                    'timestamp': timestamp,
-                    'machine_id': machine_id,
-                    'plant': plant_model_data.plant_name,
-                    'model': plant_model_data.model_name,
-                    'machine_location': machine_location,
-                    'data': relevant_data,
+                    "timestamp": timestamp,
+                    "machine_id": machine_id,
+                    "plant": plant_model_data.plant_name.plant_name,
+                    "model": plant_model_data.model_name.model_name,
+                    "machine_location": machine_location,
+                    "data": relevant_data,
                 })
             print('len', len(response_data))
 

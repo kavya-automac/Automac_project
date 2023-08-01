@@ -15,7 +15,7 @@ urlpatterns = [
 
     path('dashboard/', Dashboard.as_view({'get': 'dashboard'}), name='dashboard'),
     # path('machine/', MachinesView.as_view({'get': 'machine'}), name='machine'),
-    path('machine_form/', MachinesView.as_view({'get': 'machine_form'}), name='machine'),
+    path('machine_list/', MachinesView.as_view({'get': 'machine_list'}), name='machine'),
     # path('machine_details/<int:pk>/', MachinesView.as_view({'get': 'machine_details'}), name='machine_details'),
     path('machine_details/', MachinesView.as_view({'get': 'machine_details'}), name='machine_details'),
     path('Trail_details/', Trails.as_view({'get': 'Trail_details'}), name='Trail_details'),
