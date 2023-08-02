@@ -290,20 +290,24 @@ class MachinesView(ViewSet):
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
                 elif module == "iostatus":
                     io_data = Machines_List.objects.filter(machine_id=machine_id)
+
                     io_serializer = IostatusmachineSerializer(io_data, many=True)
                     io_serializer_data = io_serializer.data
                     print('io_serializer_data', io_serializer_data)
+                    # print('issssssssssssssssss',io_serializer_data.db_timestamp)
+
 
                     machine_values_data = MachineDetails.objects.filter(machine_id=machine_id).order_by('-id').first()
                     print('machine_values_data', machine_values_data)
 
                     last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
+                    # print('last_valies_data',machine_values_data.db_timestamp)
+                    # print('last_valies_data',machine_values_data.db_timestamp)
 
                     for i in range(len(io_serializer_data)):
                         print('i', i)
                         io_data = io_serializer_data[i]
-                        io_data['db_timestamp'] = last_valies_data.get('db_timestamp', None)
-
+                        io_data['db_timestamp'] = last_valies_data.get('db_timestamp', str(None))
                         # Create a new list of dictionaries with the desired format for digital_input
                         # ###### digital_input
                         digital_input_data = []
@@ -421,20 +425,29 @@ class Trails(ViewSet):
 
 
     @action(detail=False, method=['get'])
-    def Trail_machine(self, request):
+    def Trail_List(self, request):
         if request.user.is_authenticated:
             print("if")
 
             BASE_DIR = Path(__file__).resolve().parent.parent
+            get_user_data = all_Machine_data.objects.filter(user_name=request.user)
+            # print('get_user_data',get_user_data[0].company_name.company_name)
+            get_user_data_s = all_Machine_data_Serializer2(get_user_data, many=True)
+            get_user_data_s_data = get_user_data_s.data
+
+            print('get_user_data_s_data', get_user_data_s_data)
+            for i in range(0, len(get_user_data_s_data)):
+                get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
+                get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
+                get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
+                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
+                # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
+                get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
+            print('get_user_data_s_data', get_user_data_s_data)
+
+            return JsonResponse({"Trail_list": get_user_data_s_data})
 
 
-            if  'id' in request.GET:
-
-                data = json.load(open(str(BASE_DIR)+"/Automac_app/machines.json"))
-            else:
-                data={"status":"enter_id"}
-
-            return JsonResponse(data)
 
         else:
             print("else")
