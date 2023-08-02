@@ -84,7 +84,7 @@ class Machines_List(models.Model):
     digital_output= ArrayField(models.CharField(max_length=100,blank=True))
     analog_input = ArrayField(models.CharField(max_length=100,blank=True))
     analog_output = ArrayField(models.CharField(max_length=100,blank=True))
-    date_of_installation=models.CharField(max_length=100,blank=True)
+    date_of_installation=models.CharField(max_length=100,null=True,blank=True)
     machine_state=models.CharField(max_length=100)
 
     class Meta:

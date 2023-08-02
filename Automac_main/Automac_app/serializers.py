@@ -158,7 +158,7 @@ class generalmachineSerializer(serializers.ModelSerializer):
 class IostatusmachineSerializer(serializers.ModelSerializer):
     class Meta:
         model=Machines_List
-        fields = ('id', 'machine_name', 'digital_input','digital_output','analog_input','analog_output')
+        fields = ('machine_id','machine_name', 'digital_input','digital_output','analog_input','analog_output')
 
 class Machines_List_Serializer(serializers.ModelSerializer):
     class Meta:

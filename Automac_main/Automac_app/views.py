@@ -192,7 +192,7 @@ class MachinesView(ViewSet):
                 get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
                 get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
                 # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
-                get_user_data_s_data[i].update(line_name=get_user_data[i].line_name)
+                get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
             print('get_user_data_s_data',get_user_data_s_data)
 
 
@@ -234,11 +234,13 @@ class MachinesView(ViewSet):
                     general_data = Machines_List.objects.get(machine_id=machine_id)
                     print('general_data',general_data)
                     general_serialzer=generalmachineSerializer(general_data)
-                    general_serialzer_data_1=general_serialzer.data
-                    print('general_serialzer',general_serialzer_data_1)
+                    general_serialzer_data_11=general_serialzer.data
+                    # print('general_serialzer',general_serialzer_data_11)
+                    general_serialzer_data_1=null_to_str(general_serialzer_data_11)
+                    # print('general_serialzer_data_1',general_serialzer_data_1)
 
                     plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
-                    print('plant_line_data',plant_line_data)
+                    # print('plant_line_data',plant_line_data)
 
                     if not plant_line_data.exists():
                         # If the plant_line_data is empty, return a response indicating that the user doesn't have access.
@@ -251,7 +253,7 @@ class MachinesView(ViewSet):
                     for f_names in range(0,len(plant_line_data)):
                         s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
                         s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
-                        s_data_d[f_names].update(line_name=plant_line_data[f_names].line_name)
+                        s_data_d[f_names].update(line_name=str(plant_line_data[f_names].line_name))
                         print('s_data',s_data_d)
                         general_serialzer_data_1.update(dict(s_data_d[0]))
                         # general_serialzer_data_1=dict(s_data_d)
@@ -492,7 +494,7 @@ class Reports_view(ViewSet):
 
             plant_model_data = all_Machine_data.objects.filter(machine_id=machine.id,user_name=request.user)
 
-            print('plant_model_data_s', plant_model_data[0].plant_name)
+            print('plant_model_data_s', plant_model_data)
 
 
             response_data = []
@@ -508,13 +510,15 @@ class Reports_view(ViewSet):
                 else:
                     relevant_data = {}
 
+
                 response_data.append({
 
                     "timestamp": timestamp,
                     "machine_id": machine_id,
-                    "plant": plant_model_data.plant_name.plant_name,
-                    "model": plant_model_data.model_name.model_name,
                     "machine_location": machine_location,
+                    "plant":plant_model_data[0].plant_name.plant_name,
+                    "model": plant_model_data[0].model_name.model_name,
+
                     "data": relevant_data,
                 })
             print('len', len(response_data))
@@ -635,3 +639,18 @@ class test(ViewSet):
 # End_datetime : 2023-07-19 05:32:19
 # report_type : Temperature
 #
+#
+#
+def null_to_str(parameter1):
+    for data,vv in  parameter1.items():
+        # print('data',data)
+        # print('vv',vv)
+        # print('before',type(vv))
+
+        if vv == None:
+            parameter1[data] = str(vv)  # Convert the value to a string
+
+        # print('after',type(vv))
+        # print('vv',vv)
+
+    return parameter1
