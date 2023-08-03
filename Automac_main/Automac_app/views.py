@@ -154,6 +154,8 @@ def logout_view(request):
     logout(request)
     return JsonResponse({"status": "Logged_out"})
 
+#convert list or dict values into string
+
 
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -654,16 +656,27 @@ class test(ViewSet):
 #
 #
 #
-def null_to_str(parameter1):
-    for data,vv in  parameter1.items():
-        # print('data',data)
-        # print('vv',vv)
-        # print('before',type(vv))
+# def null_to_str(parameter1):
+#     for data,vv in  parameter1.items():
+#         # print('data',data)
+#         # print('vv',vv)
+#         # print('before',type(vv))
+#
+#         if vv == None:
+#             parameter1[data] = str(vv)  # Convert the value to a string
+#
+#         # print('after',type(vv))
+#         # print('vv',vv)
+#
+#     return parameter1
 
-        if vv == None:
-            parameter1[data] = str(vv)  # Convert the value to a string
 
-        # print('after',type(vv))
-        # print('vv',vv)
+def null_to_str(data):
+    if isinstance(data, list):
+        return [[str(item) for item in inner_list] for inner_list in data]
+    elif isinstance(data, dict):
+        return {key: (str(value) if value is not None else 'None') for key, value in data.items()}
+    else:
+        return str(data) if data is not None else 'None'
 
-    return parameter1
+

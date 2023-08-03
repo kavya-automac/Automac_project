@@ -4,6 +4,8 @@ from .serializers import *
 from Automac_machines_app.serializers import machineSerializer,machineSerializer_two
 from Automac_machines_app.models import MachineDetails
 
+
+
 def history_fun(machine_id,date):
 
     details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date)
@@ -25,6 +27,14 @@ def history_fun(machine_id,date):
         d_o_v.append(r_s_d[d]['digital_output'])
         a_i_v.append(r_s_d[d]['analog_input'])
         a_o_v.append(r_s_d[d]['analog_output'])
+    from .views import null_to_str
+    d_i_v = null_to_str(d_i_v)
+    d_o_v = null_to_str(d_o_v)
+    a_i_v = null_to_str(a_i_v)
+    a_o_v = null_to_str(a_o_v)
+
+
+
     # print('d_i_v', d_i_v)
     # print('d_o_v', d_o_v)
     # print('a_i_v', a_i_v)
