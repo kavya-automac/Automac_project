@@ -14,7 +14,7 @@ from Automac_machines_app import routing
 
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pro.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Automac_main.settings')
 # application = get_asgi_application()
 application = ProtocolTypeRouter({
     'http':get_asgi_application(),

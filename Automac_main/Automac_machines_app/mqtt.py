@@ -1,3 +1,4 @@
+import os
 from datetime import time
 from django.apps import apps
 import paho.mqtt.client as mqtt
@@ -9,6 +10,7 @@ from asgiref.sync import async_to_sync
 from . import multi_topic_file
 print('mqtt')
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Automac_main.settings')
 
 
 
