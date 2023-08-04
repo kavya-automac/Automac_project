@@ -27,6 +27,8 @@ def test_fun(payload1):
 
     analog_input = [payload['Temperature'], payload['Humidity']]
     analog_output = [payload['Flow']]
+    machine_id=data2[0]['machine_id']
+    machine_name=data2[0]['machine_name']
 
     digital_data_input = dict(zip(digital_input_keys, digital_input))
     # print('channels_data_input',channels_data_input)
@@ -35,10 +37,10 @@ def test_fun(payload1):
     analog_data_output = dict(zip(analog_output_keys, analog_output))
 
 
-    result = {
-        'digital_data_input': digital_data_input, 'digital_data_output': digital_data_output,'analog_data_input':analog_data_input,'analog_data_output':analog_data_output
+    result = {'machine_id':machine_id,'machine_name':machine_name,
+        'digital_input': digital_data_input, 'digital_output': digital_data_output,'analog_input':analog_data_input,'analog_output':analog_data_output
     }
-    result['time_stamp']=payload['timestamp']
+    result['db_timestamp']=payload['timestamp']
 
     res=json.dumps(result)
     print(res)

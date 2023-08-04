@@ -314,7 +314,9 @@ class MachinesView(ViewSet):
                         # ###### digital_input
                         digital_input_data = []
                         for key, value in zip(io_data['digital_input'], last_valies_data.get('digital_input', [])):
-                            digital_input_data.append({"name": key, "value": str(value)})
+                            value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+
+                            digital_input_data.append({"name": key, "value": value_str})
                         print('digital_input_data',digital_input_data)
                         io_data['digital_input'] = digital_input_data
 
@@ -322,7 +324,9 @@ class MachinesView(ViewSet):
 
                         digital_output_data = []
                         for key, value in zip(io_data['digital_output'], last_valies_data.get('digital_output', [])):
-                            digital_output_data.append({"name": key, "value": str(value)})
+                            value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+
+                            digital_output_data.append({"name": key, "value": value_str})
                         print('digital_output_data', digital_output_data)
                         io_data['digital_output'] = digital_output_data
 
