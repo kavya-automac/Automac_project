@@ -345,9 +345,10 @@ class MachinesView(ViewSet):
                             analog_output_data.append({"name": key, "value": str(value)})
                         print('analog_input_data', analog_output_data)
                         io_data['analog_output'] = analog_output_data
+                    # print('llllllllllllll',io_data)
 
 
-                    data = {'iostatus': io_serializer_data}
+                    data = {'iostatus': io_serializer_data[0]}
 
                     # for i in range(len(io_serializer_data)):
                     #     print('i', i)
