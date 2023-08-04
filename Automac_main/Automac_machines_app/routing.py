@@ -4,7 +4,7 @@ from. import consumers
 
 print("routingggg")
 websocket_urlpatterns=[
-    path('mqtt_data/', consumers.ChatConsumer.as_asgi())
+    path('machine_mqtt_data/', consumers.ChatConsumer.as_asgi())
 
 ]
 

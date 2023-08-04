@@ -11,10 +11,10 @@ def test_fun(payload1):
     user_data = Machines_List.objects.all()
     user_serializer = usermachineSerializer(user_data, many=True)
     data2 = user_serializer.data
-    print('data2',data2)
+    # print('data2',data2)
 
     payload = json.loads(payload1)
-    print('payload',payload)
+    # print('payload',payload)
 
     digital_input_keys = data2[0]['digital_input']
     digital_output_keys = data2[0]['digital_output']
@@ -37,14 +37,15 @@ def test_fun(payload1):
     analog_data_output = dict(zip(analog_output_keys, analog_output))
 
 
-    result = {'machine_id':machine_id,'machine_name':machine_name,
-        'digital_input': digital_data_input, 'digital_output': digital_data_output,'analog_input':analog_data_input,'analog_output':analog_data_output
+    result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
+              'digital_output': digital_data_output,'analog_input':analog_data_input,
+              'analog_output':analog_data_output
     }
     result['db_timestamp']=payload['timestamp']
     # print('mmmmmmm',type(result))
 
     res=json.dumps(result)
-    # print('kkkk',type(res))
+    print('res',res)
 
 
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
