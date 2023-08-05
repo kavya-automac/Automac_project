@@ -17,6 +17,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("mqtt_data", self.channel_name)
 
     async def receive(self, text_data):
+        print('text',text_data)
         # Handle received data from the WebSocket connection
         # You can perform any required processing or logic here
         # For example, you can save the received data to the database

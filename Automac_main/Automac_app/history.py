@@ -32,6 +32,21 @@ def history_fun(machine_id,date):
     d_o_v = null_to_str(d_o_v)
     a_i_v = null_to_str(a_i_v)
     a_o_v = null_to_str(a_o_v)
+    print('siv',d_i_v)
+    for inner_list in d_i_v:
+        for i in range(len(inner_list)):
+            if inner_list[i] == 'True':
+                inner_list[i] = 'On'
+            elif inner_list[i] == 'False':
+                inner_list[i] = 'Off'
+
+    # Convert 'True' to 'On' and 'False' to 'Off' in the list of lists for d_o_v
+    for inner_list in d_o_v:
+        for i in range(len(inner_list)):
+            if inner_list[i] == 'True':
+                inner_list[i] = 'On'
+            elif inner_list[i] == 'False':
+                inner_list[i] = 'Off'
 
 
 
