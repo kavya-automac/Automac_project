@@ -37,28 +37,33 @@ def test_fun(payload1):
     # analog_data_input = dict(zip(analog_input_keys, analog_input))
     # analog_data_output = dict(zip(analog_output_keys, analog_output))
 
-    data = [
-               {"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)
-           ] + [
-               {"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)
-           ] + [
-               {"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)
-           ] + [
-               {"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)
-           ]
-    print('data',data)
+    # data = [
+    #            {"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)
+    #        ] + [
+    #            {"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)
+    #        ] + [
+    #            {"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)
+    #        ] + [
+    #            {"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)
+    #        ]
+    # print('data',data)
+
+    digital_data_input=[{"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)]
+
+    digital_data_output=[{"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)]
+    analog_data_input=[{"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)]
+
+    analog_data_output=[{"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)]
 
 
 
+    # result = {'machine_id': machine_id, 'machine_name': machine_name, "data":data
+    #           }
 
-
-    result = {'machine_id': machine_id, 'machine_name': machine_name, "data":data
-              }
-
-    # result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
-    #           'digital_output': digital_data_output,'analog_input':analog_data_input,
-    #           'analog_output':analog_data_output
-    # }
+    result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
+              'digital_output': digital_data_output,'analog_input':analog_data_input,
+              'analog_output':analog_data_output
+    }
 
     result['db_timestamp']=payload['timestamp']
     # print('mmmmmmm',type(result))
