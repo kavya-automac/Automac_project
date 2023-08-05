@@ -29,23 +29,42 @@ def test_fun(payload1):
     analog_output = [payload['Flow']]
     machine_id=data2[0]['machine_id']
     machine_name=data2[0]['machine_name']
+    # 1
+    # digital_data_input = dict(zip(digital_input_keys, digital_input))
+    #
+    # # print('channels_data_input',channels_data_input)
+    # digital_data_output = dict(zip(digital_output_keys, digital_output))
+    # analog_data_input = dict(zip(analog_input_keys, analog_input))
+    # analog_data_output = dict(zip(analog_output_keys, analog_output))
 
-    digital_data_input = dict(zip(digital_input_keys, digital_input))
-    # print('channels_data_input',channels_data_input)
-    digital_data_output = dict(zip(digital_output_keys, digital_output))
-    analog_data_input = dict(zip(analog_input_keys, analog_input))
-    analog_data_output = dict(zip(analog_output_keys, analog_output))
+    data = [
+               {"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)
+           ] + [
+               {"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)
+           ] + [
+               {"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)
+           ] + [
+               {"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)
+           ]
+    print('data',data)
 
 
-    result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
-              'digital_output': digital_data_output,'analog_input':analog_data_input,
-              'analog_output':analog_data_output
-    }
+
+
+
+    result = {'machine_id': machine_id, 'machine_name': machine_name, "data":data
+              }
+
+    # result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
+    #           'digital_output': digital_data_output,'analog_input':analog_data_input,
+    #           'analog_output':analog_data_output
+    # }
+
     result['db_timestamp']=payload['timestamp']
     # print('mmmmmmm',type(result))
 
     res=json.dumps(result)
-    print('res',res)
+    # print('res',res)
 
 
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])

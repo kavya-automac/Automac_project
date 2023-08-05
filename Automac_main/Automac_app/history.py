@@ -8,7 +8,8 @@ from Automac_machines_app.models import MachineDetails
 
 def history_fun(machine_id,date):
 
-    details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date)
+    details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date)[:50]
+    # print('details',details)
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])
     print('details',len(details))
@@ -22,6 +23,7 @@ def history_fun(machine_id,date):
     d_o_v = []
     a_i_v = []
     a_o_v = []
+
     for d in range(0, len(r_s_d)):
         d_i_v.append(r_s_d[d]['digital_input'])
         d_o_v.append(r_s_d[d]['digital_output'])
@@ -32,13 +34,15 @@ def history_fun(machine_id,date):
     d_o_v = null_to_str(d_o_v)
     a_i_v = null_to_str(a_i_v)
     a_o_v = null_to_str(a_o_v)
-    print('siv',d_i_v)
+    # print('siv',d_i_v)
     for inner_list in d_i_v:
         for i in range(len(inner_list)):
             if inner_list[i] == 'True':
                 inner_list[i] = 'On'
             elif inner_list[i] == 'False':
                 inner_list[i] = 'Off'
+    # print('siv',d_i_v)
+
 
     # Convert 'True' to 'On' and 'False' to 'Off' in the list of lists for d_o_v
     for inner_list in d_o_v:
@@ -70,39 +74,116 @@ def history_fun(machine_id,date):
     # print('a_o_k', a_o_k)
 
 
-    d_i_res = {}
-    d_o_res = {}
-    a_i_res = {}
-    a_o_res = {}
-    for i in range(0,len(r_s_d)):
-        # print(i)
-        d_i_res.update(dict(zip(d_i_k, d_i_v[i])))
-        # print('d_i_v[i]',d_i_v[i])
-        d_o_res.update(dict(zip(d_o_k, d_o_v[i])))
-        a_i_res.update(dict(zip(a_i_k, a_i_v[i])))
-        a_o_res.update(dict(zip(a_o_k, a_o_v[i])))
 
-
-
-
+    # d_i_res = {}
+    # d_o_res = {}
+    # a_i_res = {}
+    # a_o_res = {}
+    # for key, value in zip(d_i_k, d_i_v[i]):
+    #     d_i_res.append({"name": key, "value": value})
+    #
     # print('d_i_res', d_i_res)
-    # print('d_o_res',d_o_res)
-    # print('a_i_res',a_i_res)
-    # print('a_o_res',a_o_res)
+    #
+    # for key, value in zip(d_o_k, d_o_v[i]):
+    #     d_o_res.append({"name": key, "value": value})
+    # print('d_o_res', d_o_res)
+    #
+    # for key, value in zip(a_i_k, a_i_v[i]):
+    #     a_i_res.append({"name": key, "value": value})
+    # print('a_i_res', a_i_res)
+    #
+    # for key, value in zip(a_o_k, a_o_v[i]):
+    #     a_o_res.append({"name": key, "value": value})
+    #
+    # print('a_o_res', a_o_res)
 
-    for i in range(0,len(r_s_d)):
-        r_s_d[i]['digital_input'] = d_i_res
-        r_s_d[i]['digital_output'] = d_o_res
-        r_s_d[i]['analog_input'] = a_i_res
-        r_s_d[i]['analog_output'] = a_o_res
+    # for i in range(0,len(r_s_d)):
+    #     # print(i)
+    #
+    #     d_i_res.update(dict(zip(d_i_k, d_i_v[i])))
+    #     # print('d_i_v[i]',d_i_v[i])
+    #     d_o_res.update(dict(zip(d_o_k, d_o_v[i])))
+    #     a_i_res.update(dict(zip(a_i_k, a_i_v[i])))
+    #     a_o_res.update(dict(zip(a_o_k, a_o_v[i])))
 
-    for i in r_s_d:
-        i.update(i.pop("digital_input"))
-        i.update(i.pop("digital_output"))
-        i.update(i.pop("analog_input"))
-        i.update(i.pop("analog_output"))
-        i.pop("other")
-    return r_s_d
+    # for i in range(0, len(r_s_d)):
+    #     # print(i)
+    #     di = dict(zip(d_i_k, d_i_v[i]))
+    #
+    #     # d_i_res.append({"name": key, "value": value})
+    #
+    #
+    #     d_i_res.update(dict(zip(d_i_k, d_i_v[i])))
+    #     # print('d_i_v[i]',d_i_v[i])
+    #     d_o_res.update(dict(zip(d_o_k, d_o_v[i])))
+    #     a_i_res.update(dict(zip(a_i_k, a_i_v[i])))
+    #     a_o_res.update(dict(zip(a_o_k, a_o_v[i])))
+    # print('d_i_res',d_i_res)
+    result_data=[]
+    # data=[]
+    #
+    # d_i_res = []
+    # d_o_res = []
+    # a_i_res = []
+    # a_o_res = []
+    for i in range(len(r_s_d)):
+        d_i_res = [{'name': key, 'value': value} for key, value in zip(d_i_k, d_i_v[i])]
+        d_o_res = [{'name': key, 'value': value} for key, value in zip(d_o_k, d_o_v[i])]
+        a_i_res = [{'name': key, 'value': value} for key, value in zip(a_i_k, a_i_v[i])]
+        a_o_res = [{'name': key, 'value': value} for key, value in zip(a_o_k, a_o_v[i])]
+
+        entry = {
+            "db_timestamp": r_s_d[i]['db_timestamp'],
+            "timestamp": r_s_d[i]['timestamp'],
+            "machine_id": r_s_d[i]['machine_id'],
+            "machine_location": r_s_d[i]['machine_location'],
+            "data": d_i_res + d_o_res + a_i_res + a_o_res
+        }
+        result_data.append(entry)
+
+    # print('d_i_res',d_i_res)
+    # data.append(d_i_res)
+    # data.append(d_o_res)
+    # data.append(a_i_res)
+    # data.append(a_o_res)
+    # print('data',data)
+    #
+    # # print('d_i_res', d_i_res)
+    # # print('d_o_res',d_o_res)
+    # # print('a_i_res',a_i_res)
+    # # print('a_o_res',a_o_res)
+    #
+    # # entry = {
+    # #     "db_timestamp": r_s_d[i]['db_timestamp'],
+    # #     "timestamp": r_s_d[i]['timestamp'],
+    # #     "machine_id": r_s_d[i]['machine_id'],
+    # #     "machine_location": r_s_d[i]['machine_location'],
+    # #     "data": d_i_res + d_o_res + a_i_res + a_o_res
+    # # }
+    # #
+    # # result_data.append(entry)
+
+
+    # for i in range(0,len(r_s_d)):
+    #     r_s_d[i]['digital_input'] = d_i_res
+    #     r_s_d[i]['digital_output'] = d_o_res
+    #     r_s_d[i]['analog_input'] = a_i_res
+    #     r_s_d[i]['analog_output'] = a_o_res
+
+
+    # for i in r_s_d:
+    #     i.update(i.pop("digital_input"))
+    #     i.update(i.pop("digital_output"))
+    #     i.update(i.pop("analog_input"))
+    #     i.update(i.pop("analog_output"))
+
+
+
+
+
+
+    return result_data
+    # return r_s_d
 
 
 
