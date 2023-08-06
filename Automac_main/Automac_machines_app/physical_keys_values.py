@@ -74,7 +74,7 @@ def test_fun(payload1):
 
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": res})
-    #
+
 
     return res
 
