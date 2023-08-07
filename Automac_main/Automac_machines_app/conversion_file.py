@@ -11,17 +11,17 @@ def store_data(payload1):
     timestamp = payload['timestamp']
     machine_id = payload['info']['mid']
     machine_location = payload['info']['location']
-    digital_input =[payload['LP1'],payload['LP2'],payload['HP1'],payload['HP2'],payload['Dosing'],payload['3PhasePreventer']]
-    digital_output =[payload['Compressor_1'],payload['Compressor_2'],payload['Pump1'],payload['Pump2'],payload['Pump3']]
-    analog_input = [payload['Temperature'],payload['Humidity']]
-    analog_output = [payload['Flow']]
+    digital_input =[payload.get('LP1'),payload.get('LP2'),payload.get('HP1'),payload.get('HP2'),payload.get('Dosing'),payload.get('3PhasePreventer')]
+    digital_output =[payload.get('Compressor_1'),payload.get('Compressor_2'),payload.get('Pump1'),payload.get('Pump2'),payload.get('Pump3')]
+    analog_input = [payload.get('Temperature'),payload.get('Humidity')]
+    analog_output = [payload.get('Flow')]
     other=[
-        payload['Water_Level'],
-        payload['set_points ']['set_temp'],
-        payload['set_points ']['set_hum'],
-        payload['THSensor_Status'],
-        payload['Temp_Subzero'],
-        payload['Hum_Suzero']
+        payload.get('Water_Level'),
+        payload.get('set_points ',{}).get('set_temp'),
+        payload.get('set_points ',{}).get('set_hum'),
+        payload.get('THSensor_Status'),
+        payload.get('Temp_Subzero'),
+        payload.get('Hum_Suzero')
     ]
     print('digital_input',digital_input)
 

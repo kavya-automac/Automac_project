@@ -423,7 +423,7 @@ class Trails(ViewSet):
 
             trail_detail_data = history_fun(machine_id,date)
             # reports_data = history_fun(machine_id,start_datetime,end_datetime)
-            return JsonResponse({"history": trail_detail_data})
+            return trail_detail_data
 
         else:
             print("else")
