@@ -300,18 +300,21 @@ class MachinesView(ViewSet):
                     # print('issssssssssssssssss',io_serializer_data.db_timestamp)
 
 
-                    machine_values_data = MachineDetails.objects.filter(machine_id=io_data.machine_id).order_by('-id').first()
+                    machine_values_data = MachineDetails.objects.filter(machine_id=io_data.machine_id).order_by('-machine_id').first()
                     print('machine_values_data', machine_values_data)
 
-                    last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
-                    # print('last_valies_data',machine_values_data.db_timestamp)
-                    # print('last_valies_data',machine_values_data.db_timestamp)
+                    # last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
+                    last_valies_data_1 = machineSerializer(machine_values_data)
+                    last_valies_data=last_valies_data_1.data
+                    print('last_valies_data',machine_values_data.db_timestamp)
+                    print('last_valies_data',last_valies_data)
 
                     # for i in range(len(io_serializer_data)):
                     #     print('i', i)
                     io_data = io_serializer_data
                     print('lllllllllllllllll',io_data)
-                    io_data['db_timestamp'] = last_valies_data.get('db_timestamp', str(None))
+                    # io_data['db_timestamp'] = last_valies_data.get('db_timestamp', str(None))
+                    io_data['db_timestamp'] = machine_values_data.db_timestamp
                     # Create a new list of dictionaries with the desired format for digital_input
                     # ###### digital_input
                     digital_input_data = []
