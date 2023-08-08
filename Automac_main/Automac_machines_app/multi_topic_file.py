@@ -9,7 +9,7 @@ def all_topics(payload1) :
     if 'Topic_name' in  topics:
         conversion_file.store_data(payload1)
     if 'Maithri/Device_7inch' in  topics:
-        conversion_file.store_data(payload1)
+        conversion_file.MID004_store_data(payload1)
 
     else:
         pass

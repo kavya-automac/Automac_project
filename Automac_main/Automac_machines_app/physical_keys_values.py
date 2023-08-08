@@ -8,74 +8,183 @@ from rest_framework.response import Response
 
 
 def test_fun(payload1):
-    user_data = Machines_List.objects.all()
-    user_serializer = usermachineSerializer(user_data, many=True)
-    data2 = user_serializer.data
-    # print('data2',data2)
-
     payload = json.loads(payload1)
-    # print('payload',payload)
 
-    digital_input_keys = data2[0]['digital_input']
-    digital_output_keys = data2[0]['digital_output']
-    analog_input_keys = data2[0]['analog_input']
-    analog_output_keys = data2[0]['analog_output']
-    digital_input = [payload.get('LP1'), payload.get('LP2'), payload.get('HP1'), payload.get('HP2'),
-                     payload.get('Dosing'), payload.get('3PhasePreventer')]
-    digital_output = [payload.get('Compressor_1'), payload.get('Compressor_2'), payload.get('Pump1'),
-                      payload.get('Pump2'), payload.get('Pump3')]
-    analog_input = [payload.get('Temperature'), payload.get('Humidity')]
-    analog_output = [payload.get('Flow')]
-    machine_id=data2[0]['machine_id']
-    machine_name=data2[0]['machine_name']
-    # 1
-    # digital_data_input = dict(zip(digital_input_keys, digital_input))
-    #
-    # # print('channels_data_input',channels_data_input)
-    # digital_data_output = dict(zip(digital_output_keys, digital_output))
-    # analog_data_input = dict(zip(analog_input_keys, analog_input))
-    # analog_data_output = dict(zip(analog_output_keys, analog_output))
+    # Extract machine_id from the payload
+    machine_id = payload['info']['mid']
 
-    # data = [
-    #            {"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)
-    #        ] + [
-    #            {"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)
-    #        ] + [
-    #            {"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)
-    #        ] + [
-    #            {"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)
-    #        ]
-    # print('data',data)
+    # Query the Machines_List model to get data for the specific machine_id
+    user_data = Machines_List.objects.filter(machine_id=machine_id)
+    # user_data = Machines_List.objects.filter(machine_id=machine_id)
+    print('user_dataaaaaaaaaa',user_data)
+    # query_string_bytes = self.scope['query_string']
+    # query_string = query_string_bytes.decode('utf-8')
+    # print('qqqq', query_string)
 
-    digital_data_input=[{"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)]
-
-    digital_data_output=[{"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)]
-    analog_data_input=[{"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)]
-
-    analog_data_output=[{"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)]
+    if user_data.exists():
 
 
+        # self.scope['query_string']['machine_id']
+        user_serializer = usermachineSerializer(user_data.first())  # Get a single instance
+        data2 = user_serializer.data
 
-    # result = {'machine_id': machine_id, 'machine_name': machine_name, "data":data
-    #           }
+        # Extract keys for digital_input, digital_output, analog_input, and analog_output
+        digital_input_keys = data2['digital_input']
+        digital_output_keys = data2['digital_output']
+        analog_input_keys = data2['analog_input']
+        analog_output_keys = data2['analog_output']
 
-    result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
-              'digital_output': digital_data_output,'analog_input':analog_data_input,
-              'analog_output':analog_data_output
-    }
+        # Extract values from the payload using the corresponding keys
+        digital_input = [payload.get('LP1'), payload.get('LP2'), payload.get('HP1'), payload.get('HP2'),
+                         payload.get('Dosing'), payload.get('3PhasePreventer')]
+        digital_output = [payload.get('Compressor_1'),  payload.get('Pump'),payload.get('Compressor_2'), payload.get('Pump1'),
+                          payload.get('Pump2'), payload.get('Pump3')]
+        analog_input = [payload.get('Temperature'), payload.get('Humidity')]
+        analog_output = [payload.get('Flow')]
 
-    result['db_timestamp']=payload['timestamp']
-    # print('mmmmmmm',type(result))
+        # Create dictionaries for data to be sent
+        digital_data_input = [{"name": key, "value": str(value)} for key, value in zip(digital_input_keys, digital_input)]
+        digital_data_output = [{"name": key, "value": str(value)} for key, value in zip(digital_output_keys, digital_output)]
+        analog_data_input = [{"name": key, "value": str(value)} for key, value in zip(analog_input_keys, analog_input)]
+        analog_data_output = [{"name": key, "value": str(value)} for key, value in zip(analog_output_keys, analog_output)]
 
-    res=json.dumps(result)
-    # print('res',res)
+        # Construct the final result dictionary
+        result = {
+            'machine_id': machine_id,
+            'machine_name': data2['machine_name'],
+            'digital_input': digital_data_input,
+            'digital_output': digital_data_output,
+            'analog_input': analog_data_input,
+            'analog_output': analog_data_output,
+            'db_timestamp': payload['timestamp']
+        }
+
+        # Convert the result dictionary to a JSON string
+        res = json.dumps(result)
+        channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
+        # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
+        # print('channel_layer',channel_layer)
+        async_to_sync(channel_layer.group_send)(machine_id, {"type": "chat.message", "text": res})
+
+        # return res
+    else:
+        return None  # Handle the case where machine_id doesn't exist
 
 
-    # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
-    # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": res})
+#
+# for key in digital_output_keys:
+#     value = payload.get(key)
+#     digital_output.append({"name": key, "value": value})
+
+# ====================================================================================================
+# def test_fun(payload1):
+#     # a=payload1['info']['mid']
+#     # print('aaaaaaa',a)
+#     # u_data=Machines_List.objects.filter(machine_id=machine_id)
+#     payload = json.loads(payload1)
+#     machine_id = payload['info']['mid']  # Extract the machine_id
+#     print('mmmmmmmmmm', machine_id)
+#     user_data = Machines_List.objects.filter(machine_id=machine_id)
+#
+#     # user_data = Machines_List.objects.all()
+#     user_serializer = usermachineSerializer(user_data, many=True)
+#     data2 = user_serializer.data
+#     print('data2',data2)
+#
+#
+#     # print('payload',payload)
+#
+#     digital_input_keys = data2[0]['digital_input']
+#     digital_output_keys = data2[0]['digital_output']
+#     analog_input_keys = data2[0]['analog_input']
+#     analog_output_keys = data2[0]['analog_output']
+#     digital_input = [payload.get('LP1'), payload.get('LP2'), payload.get('HP1'), payload.get('HP2'),
+#                      payload.get('Dosing'), payload.get('3PhasePreventer')]
+#     digital_output = [payload.get('Compressor_1'), payload.get('Compressor_2'), payload.get('Pump1'),
+#                       payload.get('Pump2'), payload.get('Pump3')]
+#     analog_input = [payload.get('Temperature'), payload.get('Humidity')]
+#     analog_output = [payload.get('Flow')]
+#     machine_id=data2[0]['machine_id']
+#     machine_name=data2[0]['machine_name']
+#     # 1
+#     # digital_data_input = dict(zip(digital_input_keys, digital_input))
+#     #
+#     # # print('channels_data_input',channels_data_input)
+#     # digital_data_output = dict(zip(digital_output_keys, digital_output))
+#     # analog_data_input = dict(zip(analog_input_keys, analog_input))
+#     # analog_data_output = dict(zip(analog_output_keys, analog_output))
+#
+#     # data = [
+#     #            {"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)
+#     #        ] + [
+#     #            {"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)
+#     #        ] + [
+#     #            {"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)
+#     #        ] + [
+#     #            {"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)
+#     #        ]
+#     # print('data',data)
+#
+#     digital_data_input=[{"name": key, "value": value} for key, value in zip(digital_input_keys, digital_input)]
+#
+#     digital_data_output=[{"name": key, "value": value} for key, value in zip(digital_output_keys, digital_output)]
+#     analog_data_input=[{"name": key, "value": value} for key, value in zip(analog_input_keys, analog_input)]
+#
+#     analog_data_output=[{"name": key, "value": value} for key, value in zip(analog_output_keys, analog_output)]
+#
+#
+#
+#
+#
+#     result = {'machine_id':machine_id,'machine_name':machine_name,'digital_input': digital_data_input,
+#               'digital_output': digital_data_output,'analog_input':analog_data_input,
+#               'analog_output':analog_data_output
+#     }
+#
+#     result['db_timestamp']=payload['timestamp']
+#     # print('mmmmmmm',type(result))
+#
+#     res=json.dumps(result)
+#
+#
+#     return res
+#
 
 
-    return res
+
+# -------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # def test_fun(payload1):
 #     user_data = Machines_List.objects.all()
 #     user_serializer = usermachineSerializer(user_data, many=True)

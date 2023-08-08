@@ -291,64 +291,66 @@ class MachinesView(ViewSet):
 
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
                 elif module == "iostatus":
-                    io_data = Machines_List.objects.filter(machine_id=machine_id)
+                    io_data = Machines_List.objects.get(machine_id=machine_id)
+                    print('io_data',io_data.machine_id)
 
-                    io_serializer = IostatusmachineSerializer(io_data, many=True)
+                    io_serializer = IostatusmachineSerializer(io_data)
                     io_serializer_data = io_serializer.data
                     print('io_serializer_data', io_serializer_data)
                     # print('issssssssssssssssss',io_serializer_data.db_timestamp)
 
 
-                    machine_values_data = MachineDetails.objects.filter(machine_id=machine_id).order_by('-id').first()
+                    machine_values_data = MachineDetails.objects.filter(machine_id=io_data.machine_id).order_by('-id').first()
                     print('machine_values_data', machine_values_data)
 
                     last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
                     # print('last_valies_data',machine_values_data.db_timestamp)
                     # print('last_valies_data',machine_values_data.db_timestamp)
 
-                    for i in range(len(io_serializer_data)):
-                        print('i', i)
-                        io_data = io_serializer_data[i]
-                        io_data['db_timestamp'] = last_valies_data.get('db_timestamp', str(None))
-                        # Create a new list of dictionaries with the desired format for digital_input
-                        # ###### digital_input
-                        digital_input_data = []
-                        for key, value in zip(io_data['digital_input'], last_valies_data.get('digital_input', [])):
-                            value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+                    # for i in range(len(io_serializer_data)):
+                    #     print('i', i)
+                    io_data = io_serializer_data
+                    print('lllllllllllllllll',io_data)
+                    io_data['db_timestamp'] = last_valies_data.get('db_timestamp', str(None))
+                    # Create a new list of dictionaries with the desired format for digital_input
+                    # ###### digital_input
+                    digital_input_data = []
+                    for key, value in zip(io_data['digital_input'], last_valies_data.get('digital_input', [])):
+                        value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
 
-                            digital_input_data.append({"name": key, "value": value_str})
-                        print('digital_input_data',digital_input_data)
-                        io_data['digital_input'] = digital_input_data
+                        digital_input_data.append({"name": key, "value": value_str})
+                    print('digital_input_data',digital_input_data)
+                    io_data['digital_input'] = digital_input_data
 
-                        # ###### digital_output
+                    # ###### digital_output
 
-                        digital_output_data = []
-                        for key, value in zip(io_data['digital_output'], last_valies_data.get('digital_output', [])):
-                            value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+                    digital_output_data = []
+                    for key, value in zip(io_data['digital_output'], last_valies_data.get('digital_output', [])):
+                        value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
 
-                            digital_output_data.append({"name": key, "value": value_str})
-                        print('digital_output_data', digital_output_data)
-                        io_data['digital_output'] = digital_output_data
+                        digital_output_data.append({"name": key, "value": value_str})
+                    print('digital_output_data', digital_output_data)
+                    io_data['digital_output'] = digital_output_data
 
-                        # ###### analog_input
+                    # ###### analog_input
 
-                        analog_input_data = []
-                        for key, value in zip(io_data['analog_input'], last_valies_data.get('analog_input', [])):
-                            analog_input_data.append({"name": key, "value": str(value)})
-                        print('analog_input_data', analog_input_data)
-                        io_data['analog_input'] = analog_input_data
+                    analog_input_data = []
+                    for key, value in zip(io_data['analog_input'], last_valies_data.get('analog_input', [])):
+                        analog_input_data.append({"name": key, "value": str(value)})
+                    print('analog_input_data', analog_input_data)
+                    io_data['analog_input'] = analog_input_data
 
-                        # ###### analog_output
+                    # ###### analog_output
 
-                        analog_output_data = []
-                        for key, value in zip(io_data['analog_output'], last_valies_data.get('analog_output', [])):
-                            analog_output_data.append({"name": key, "value": str(value)})
-                        print('analog_input_data', analog_output_data)
-                        io_data['analog_output'] = analog_output_data
-                    # print('llllllllllllll',io_data)
+                    analog_output_data = []
+                    for key, value in zip(io_data['analog_output'], last_valies_data.get('analog_output', [])):
+                        analog_output_data.append({"name": key, "value": str(value)})
+                    print('analog_input_data', analog_output_data)
+                    io_data['analog_output'] = analog_output_data
+                # print('llllllllllllll',io_data)
 
 
-                    data = {'iostatus': io_serializer_data[0]}
+                    data = {'iostatus': io_serializer_data}
 
                     # for i in range(len(io_serializer_data)):
                     #     print('i', i)

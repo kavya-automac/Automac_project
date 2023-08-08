@@ -91,7 +91,7 @@ def history_fun(machine_id,date):
     else:
         # print('elseeee',not r_s_d)
         entry = {
-            # "db_timestamp": date,
+            "db_timestamp": date,
             # "timestamp": r_s_d[i]['timestamp'],
             "machine_id": r_s2_d['machine_id'],
             "machine_location": r_s2_d['machine_location'],
