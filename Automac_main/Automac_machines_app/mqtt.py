@@ -34,7 +34,8 @@ def on_message(client, userdata, msg):
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
     payload1 = msg.payload.decode()  # Assuming the payload is a string
-    # print('payload1',payload1)
+    topic=msg.topic
+    print('payload1',msg.topic)
 
     multi_topic_file.all_topics(payload1)
 
@@ -43,10 +44,10 @@ def on_message(client, userdata, msg):
     from . import physical_keys_values
     # machine_id=payload1['info']['mid']
     # print('mmmmmmmmm',machine_id)
-
-    physical_keys_values.test_fun(payload1)
-    # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
-    # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
+    if topic =='maithri/abu_dabhi' or topic =='Topic_name':
+        physical_keys_values.test_fun(payload1)
+        # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
+        # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -63,7 +64,7 @@ client.connect(
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully on aws')
-       # client_1.subscribe('Maithri/Device_7inch')
+       client_1.subscribe('Maithri/Device_7inch')
    else:
        print('Bad connection. Code:', rc)
 
@@ -76,18 +77,24 @@ def on_message_1(client_1, userdata, msg):
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
     payload1 = msg.payload.decode()  # Assuming the payload is a string
-    print('payload1',payload1)
+    topic=msg.topic
+    # print('payload1',payload1)
+    print('payload1',msg.topic)
+
 
     multi_topic_file.all_topics(payload1)
+    # print('topicname',payload1.Topic)
 
 
 
     from . import physical_keys_values
+    if topic =='Maithri/Device_7inch':
 
-    physical_keys_values.test_fun(payload1)
-    # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
-    # # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
-    # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
+
+        physical_keys_values.Device_7inch(payload1)
+        # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
+        # # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
+        # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
 
 
 client_1 = mqtt.Client()

@@ -71,6 +71,75 @@ def test_fun(payload1):
         return None  # Handle the case where machine_id doesn't exist
 
 
+
+def Device_7inch(payload1):
+    payload = json.loads(payload1)
+
+    # Extract machine_id from the payload
+    machine_id = payload['info']['mid']
+
+    # Query the Machines_List model to get data for the specific machine_id
+    user_data = Machines_List.objects.filter(machine_id=machine_id)
+    # user_data = Machines_List.objects.filter(machine_id=machine_id)
+    print('user_dataaaaaaaaaa',user_data)
+    # query_string_bytes = self.scope['query_string']
+    # query_string = query_string_bytes.decode('utf-8')
+    # print('qqqq', query_string)
+
+    if user_data.exists():
+
+
+        # self.scope['query_string']['machine_id']
+        user_serializer = usermachineSerializer(user_data.first())  # Get a single instance
+        data2 = user_serializer.data
+
+        # Extract keys for digital_input, digital_output, analog_input, and analog_output
+        digital_input_keys = data2['digital_input']
+        print('digital_input_keys',digital_input_keys)
+        digital_output_keys = data2['digital_output']
+        analog_input_keys = data2['analog_input']
+        analog_output_keys = data2['analog_output']
+
+        # Extract values from the payload using the corresponding keys
+        digital_input = [payload.get('Dosing')]
+        digital_output = [payload.get('Compressor_1'),  payload.get('Pump')]
+        analog_input = [payload.get('Temperature'), payload.get('Humidity')]
+        analog_output = [payload.get('Flow')]
+
+        # Create dictionaries for data to be sent
+        digital_data_input = [{"name": key, "value": str(value)} for key, value in zip(digital_input_keys, digital_input)]
+        digital_data_output = [{"name": key, "value": str(value)} for key, value in zip(digital_output_keys, digital_output)]
+        analog_data_input = [{"name": key, "value": str(value)} for key, value in zip(analog_input_keys, analog_input)]
+        analog_data_output = [{"name": key, "value": str(value)} for key, value in zip(analog_output_keys, analog_output)]
+
+        # Construct the final result dictionary
+        result = {
+            'machine_id': machine_id,
+            'machine_name': data2['machine_name'],
+            'digital_input': digital_data_input,
+            'digital_output': digital_data_output,
+            'analog_input': analog_data_input,
+            'analog_output': analog_data_output,
+            'db_timestamp': payload['timestamp']
+        }
+
+        # Convert the result dictionary to a JSON string
+        res = json.dumps(result)
+        channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
+        # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
+        # print('channel_layer',channel_layer)
+        async_to_sync(channel_layer.group_send)(machine_id, {"type": "chat.message", "text": res})
+
+        # return res
+    else:
+        return None  # Handle the case where machine_id doesn't exist
+
+
+
+
+
+
+
 #
 # for key in digital_output_keys:
 #     value = payload.get(key)
