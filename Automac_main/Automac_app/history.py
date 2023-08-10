@@ -60,7 +60,7 @@ def history_fun(machine_id,date):
     keys = Machines_List.objects.get(machine_id=machine_id)
     serializer_2 = usermachineSerializer(keys)
     r_s2_d = serializer_2.data
-    print('hhhhhhhhhhhhhhhh',r_s2_d)
+    # print('hhhhhhhhhhhhhhhh',r_s2_d)
     # print('r_s2_d', r_s2_d)
 
     d_i_k = r_s2_d['digital_input']
@@ -81,7 +81,7 @@ def history_fun(machine_id,date):
 
 
             data_entries = d_i_res + d_o_res + a_i_res + a_o_res
-            print('dtaaaaaaaaaaaaa',data_entries)
+            # print('dtaaaaaaaaaaaaa',data_entries)
 
             entry = {
 
@@ -90,7 +90,7 @@ def history_fun(machine_id,date):
 
 
             entry.update({"timestamp":r_s_d[i]['timestamp']})
-            print('lllllllll',entry)
+            # print('lllllllll',entry)
 
             result_data.append(entry)
     resultant_data = {
@@ -99,7 +99,7 @@ def history_fun(machine_id,date):
         "machine_name": r_s2_d['machine_name']},
         "Trail_Details": result_data
     }
-    print("rewwwwwwwwwsw",type(resultant_data))
+    # print("rewwwwwwwwwsw",type(resultant_data))
 
 
     return JsonResponse(resultant_data)
