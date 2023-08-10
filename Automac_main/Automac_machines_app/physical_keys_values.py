@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 
 def physical_k_v_combined(payload1):
+    # print('hhhh')
     payload = json.loads(payload1)
 
     # Extract machine_id from the payload
@@ -73,24 +74,26 @@ def physical_k_v_combined(payload1):
 
 
 def Device_7inch(payload1):
+    # print('kkk')
+
     payload = json.loads(payload1)
 
     # Extract machine_id from the payload
     machine_id = payload['info']['mid']
 
     # Query the Machines_List model to get data for the specific machine_id
-    user_data = Machines_List.objects.filter(machine_id=machine_id)
+    user_data2 = Machines_List.objects.filter(machine_id=machine_id)
     # user_data = Machines_List.objects.filter(machine_id=machine_id)
-    print('user_dataaaaaaaaaa',user_data)
+    print('user_dataaaaaaaaaa',user_data2)
     # query_string_bytes = self.scope['query_string']
     # query_string = query_string_bytes.decode('utf-8')
     # print('qqqq', query_string)
 
-    if user_data.exists():
+    if user_data2.exists():
 
 
         # self.scope['query_string']['machine_id']
-        user_serializer = usermachineSerializer(user_data.first())  # Get a single instance
+        user_serializer = usermachineSerializer(user_data2.first())  # Get a single instance
         data2 = user_serializer.data
 
         # Extract keys for digital_input, digital_output, analog_input, and analog_output

@@ -23,7 +23,7 @@ def store_data(payload1):
         payload.get('Temp_Subzero'),
         payload.get('Hum_Suzero')
     ]
-    print('digital_input',digital_input)
+    print('digital_input abb',digital_input)
 
 
     MachineDetails = apps.get_model('Automac_machines_app', 'MachineDetails')

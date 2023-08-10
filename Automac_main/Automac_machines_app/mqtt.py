@@ -4,7 +4,6 @@ from django.apps import apps
 import paho.mqtt.client as mqtt
 from django.conf import settings
 import json
-#
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from . import multi_topic_file
@@ -25,10 +24,6 @@ def on_connect(client, userdata, flags, rc):
    else:
        print('Bad connection. Code:', rc)
 
-
-
-
-
 def on_message(client, userdata, msg):
     # print("on_message")
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
@@ -37,17 +32,13 @@ def on_message(client, userdata, msg):
     topic=msg.topic
     print('payload1',msg.topic)
 
-    multi_topic_file.all_topics(payload1)
+    multi_topic_file.all_topics(payload1,topic)
 
-
-
-    from . import physical_keys_values
-    # machine_id=payload1['info']['mid']
-    # print('mmmmmmmmm',machine_id)
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
+        from . import physical_keys_values
         physical_keys_values.physical_k_v_combined(payload1)
-        # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
-        # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
+    else:
+        pass
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -60,6 +51,7 @@ client.connect(
 )
 
 
+# aws connection  MID004-----------------------------------------------
 
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
@@ -67,10 +59,6 @@ def on_connect_1(client_1, userdata, flags, rc):
        client_1.subscribe('Maithri/Device_7inch')
    else:
        print('Bad connection. Code:', rc)
-
-
-
-
 
 def on_message_1(client_1, userdata, msg):
     # print("on_message")
@@ -82,19 +70,16 @@ def on_message_1(client_1, userdata, msg):
     print('payload1',msg.topic)
 
 
-    multi_topic_file.all_topics(payload1)
+    multi_topic_file.all_topics(payload1,topic)
     # print('topicname',payload1.Topic)
 
 
 
-    from . import physical_keys_values
+    # from . import physical_keys_values
     if topic =='Maithri/Device_7inch':
-
+        from . import physical_keys_values
 
         physical_keys_values.Device_7inch(payload1)
-        # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
-        # # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
-        # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
 
 
 client_1 = mqtt.Client()
@@ -109,4 +94,3 @@ client_1.connect(
    port=settings.AWSPORT,
    keepalive=settings.MQTT_KEEPALIVE
 )
-
