@@ -33,10 +33,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print('text',text_data)
         print('reciver ........scope', self.scope)
 
-        # Handle received data from the WebSocket connection
-        # You can perform any required processing or logic here
-        # For example, you can save the received data to the database
-        # or perform some calculations on the data
 
         # Send the processed data to the connected WebSocket clients
         await self.channel_layer.group_send("mqtt_data", {
