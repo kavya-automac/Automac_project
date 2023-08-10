@@ -38,7 +38,7 @@ def physical_k_v_combined(payload1):
         # Extract values from the payload using the corresponding keys
         digital_input = [payload.get('LP1'), payload.get('LP2'), payload.get('HP1'), payload.get('HP2'),
                          payload.get('Dosing'), payload.get('3PhasePreventer')]
-        digital_output = [payload.get('Compressor_1'),  payload.get('Pump'),payload.get('Compressor_2'), payload.get('Pump1'),
+        digital_output = [payload.get('Compressor_1'),payload.get('Compressor_2'), payload.get('Pump1'),
                           payload.get('Pump2'), payload.get('Pump3')]
         analog_input = [payload.get('Temperature'), payload.get('Humidity')]
         analog_output = [payload.get('Flow')]
