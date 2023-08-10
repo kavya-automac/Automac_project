@@ -86,6 +86,7 @@ def history_fun(machine_id,date):
                 "db_timestamp": r_s_d[i]['db_timestamp'],
                 "timestamp": r_s_d[i]['timestamp'],
                 "machine_id": r_s_d[i]['machine_id'],
+                "machine_name": r_s_d[i]['machine_id'],
                 "machine_location": r_s_d[i]['machine_location'],
                 "data": data_entries
             }
@@ -100,6 +101,7 @@ def history_fun(machine_id,date):
             # "timestamp": datetime.datetime.now().isoformat(),
             "timestamp": date+"T00:00:00.000000Z",
             "machine_id": r_s2_d['machine_id'],
+            "machine_name": r_s2_d['machine_name'],
             "machine_location": r_s2_d['machine_location'],
             "data": []
         }
