@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import JsonResponse
 
 from .serializers import *
@@ -93,8 +95,10 @@ def history_fun(machine_id,date):
         entry = {
             # "db_timestamp": date,
             # "timestamp": r_s_d[i]['timestamp'],
-            "db_timestamp": "",
-            "timestamp": "",
+            "db_timestamp": date,
+            # "db_timestamp": datetime.datetime.now().isoformat(),
+            # "timestamp": datetime.datetime.now().isoformat(),
+            "timestamp": date,
             "machine_id": r_s2_d['machine_id'],
             "machine_location": r_s2_d['machine_location'],
             "data": []
