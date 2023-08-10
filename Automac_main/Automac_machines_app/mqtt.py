@@ -45,7 +45,7 @@ def on_message(client, userdata, msg):
     # machine_id=payload1['info']['mid']
     # print('mmmmmmmmm',machine_id)
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
-        physical_keys_values.test_fun(payload1)
+        physical_keys_values.physical_k_v_combined(payload1)
         # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
         # async_to_sync(channel_layer.group_send)("mqtt_data", {"type": "chat.message", "text": data})
 

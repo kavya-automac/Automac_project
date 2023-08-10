@@ -7,7 +7,7 @@ from asgiref.sync import async_to_sync
 from rest_framework.response import Response
 
 
-def test_fun(payload1):
+def physical_k_v_combined(payload1):
     payload = json.loads(payload1)
 
     # Extract machine_id from the payload
