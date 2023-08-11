@@ -313,7 +313,7 @@ class MachinesView(ViewSet):
                     #     print('i', i)
                     io_data = io_serializer_data
                     print('lllllllllllllllll',io_data)
-                    io_data['db_timestamp'] = last_valies_data.get('db_timestamp', str(None))
+                    io_data['db_timestamp'] = last_valies_data.get('timestamp', str(None))
                     # io_data['db_timestamp'] = machine_values_data.db_timestamp
                     # Create a new list of dictionaries with the desired format for digital_input
                     # ###### digital_input
