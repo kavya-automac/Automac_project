@@ -4,7 +4,8 @@ from django.db import models
 class MachineDetails(models.Model):
     objects = models.Manager()
     db_timestamp=models.DateTimeField(auto_now_add=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
+    test_timestamp = models.CharField(max_length=250,default='NA')
     machine_id = models.CharField(max_length=150)
     machine_location = models.CharField(max_length=250)
     digital_input = ArrayField(models.BooleanField())
@@ -18,4 +19,5 @@ class MachineDetails(models.Model):
         db_table = 'machines_schema"."machinedetails_table'
 
     def __str__(self):
-        return "%s,%s" % (self.timestamp, self.machine_id)
+        # return "%s,%s %s" % (self.db_timestamp, self.machine_id,self.timestamp)
+        return "%s,%s %s %s" % (self.db_timestamp, self.machine_id,self.timestamp,self.test_timestamp)

@@ -11,6 +11,7 @@ from Automac_machines_app.models import MachineDetails
 
 def history_fun(machine_id,date):
     details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
+    # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
     print('details',details)
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])

@@ -7,6 +7,7 @@ def store_data(payload1):
     payload = json.loads(payload1)
     print('payload store_data',payload['timestamp'])
 
+
     # Extract the data from the JSON payload
     timestamp = payload['timestamp']
     machine_id = payload['info']['mid']
@@ -50,6 +51,7 @@ def store_data(payload1):
     # Create an instance of the SensorData model
     sensor_data = MachineDetails(
        # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
+       test_timestamp=timestamp,
        timestamp=timestamp,
        machine_id=machine_id,
        machine_location=machine_location,

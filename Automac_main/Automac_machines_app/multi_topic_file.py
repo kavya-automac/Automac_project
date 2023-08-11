@@ -18,6 +18,7 @@ def all_topics(payload1,topic):
     if topic == 'maithri/abu_dabhi':
         conversion_file.store_data(payload1)
     elif topic == 'Topic_name':
+        print("all_topics Topic_name ")
         conversion_file.store_data(payload1)
     elif topic == 'Maithri/Device_7inch':
         conversion_file.MID004_store_data(payload1)

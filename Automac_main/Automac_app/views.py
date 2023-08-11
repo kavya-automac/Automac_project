@@ -300,7 +300,7 @@ class MachinesView(ViewSet):
                     # print('issssssssssssssssss',io_serializer_data.db_timestamp)
 
 
-                    machine_values_data = MachineDetails.objects.filter(machine_id=io_data.machine_id).order_by('-machine_id').first()
+                    machine_values_data = MachineDetails.objects.filter(machine_id=io_data.machine_id).order_by('-timestamp').first()
                     print('machine_values_data', machine_values_data)
 
                     # last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
