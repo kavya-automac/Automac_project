@@ -10,15 +10,15 @@ from Automac_machines_app.models import MachineDetails
 
 
 def history_fun(machine_id,date):
-    details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date)[:50]
-    # print('details',details)
+    details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
+    print('details',details)
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])
     print('details',len(details))
     serializer = machineSerializer(details, many=True)
 
     r_s_d = serializer.data
-    # print('r_s_d',r_s_d)
+    print('r_s_d',r_s_d)
     d_i_v = []
     d_o_v = []
     a_i_v = []
@@ -29,7 +29,7 @@ def history_fun(machine_id,date):
         d_o_v.append(r_s_d[d]['digital_output'])
         a_i_v.append(r_s_d[d]['analog_input'])
         a_o_v.append(r_s_d[d]['analog_output'])
-    # print('d_i_v',d_i_v)
+    print('d_i_v',d_i_v)
 
     from .views import null_to_str
     d_i_v = null_to_str(d_i_v)
@@ -67,7 +67,10 @@ def history_fun(machine_id,date):
     d_o_k = r_s2_d['digital_output']
     a_i_k = r_s2_d['analog_input']
     a_o_k = r_s2_d['analog_output']
-
+    print('dkkkk',d_i_k)
+    print('dok',d_o_k)
+    print('aik',a_i_k)
+    print('aok',a_o_k)
     result_data=[]
 
     if  r_s_d:
@@ -93,6 +96,7 @@ def history_fun(machine_id,date):
             # print('lllllllll',entry)
 
             result_data.append(entry)
+    print('resulttttttttttttttttttttt',result_data)
     resultant_data = {
         "machine_details":{
         "machine_id": r_s2_d['machine_id'],

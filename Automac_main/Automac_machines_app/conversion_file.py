@@ -5,7 +5,7 @@ from django.apps import apps
 def store_data(payload1):
 
     payload = json.loads(payload1)
-    # print('payload',payload)
+    print('payload store_data',payload['timestamp'])
 
     # Extract the data from the JSON payload
     timestamp = payload['timestamp']
@@ -15,6 +15,13 @@ def store_data(payload1):
     digital_output =[payload.get('Compressor_1'),payload.get('Compressor_2'),payload.get('Pump1'),payload.get('Pump2'),payload.get('Pump3')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
+
+    # digital_input = [payload['LP1'], payload['LP2'], payload['HP1'], payload['HP2'],
+    #                  payload['Dosing'], payload['3PhasePreventer']]
+    # digital_output = [payload['Compressor_1'], payload['Compressor_2'], payload['Pump1'],
+    #                   payload['Pump2'], payload['Pump3']]
+    # analog_input = [payload['Temperature'], payload['Humidity']]
+    # analog_output = [payload['Flow']]
     other=[
         payload.get('Water_Level'),
         payload.get('set_points ',{}).get('set_temp'),
@@ -53,6 +60,7 @@ def store_data(payload1):
        other=other
     )
 
+    print("sensor_data ", sensor_data)
     # Save the instance to the database
     sensor_data.save()
 
@@ -71,6 +79,13 @@ def MID004_store_data(payload1):
     digital_output =[payload.get('Compressor_1'),payload.get('Pump')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
+
+    # digital_input = [payload['Dosing']]
+    # digital_output = [payload['Compressor_1'], payload['Pump']]
+    # analog_input = [payload['Temperature'], payload['Humidity']]
+    # analog_output = [payload['Flow']]
+
+
     other=[
         payload.get('Water_Level'),
         payload.get('set_points ',{}).get('set_temp'),
@@ -108,6 +123,7 @@ def MID004_store_data(payload1):
        analog_output=analog_output,
        other=other
     )
+
 
     # Save the instance to the database
     sensor_data.save()

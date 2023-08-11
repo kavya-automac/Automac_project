@@ -18,4 +18,4 @@ class MachineDetails(models.Model):
         db_table = 'machines_schema"."machinedetails_table'
 
     def __str__(self):
-        return "%s,%s" % (self.db_timestamp, self.machine_id)
+        return "%s,%s" % (self.timestamp, self.machine_id)

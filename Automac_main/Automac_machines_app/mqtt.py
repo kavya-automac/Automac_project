@@ -29,8 +29,11 @@ def on_message(client, userdata, msg):
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
     payload1 = msg.payload.decode()  # Assuming the payload is a string
+    payload_json = json.loads(payload1)
     topic=msg.topic
     print('payload1',msg.topic)
+    print('timestamp :', payload_json['timestamp'])
+    print('machineid :', payload_json['info']['mid'])
 
     multi_topic_file.all_topics(payload1,topic)
 
@@ -56,7 +59,7 @@ client.connect(
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully on aws')
-       client_1.subscribe('Maithri/Device_7inch')
+       # client_1.subscribe('Maithri/Device_7inch')
    else:
        print('Bad connection. Code:', rc)
 
