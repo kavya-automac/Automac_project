@@ -116,7 +116,8 @@ def MID004_store_data(payload1):
     # Create an instance of the SensorData model
     sensor_data = MachineDetails(
        # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
-       timestamp=timestamp,
+        test_timestamp=timestamp,
+        timestamp=timestamp,
        machine_id=machine_id,
        machine_location=machine_location,
        digital_input=digital_input,
