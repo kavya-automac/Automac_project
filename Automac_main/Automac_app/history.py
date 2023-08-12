@@ -57,8 +57,13 @@ def history_fun(machine_id,date):
     print(d_o_v)
     print(a_i_v)
     print(a_o_v)
-
-    keys = Machines_List.objects.get(machine_id=machine_id)
+    try:
+        keys = Machines_List.objects.get(machine_id=machine_id)
+    except Machines_List.DoesNotExist:
+        error_message = "Please enter a valid machine_id."
+        return JsonResponse({"error": error_message}, status=400)  # Return an error response
+    print("keyyyyyy",keys)
+    # keys = Machines_List.objects.get(machine_id=machine_id)
     serializer_2 = usermachineSerializer(keys)
     r_s2_d = serializer_2.data
     # print('hhhhhhhhhhhhhhhh',r_s2_d)
