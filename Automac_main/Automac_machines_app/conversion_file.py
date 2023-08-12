@@ -81,6 +81,7 @@ def MID004_store_data(payload1):
     digital_output =[payload.get('Compressor_1'),payload.get('Pump')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
+    print("digital_output",digital_output)
 
     # digital_input = [payload['Dosing']]
     # digital_output = [payload['Compressor_1'], payload['Pump']]

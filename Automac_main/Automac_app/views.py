@@ -291,7 +291,13 @@ class MachinesView(ViewSet):
 
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
                 elif module == "iostatus":
-                    io_data = Machines_List.objects.get(machine_id=machine_id)
+                    try:
+                        io_data = Machines_List.objects.get(machine_id=machine_id)
+                    except Machines_List.DoesNotExist:
+                        error_message = "Please enter a valid machine_id."
+                        return JsonResponse({"error": error_message}, status=400)  # Return an error response
+
+                    # io_data = Machines_List.objects.get(machine_id=machine_id)
                     print('io_data',io_data.machine_id)
 
                     io_serializer = IostatusmachineSerializer(io_data)
