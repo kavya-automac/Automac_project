@@ -295,7 +295,7 @@ class MachinesView(ViewSet):
                         io_data = Machines_List.objects.get(machine_id=machine_id)
                     except Machines_List.DoesNotExist:
                         error_message = "Please enter a valid machine_id."
-                        return JsonResponse({"error": error_message}, status=400)  # Return an error response
+                        return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
                     # io_data = Machines_List.objects.get(machine_id=machine_id)
                     print('io_data',io_data.machine_id)

@@ -54,5 +54,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=event["text"])
         # print(event)
         # await self.send(text_data=json.dumps(event["text"]))
-        await asyncio.sleep(4)
+        await asyncio.sleep(2)
 
