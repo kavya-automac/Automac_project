@@ -111,8 +111,9 @@ def history_fun(machine_id,date):
     result_data=[]
 
 
+
     if  r_s_d:
-        # print('iffff',not r_s_d)
+        print('iffff',not r_s_d)
         for i in range(len(r_s_d)):
             # d_i_res = [{'name': key, 'value': value} for key, value in zip(digital_input_keys, digital_input_value[i])]
             # # print('d_i_res',d_i_res)
@@ -138,7 +139,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 d_i_res.append({'name': key, 'value': value, 'color': color})
-                # print('inputttt', d_i_res)
+                print('inputttt', d_i_res)
 
             d_o_res = []
 
@@ -158,7 +159,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 d_o_res.append({'name': key, 'value': value, 'color': color})
-                # print('d outputttt', d_o_res)
+                print('d outputttt', d_o_res)
 
             a_i_res = []
 
@@ -176,7 +177,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 a_i_res.append({'name': key, 'value': value,'color':color, 'unit': db_unit})
-                # print('aa inputputttt', a_i_res)
+                print('aa inputputttt', a_i_res)
 
             a_o_res = []
 
@@ -194,7 +195,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 a_o_res.append({'name': key, 'value': value,'color':color, 'unit': db_unit})
-                # print('aaa outputttt', a_o_res)
+                print('aaa outputttt', a_o_res)
 
             data_entries = d_i_res + d_o_res + a_i_res + a_o_res
             print('dtaaaaaaaaaaaaa',data_entries)
@@ -223,9 +224,16 @@ def history_fun(machine_id,date):
 
 
         return JsonResponse(resultant_data)
-
-
     else:
-        # If data is not present, return an appropriate response
-        error_message = "No data available for the given machine_id and date."
-        return JsonResponse({"status": error_message}, status=404)
+        resultant_data = {
+            "machine_details": {
+                "machine_id": r_s2_d['machine_id'],
+                "machine_name": r_s2_d['machine_name']},
+            "Trail_Details": result_data
+
+        }
+        return JsonResponse(resultant_data)
+
+
+
+
