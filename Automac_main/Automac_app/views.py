@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+import datetime
 # from django.contrib.auth.decorators import login_required
 # from django.http import JsonResponse
 # from django.shortcuts import render, redirect
@@ -410,8 +411,13 @@ class MachinesView(ViewSet):
 
                         analog_keyvalue_output_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
                     # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
-                    # print('timeeeeeeeeeeeeeeeeeeeeee',str(last_valies_data.get('timestamp')))
-
+                    # print('timeeeeeeeeeeeeeeeeeeeeee',str(last_valies_data.get('timestamp',datetime.datetime.now())))
+                    timestamp = last_valies_data.get('timestamp')
+                    if timestamp:
+                        formatted_time = str(timestamp)
+                    else:
+                        formatted_time = str(datetime.datetime.now())
+                    print('formatted_time',formatted_time)
 
                     data = {'iostatus': {
                         "machine_id":machine.machine_id,
@@ -420,7 +426,7 @@ class MachinesView(ViewSet):
                         "digital_output":digital_keyvalue_output_data,
                         "analog_input":analog_keyvalue_input_data,
                         "analog_output":analog_keyvalue_output_data,
-                        "db_timestamp": str(last_valies_data.get('timestamp',))
+                        "db_timestamp": formatted_time
 
                     }}
 
