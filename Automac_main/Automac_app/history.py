@@ -15,7 +15,7 @@ def history_fun(machine_id,date):
     # print('details',details)
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])
-    # print('details',len(details))
+    print('details',len(machine_value_data))
     serializer = machineSerializer(machine_value_data, many=True)
 
     r_s_d = serializer.data
@@ -65,11 +65,16 @@ def history_fun(machine_id,date):
     serializer_2 = usermachineSerializer(machine)
     r_s2_d = serializer_2.data
 
+
     input_output_data = IO_List.objects.filter(machine_id=machine.id)
     # print('input_output_data', input_output_data)
     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
     # print('input_output_data_serializer', input_output_data_serializer)
     input_output_data_serializer_data = input_output_data_serializer.data
+    print('iddddddddddd',input_output_data_serializer_data[0]['machine_id'])
+    print('iiii',r_s2_d['machine_id'])
+
+
 
 
 
@@ -192,7 +197,7 @@ def history_fun(machine_id,date):
                 # print('aaa outputttt', a_o_res)
 
             data_entries = d_i_res + d_o_res + a_i_res + a_o_res
-            # print('dtaaaaaaaaaaaaa',data_entries)
+            print('dtaaaaaaaaaaaaa',data_entries)
 
 
             entry = {
@@ -218,3 +223,9 @@ def history_fun(machine_id,date):
 
 
         return JsonResponse(resultant_data)
+
+
+    else:
+        # If data is not present, return an appropriate response
+        error_message = "No data available for the given machine_id and date."
+        return JsonResponse({"status": error_message}, status=404)

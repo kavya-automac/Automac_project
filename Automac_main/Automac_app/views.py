@@ -420,7 +420,7 @@ class MachinesView(ViewSet):
                         "digital_output":digital_keyvalue_output_data,
                         "analog_input":analog_keyvalue_input_data,
                         "analog_output":analog_keyvalue_output_data,
-                        "db_timestamp": str(last_valies_data.get('timestamp'))
+                        "db_timestamp": str(last_valies_data.get('timestamp',))
 
                     }}
 
