@@ -39,7 +39,7 @@ def on_message(client, userdata, msg):
 
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
         from . import physical_keys_values
-        physical_keys_values.physical_k_v_combined(payload1)
+        physical_keys_values.mqtt_data_to_channels(payload1)
     else:
         pass
 

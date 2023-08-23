@@ -231,6 +231,13 @@ class all_Machine_data_Serializer2(serializers.ModelSerializer):
         fields = ('company_name','plant_name','machine_id','model_name','line_name')
 
 
+class IO_list_serializer(serializers.ModelSerializer):
+    class Meta:
+        model=IO_List
+        # fields = '__all__'
+        fields = ('machine_id','IO_type','IO_name','IO_value','IO_color','IO_Unit')
+
+
 
 
 

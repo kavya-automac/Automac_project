@@ -114,6 +114,21 @@ class all_Machine_data(models.Model):
 
 
 
+class IO_List(models.Model):
+    machine_id=models.ForeignKey(Machines_List,on_delete=models.CASCADE)
+    IO_type=models.CharField(max_length=100)
+    IO_name=models.CharField(max_length=100)
+    IO_value=ArrayField(models.CharField(max_length=100,blank=True))
+    IO_color=ArrayField(models.CharField(max_length=100,blank=True))
+    IO_Range=models.CharField(max_length=100,blank=True)
+    IO_Unit=models.CharField(max_length=100,blank=True)
+
+    class Meta:
+        app_label = 'Automac_app'
+        db_table = 'users_schema"."IO_List'
+
+    def __str__(self):
+        return str(self.machine_id)
 
 
 
