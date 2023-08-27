@@ -129,6 +129,8 @@ def history_fun(machine_id,date):
                 for k in range(len(input_output_data)):
                     if input_output_data_serializer_data[k]['IO_type'] == "digital_input" and \
                             input_output_data_serializer_data[k]['IO_name'] == key:
+                        db_unit = input_output_data_serializer_data[k]['IO_Unit']
+
                         db_color = input_output_data_serializer_data[k]['IO_color']
                         if value == "On":
                             color = db_color[0]
@@ -138,7 +140,7 @@ def history_fun(machine_id,date):
                         break  # Exit loop once the correct key is found
                     else:
                         pass
-                d_i_res.append({'name': key, 'value': value, 'color': color})
+                d_i_res.append({'name': key, 'value': value, 'color': color,'unit':db_unit})
                 print('inputttt', d_i_res)
 
             d_o_res = []
@@ -149,6 +151,8 @@ def history_fun(machine_id,date):
                 for k in range(len(input_output_data)):
                     if input_output_data_serializer_data[k]['IO_type'] == "digital_output" and \
                             input_output_data_serializer_data[k]['IO_name'] == key:
+                        db_unit = input_output_data_serializer_data[k]['IO_Unit']
+
                         db_color = input_output_data_serializer_data[k]['IO_color']
                         if value == "On":
                             color = db_color[0]
@@ -158,7 +162,7 @@ def history_fun(machine_id,date):
                         break  # Exit loop once the correct key is found
                     else:
                         pass
-                d_o_res.append({'name': key, 'value': value, 'color': color})
+                d_o_res.append({'name': key, 'value': value, 'color': color,'unit':db_unit})
                 print('d outputttt', d_o_res)
 
             a_i_res = []
