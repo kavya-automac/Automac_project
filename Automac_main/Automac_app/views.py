@@ -302,13 +302,13 @@ class MachinesView(ViewSet):
                     # print('machime.............',machine_id)
                     # print('m_nameeeeeeeeeee.............',machine.machine_name)
 
-                    input_output_data = IO_List.objects.filter(machine_id=machine.id)
-                    # print('input_output_data', input_output_data)
+                    input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
+                    print('input_output_data', input_output_data)
                     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
                     # print('input_output_data_serializer', input_output_data_serializer.data)
                     input_output_data_serializer_data=input_output_data_serializer.data
-                    # print('type', input_output_data_serializer_data[0]['IO_name'])
-                    # print('name', input_output_data_serializer_data[0].IO_name)
+                    print('type', input_output_data_serializer_data)
+                    print('name', input_output_data_serializer_data[0]['IO_name'])
                     # print('color', input_output_data_serializer_data[0].IO_color)
                     digital_input_keys=[]
                     digital_output_keys=[]
@@ -318,6 +318,7 @@ class MachinesView(ViewSet):
                     values = []
 
                     for i in range(len(input_output_data)):
+                        print('iiiiiiiiiii',i)
                         if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
                             analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
 
@@ -329,7 +330,6 @@ class MachinesView(ViewSet):
                         if input_output_data_serializer_data[i]['IO_type']=="digital_input":
                             # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
                             digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
-
                     print('digital_input_keys',digital_input_keys)
                     print('digital_output_keys',digital_output_keys)
                     print('analog_input_keys',analog_input_keys)
@@ -342,6 +342,7 @@ class MachinesView(ViewSet):
                     # print('machine_values_data', machine_values_data)
                     last_valies_data_1 = machineSerializer(machine_values_data)
                     last_valies_data = last_valies_data_1.data
+                    print('last_valies_data',last_valies_data)
 
 
 

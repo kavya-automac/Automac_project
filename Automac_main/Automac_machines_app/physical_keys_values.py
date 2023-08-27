@@ -165,7 +165,7 @@ def mqtt_data_to_channels(payload1):
     # data2 = user_serializer.data
 
     # Extract keys for digital_input, digital_output, analog_input, and analog_output
-    input_output_data = IO_List.objects.filter(machine_id=machine.id)
+    input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
     print('input_output_data', input_output_data)
     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
     print('input_output_data_serializer', input_output_data_serializer.data)
@@ -312,7 +312,7 @@ def Device_7inch(payload1):
     # data2 = user_serializer.data
 
     # Extract keys for digital_input, digital_output, analog_input, and analog_output
-    input_output_data = IO_List.objects.filter(machine_id=machine.id)
+    input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
     print('input_output_data', input_output_data)
     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
     print('input_output_data_serializer', input_output_data_serializer.data)

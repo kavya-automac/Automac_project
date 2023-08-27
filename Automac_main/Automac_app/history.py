@@ -66,7 +66,7 @@ def history_fun(machine_id,date):
     r_s2_d = serializer_2.data
 
 
-    input_output_data = IO_List.objects.filter(machine_id=machine.id)
+    input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
     # print('input_output_data', input_output_data)
     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
     # print('input_output_data_serializer', input_output_data_serializer)
