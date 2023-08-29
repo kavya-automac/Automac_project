@@ -141,10 +141,10 @@ from rest_framework.response import Response
 
 
 
-def mqtt_data_to_channels(payload1):
+def mqtt_data_to_channels(mqtt_machines_data):
     # print('hhhh')
 
-    payload = json.loads(payload1)
+    payload = json.loads(mqtt_machines_data)
     print('payload 7inch',payload)
     # Extract machine_id from the payload
     machine_id = payload['info']['mid']
@@ -288,10 +288,10 @@ def mqtt_data_to_channels(payload1):
 
 
 
-def Device_7inch(payload1):
+def Device_7inch(mqtt_machines_data):
     # print('kkk')
 
-    payload = json.loads(payload1)
+    payload = json.loads(mqtt_machines_data)
     print('payload 7inch',payload)
     # Extract machine_id from the payload
     machine_id = payload['info']['mid']

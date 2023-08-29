@@ -2,9 +2,9 @@ import json
 from django.apps import apps
 
 
-def store_data(payload1):
+def store_data(mqtt_machines_data):
 
-    payload = json.loads(payload1)
+    payload = json.loads(mqtt_machines_data)
     print('payload store_data',payload['timestamp'])
 
 
@@ -68,9 +68,9 @@ def store_data(payload1):
 
 
 
-def MID004_store_data(payload1):
+def MID004_store_data(mqtt_machines_data):
 
-    payload = json.loads(payload1)
+    payload = json.loads(mqtt_machines_data)
     # print('payload',payload)
 
     # Extract the data from the JSON payload

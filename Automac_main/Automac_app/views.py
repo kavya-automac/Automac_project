@@ -33,7 +33,7 @@ from . history import history_fun
 from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,machineSerializer_two,analog_ip_op_Serializer
 # from Automac_machines_app.serializers import *
 from Automac_machines_app.models import MachineDetails
-
+from . import kpis
 # from .Automac_machines_app.models import MachineDetails
 
 
@@ -291,7 +291,9 @@ class MachinesView(ViewSet):
 
                 elif module == "kpis":
 
-                    data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
+                    data = kpis.kpis_data()
+                    # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
+
                 elif module == "iostatus":
                     try:
                         machine = Machines_List.objects.get(machine_id=machine_id)

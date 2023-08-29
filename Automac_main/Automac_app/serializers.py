@@ -158,12 +158,12 @@ class generalmachineSerializer(serializers.ModelSerializer):
 class machinelist_historySerializer(serializers.ModelSerializer):
     class Meta:
         model=Machines_List
-        fields = ('machine_id','machine_name','machine_location', 'digital_input','digital_output','analog_input','analog_output')
+        fields = ('machine_id','machine_name','machine_location')
 
 class IostatusmachineSerializer(serializers.ModelSerializer):
     class Meta:
         model=Machines_List
-        fields = ('machine_id','machine_name', 'digital_input','digital_output','analog_input','analog_output')
+        fields = ('machine_id','machine_name')
 
 class Machines_List_Serializer(serializers.ModelSerializer):
     class Meta:

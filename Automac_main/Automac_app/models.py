@@ -79,10 +79,6 @@ class Machines_List(models.Model):
     machine_name=models.CharField(max_length=100)
     machine_id=models.CharField(max_length=100,blank=True)
     machine_location=models.CharField(max_length=100)
-    digital_input= ArrayField(models.CharField(max_length=100,blank=True))
-    digital_output= ArrayField(models.CharField(max_length=100,blank=True))
-    analog_input = ArrayField(models.CharField(max_length=100,blank=True))
-    analog_output = ArrayField(models.CharField(max_length=100,blank=True))
     date_of_installation=models.CharField(max_length=100,null=True,blank=True)
     machine_state=models.CharField(max_length=100)
 

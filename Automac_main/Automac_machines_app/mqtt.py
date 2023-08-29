@@ -28,18 +28,18 @@ def on_message(client, userdata, msg):
     # print("on_message")
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
-    payload1 = msg.payload.decode()  # Assuming the payload is a string
-    payload_json = json.loads(payload1)
+    mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
+    payload_json = json.loads(mqtt_machines_data)
     topic=msg.topic
-    print('payload1',msg.topic)
+    print('mqtt_machines_data',msg.topic)
     print('timestamp :', payload_json['timestamp'])
     print('machineid :', payload_json['info']['mid'])
 
-    multi_topic_file.all_topics(payload1,topic)
+    multi_topic_file.all_topics(mqtt_machines_data,topic)
 
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
         from . import physical_keys_values
-        physical_keys_values.mqtt_data_to_channels(payload1)
+        physical_keys_values.mqtt_data_to_channels(mqtt_machines_data)
     else:
         pass
 
@@ -67,13 +67,13 @@ def on_message_1(client_1, userdata, msg):
     # print("on_message")
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
-    payload1 = msg.payload.decode()  # Assuming the payload is a string
+    mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
     topic=msg.topic
-    # print('payload1',payload1)
+    # print('mqtt_machines_data',mqtt_machines_data)
     print('payload1',msg.topic)
 
 
-    multi_topic_file.all_topics(payload1,topic)
+    multi_topic_file.all_topics(mqtt_machines_data,topic)
     # print('topicname',payload1.Topic)
 
 
@@ -82,7 +82,7 @@ def on_message_1(client_1, userdata, msg):
     if topic =='Maithri/Device_7inch':
         from . import physical_keys_values
 
-        physical_keys_values.Device_7inch(payload1)
+        physical_keys_values.Device_7inch(mqtt_machines_data)
 
 
 client_1 = mqtt.Client()

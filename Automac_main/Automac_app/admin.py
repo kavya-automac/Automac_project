@@ -30,8 +30,7 @@ class Machine_Kpi_ListAdmin(admin.ModelAdmin):
 @admin.register(Machines_List)
 class Machines_ListAdmin(admin.ModelAdmin):
     list_display = ['machine_id','machine_image','machine_name',
-                    'machine_location','digital_input','digital_output','analog_input',
-                    'analog_output','date_of_installation','machine_state']
+                    'machine_location','date_of_installation','machine_state']
 
 
 
