@@ -33,7 +33,7 @@ from . history import history_fun
 from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,machineSerializer_two,analog_ip_op_Serializer
 # from Automac_machines_app.serializers import *
 from Automac_machines_app.models import MachineDetails
-from . import kpis
+# from . import kpis
 # from .Automac_machines_app.models import MachineDetails
 
 
