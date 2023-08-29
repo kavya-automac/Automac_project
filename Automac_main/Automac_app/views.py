@@ -291,8 +291,8 @@ class MachinesView(ViewSet):
 
                 elif module == "kpis":
 
-                    data = kpis.kpis_data()
-                    # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
+                    # data = kpis.kpis_data()
+                    data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
 
                 elif module == "iostatus":
                     try:
