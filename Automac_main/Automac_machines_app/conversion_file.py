@@ -44,9 +44,10 @@ def store_data(mqtt_machines_data):
     #         v= False
     #     print('v',v)
 
-    digital_input =[True if value == 'On' else False for value in digital_input]
 
-    digital_output = [True if value == 'On' else False for value in digital_output]
+    digital_input = [True if value.lower() == 'on' else False for value in digital_input]
+
+    digital_output = [True if value.lower() == 'on' else False for value in digital_output]
 
     # Create an instance of the SensorData model
     sensor_data = MachineDetails(
@@ -110,9 +111,16 @@ def MID004_store_data(mqtt_machines_data):
     #         v= False
     #     print('v',v)
 
-    digital_input =[True if value == 'on' else False for value in digital_input]
+    # digital_input =[True if value == 'On' else False for value in digital_input]
+    #
+    # digital_output = [True if value == 'On' else False for value in digital_output]
 
-    digital_output = [True if value == 'on' else False for value in digital_output]
+
+    # if on or On it return True
+    digital_input = [True if value.lower() == 'on' else False for value in digital_input]
+
+    digital_output = [True if value.lower() == 'on' else False for value in digital_output]
+
 
     # Create an instance of the SensorData model
     sensor_data = MachineDetails(
@@ -127,6 +135,8 @@ def MID004_store_data(mqtt_machines_data):
        analog_output=analog_output,
        other=other
     )
+
+    print("sensor_data ", sensor_data.digital_output)
 
 
     # Save the instance to the database
