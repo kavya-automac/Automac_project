@@ -208,6 +208,7 @@ class MachinesView(ViewSet):
             return JsonResponse({"status": "login_required"})
 
     @action(detail=False, method=["get"])
+    # @action(detail=False, method=["get","post"])
     def machine_details(self, request):
         if request.user.is_authenticated:
             print("if")
@@ -233,303 +234,220 @@ class MachinesView(ViewSet):
                 #     ]
                 if module == "Details":
                     # id = request.query_params.get('id')
+                    if request.method =="GET":
+                        general_data = Machines_List.objects.get(machine_id=machine_id)
+                        print('general_data',general_data)
+                        general_serialzer=generalmachineSerializer(general_data)
+                        general_serialzer_data_11=general_serialzer.data
+                        # print('general_serialzer',general_serialzer_data_11)
+                        general_serialzer_data_1=null_to_str(general_serialzer_data_11)
+                        # print('general_serialzer_data_1',general_serialzer_data_1)
 
-                    general_data = Machines_List.objects.get(machine_id=machine_id)
-                    print('general_data',general_data)
-                    general_serialzer=generalmachineSerializer(general_data)
-                    general_serialzer_data_11=general_serialzer.data
-                    # print('general_serialzer',general_serialzer_data_11)
-                    general_serialzer_data_1=null_to_str(general_serialzer_data_11)
-                    # print('general_serialzer_data_1',general_serialzer_data_1)
+                        plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
+                        print('plant_line_data',plant_line_data)
 
-                    plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
-                    print('plant_line_data',plant_line_data)
-
-                    if not plant_line_data.exists():
-                        # If the plant_line_data is empty, return a response indicating that the user doesn't have access.
-                        return JsonResponse({"message": "User does not have access to this machine."}, status=403)
-
-
-                    s_data=all_Machine_data_Serializer(plant_line_data,many=True)
-                    s_data_d=s_data.data
-                    print('plant_line_data',plant_line_data[0].plant_name,type(plant_line_data))
-                    for f_names in range(0,len(plant_line_data)):
-                        s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
-                        s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
-                        s_data_d[f_names].update(line_name=str(plant_line_data[f_names].line_name))
-                        print('s_data',s_data_d)
-                        general_serialzer_data_1.update(dict(s_data_d[0]))
-                        # general_serialzer_data_1=dict(s_data_d)
-                    if not s_data_d:
-                        return JsonResponse({"general_data": general_serialzer_data_1})
-
-                    Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
-                                       "Uploaded_by":"harsha",
-                                       "Date":"27/07/2023",
-                                       "Url":"https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf"}]
-                    Techincal_Details=[{
-                        "Date":"27/07/2023",
-                        "Device_name":"Compressor",
-                        "Make":"ELGI",
-                        "Model_No":"ELGI001",
-                        "Label":"label"
-
-                    },{
-                        "Date": "27/07/2023",
-                        "Device_name": "Cooler",
-                        "Make": "CROMPTON",
-                        "Model_No": "CRMP234",
-                        "Label": "label"
-
-                    }
-                    ]
+                        if not plant_line_data.exists():
+                            # If the plant_line_data is empty, return a response indicating that the user doesn't have access.
+                            return JsonResponse({"message": "User does not have access to this machine."}, status=403)
 
 
+                        s_data=all_Machine_data_Serializer(plant_line_data,many=True)
+                        s_data_d=s_data.data
+                        print('plant_line_data',plant_line_data[0].plant_name,type(plant_line_data))
+                        for f_names in range(0,len(plant_line_data)):
+                            s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
+                            s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
+                            s_data_d[f_names].update(line_name=str(plant_line_data[f_names].line_name))
+                            print('s_data',s_data_d)
+                            general_serialzer_data_1.update(dict(s_data_d[0]))
+                            # general_serialzer_data_1=dict(s_data_d)
+                        if not s_data_d:
+                            return JsonResponse({"general_data": general_serialzer_data_1})
 
-                    data = {'general_details':general_serialzer_data_1,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
-                    # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
+                        Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
+                                           "Uploaded_by":"harsha",
+                                           "Date":"27/07/2023",
+                                           "Url":"https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf"}]
+                        Techincal_Details=[{
+                            "Date":"27/07/2023",
+                            "Device_name":"Compressor",
+                            "Make":"ELGI",
+                            "Model_No":"ELGI001",
+                            "Label":"label"
 
+                        },{
+                            "Date": "27/07/2023",
+                            "Device_name": "Cooler",
+                            "Make": "CROMPTON",
+                            "Model_No": "CRMP234",
+                            "Label": "label"
+
+                        }
+                        ]
+
+
+
+                        data = {'general_details':general_serialzer_data_1,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
+                        # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
+                    else:
+                        data={'status':"post method not allowed"}
                 elif module == "kpis":
+                    # if request.method == "GET":
+                    #     data = kpis.get_kpis_data(self,request)
+                    #
+                    # elif request.method == "POST":
+                    #
+                    #     data = kpis.post_kpi_data(self,request)
+                    # else:
+                    #     data={'status':"post method not allowed"}
 
-                    # data = kpis.kpis_data()
+
+
+
                     data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
 
                 elif module == "iostatus":
-                    try:
-                        machine = Machines_List.objects.get(machine_id=machine_id)
-                    except Machines_List.DoesNotExist:
-                        error_message = "Please enter a valid machine_id."
-                        return JsonResponse({"status": error_message}, status=400)  # Return an error response
+                    if request.method == "GET":
+                        try:
+                            machine = Machines_List.objects.get(machine_id=machine_id)
+                        except Machines_List.DoesNotExist:
+                            error_message = "Please enter a valid machine_id."
+                            return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
-                    # print('machime.............',machine_id)
-                    # print('m_nameeeeeeeeeee.............',machine.machine_name)
+                        # print('machime.............',machine_id)
+                        # print('m_nameeeeeeeeeee.............',machine.machine_name)
 
-                    input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
-                    print('input_output_data', input_output_data)
-                    input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
-                    # print('input_output_data_serializer', input_output_data_serializer.data)
-                    input_output_data_serializer_data=input_output_data_serializer.data
-                    print('type', input_output_data_serializer_data)
-                    print('name', input_output_data_serializer_data[0]['IO_name'])
-                    # print('color', input_output_data_serializer_data[0].IO_color)
-                    digital_input_keys=[]
-                    digital_output_keys=[]
-                    analog_input_keys=[]
-                    analog_output_keys=[]
-                    color = []
-                    values = []
+                        input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
+                        print('input_output_data', input_output_data)
+                        input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
+                        # print('input_output_data_serializer', input_output_data_serializer.data)
+                        input_output_data_serializer_data=input_output_data_serializer.data
+                        print('type', input_output_data_serializer_data)
+                        print('name', input_output_data_serializer_data[0]['IO_name'])
+                        # print('color', input_output_data_serializer_data[0].IO_color)
+                        digital_input_keys=[]
+                        digital_output_keys=[]
+                        analog_input_keys=[]
+                        analog_output_keys=[]
+                        color = []
+                        values = []
 
-                    for i in range(len(input_output_data)):
-                        print('iiiiiiiiiii',i)
-                        if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
-                            analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
-
-                        if input_output_data_serializer_data[i]['IO_type'] == "analog_input":
-                            analog_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
-                        if input_output_data_serializer_data[i]['IO_type'] == "digital_output":
-                            digital_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
-
-                        if input_output_data_serializer_data[i]['IO_type']=="digital_input":
-                            # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
-                            digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
-                    print('digital_input_keys',digital_input_keys)
-                    print('digital_output_keys',digital_output_keys)
-                    print('analog_input_keys',analog_input_keys)
-                    print('analog_output_keys',analog_output_keys)
-                    print('color',color)
-                    print('values',values)
-
-
-                    machine_values_data = MachineDetails.objects.filter(machine_id=machine.machine_id).order_by('-timestamp').first()
-                    # print('machine_values_data', machine_values_data)
-                    last_valies_data_1 = machineSerializer(machine_values_data)
-                    last_valies_data = last_valies_data_1.data
-                    print('last_valies_data',last_valies_data)
-
-
-
-
-                    digital_keyvalue_input_data=[]
-
-                    for key, value in zip(digital_input_keys, last_valies_data.get('digital_input', [])):
-                        # print('valuessssssssss', last_valies_data.get('digital_input', []))
-                        value_str = "On" if value else "Off"
-                        color=None
                         for i in range(len(input_output_data)):
-                            if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and input_output_data_serializer_data[i]['IO_name'] == key:
-                                db_color = input_output_data_serializer_data[i]['IO_color']
-                                color = db_color[0] if value else db_color[1]
-                                break  # Exit loop once the correct key is found
-                            else:
-                                pass
+                            print('iiiiiiiiiii',i)
+                            if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
+                                analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
 
-                        digital_keyvalue_input_data.append({"name": key, "value": value_str,"color":color})
-                    # print('digital_keyvalue_input_data',digital_keyvalue_input_data)
+                            if input_output_data_serializer_data[i]['IO_type'] == "analog_input":
+                                analog_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+                            if input_output_data_serializer_data[i]['IO_type'] == "digital_output":
+                                digital_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
 
-
-                    digital_keyvalue_output_data=[]
-                    for key, value in zip(digital_output_keys, last_valies_data.get('digital_output', [])):
-                        value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
-                        color = None
-                        for i in range(len(input_output_data)):
-                            if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
-                                    input_output_data_serializer_data[i]['IO_name'] == key:
-                                db_color = input_output_data_serializer_data[i]['IO_color']
-                                color = db_color[0] if value else db_color[1]
-                                break  # Exit loop once the correct key is found
-                            else:
-                                pass
+                            if input_output_data_serializer_data[i]['IO_type']=="digital_input":
+                                # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
+                                digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+                        print('digital_input_keys',digital_input_keys)
+                        print('digital_output_keys',digital_output_keys)
+                        print('analog_input_keys',analog_input_keys)
+                        print('analog_output_keys',analog_output_keys)
+                        print('color',color)
+                        print('values',values)
 
 
-                        digital_keyvalue_output_data.append({"name": key, "value": value_str,"color":color})
-                    # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
+                        machine_values_data = MachineDetails.objects.filter(machine_id=machine.machine_id).order_by('-timestamp').first()
+                        # print('machine_values_data', machine_values_data)
+                        last_valies_data_1 = machineSerializer(machine_values_data)
+                        last_valies_data = last_valies_data_1.data
+                        print('last_valies_data',last_valies_data)
 
-                    analog_keyvalue_input_data=[]
-                    for key, value in zip(analog_input_keys, last_valies_data.get('analog_input', [])):
-                        db_unit=None
-                        for i in range(len(input_output_data)):
-                            if input_output_data_serializer_data[i]['IO_type'] == "analog_input" and \
-                                    input_output_data_serializer_data[i]['IO_name'] == key:
-                                db_unit = input_output_data_serializer_data[i]['IO_Unit']
-                                color= input_output_data_serializer_data[i]['IO_color'][0]
-                                break  # Exit loop once the correct key is found
-                            else:
-                                pass
 
-                        analog_keyvalue_input_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
-                    # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
 
-                    analog_keyvalue_output_data = []
-                    for key, value in zip(analog_output_keys, last_valies_data.get('analog_output', [])):
-                        db_unit = None
-                        for i in range(len(input_output_data)):
-                            if input_output_data_serializer_data[i]['IO_type'] == "analog_output" and \
-                                    input_output_data_serializer_data[i]['IO_name'] == key:
-                                db_unit = input_output_data_serializer_data[i]['IO_Unit']
-                                color= input_output_data_serializer_data[i]['IO_color'][0]
 
-                                break  # Exit loop once the correct key is found
-                            else:
-                                pass
+                        digital_keyvalue_input_data=[]
 
-                        analog_keyvalue_output_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
-                    # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
-                    # print('timeeeeeeeeeeeeeeeeeeeeee',str(last_valies_data.get('timestamp',datetime.datetime.now())))
-                    timestamp = last_valies_data.get('timestamp')
-                    if timestamp:
-                        formatted_time = str(timestamp)
+                        for key, value in zip(digital_input_keys, last_valies_data.get('digital_input', [])):
+                            # print('valuessssssssss', last_valies_data.get('digital_input', []))
+                            value_str = "On" if value else "Off"
+                            color=None
+                            for i in range(len(input_output_data)):
+                                if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and input_output_data_serializer_data[i]['IO_name'] == key:
+                                    db_color = input_output_data_serializer_data[i]['IO_color']
+                                    color = db_color[0] if value else db_color[1]
+                                    break  # Exit loop once the correct key is found
+                                else:
+                                    pass
+
+                            digital_keyvalue_input_data.append({"name": key, "value": value_str,"color":color})
+                        # print('digital_keyvalue_input_data',digital_keyvalue_input_data)
+
+
+                        digital_keyvalue_output_data=[]
+                        for key, value in zip(digital_output_keys, last_valies_data.get('digital_output', [])):
+                            value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+                            color = None
+                            for i in range(len(input_output_data)):
+                                if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
+                                        input_output_data_serializer_data[i]['IO_name'] == key:
+                                    db_color = input_output_data_serializer_data[i]['IO_color']
+                                    color = db_color[0] if value else db_color[1]
+                                    break  # Exit loop once the correct key is found
+                                else:
+                                    pass
+
+
+                            digital_keyvalue_output_data.append({"name": key, "value": value_str,"color":color})
+                        # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
+
+                        analog_keyvalue_input_data=[]
+                        for key, value in zip(analog_input_keys, last_valies_data.get('analog_input', [])):
+                            db_unit=None
+                            for i in range(len(input_output_data)):
+                                if input_output_data_serializer_data[i]['IO_type'] == "analog_input" and \
+                                        input_output_data_serializer_data[i]['IO_name'] == key:
+                                    db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                                    color= input_output_data_serializer_data[i]['IO_color'][0]
+                                    break  # Exit loop once the correct key is found
+                                else:
+                                    pass
+
+                            analog_keyvalue_input_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
+                        # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+
+                        analog_keyvalue_output_data = []
+                        for key, value in zip(analog_output_keys, last_valies_data.get('analog_output', [])):
+                            db_unit = None
+                            for i in range(len(input_output_data)):
+                                if input_output_data_serializer_data[i]['IO_type'] == "analog_output" and \
+                                        input_output_data_serializer_data[i]['IO_name'] == key:
+                                    db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                                    color= input_output_data_serializer_data[i]['IO_color'][0]
+
+                                    break  # Exit loop once the correct key is found
+                                else:
+                                    pass
+
+                            analog_keyvalue_output_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
+                        # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
+                        # print('timeeeeeeeeeeeeeeeeeeeeee',str(last_valies_data.get('timestamp',datetime.datetime.now())))
+                        timestamp = last_valies_data.get('timestamp')
+                        if timestamp:
+                            formatted_time = str(timestamp)
+                        else:
+                            formatted_time = str(datetime.datetime.now())
+                        print('formatted_time',formatted_time)
+
+                        data = {'iostatus': {
+                            "machine_id":machine.machine_id,
+                            "machine_name":machine.machine_name,
+                            "digital_input":digital_keyvalue_input_data,
+                            "digital_output":digital_keyvalue_output_data,
+                            "analog_input":analog_keyvalue_input_data,
+                            "analog_output":analog_keyvalue_output_data,
+                            "db_timestamp": formatted_time
+
+                        }}
                     else:
-                        formatted_time = str(datetime.datetime.now())
-                    print('formatted_time',formatted_time)
+                        data={'status':"post method not allowed"}
 
-                    data = {'iostatus': {
-                        "machine_id":machine.machine_id,
-                        "machine_name":machine.machine_name,
-                        "digital_input":digital_keyvalue_input_data,
-                        "digital_output":digital_keyvalue_output_data,
-                        "analog_input":analog_keyvalue_input_data,
-                        "analog_output":analog_keyvalue_output_data,
-                        "db_timestamp": formatted_time
-
-                    }}
-
-
-                #     try:
-                #         io_data = Machines_List.objects.get(machine_id=machine_id)
-                #     except Machines_List.DoesNotExist:
-                #         error_message = "Please enter a valid machine_id."
-                #         return JsonResponse({"status": error_message}, status=400)  # Return an error response
-                #
-                #     # io_data = Machines_List.objects.get(machine_id=machine_id)
-                #     print('io_data',io_data)
-                #
-                #     io_serializer = IostatusmachineSerializer(io_data)
-                #     io_serializer_data = io_serializer.data
-                #     print('io_serializer_data', io_serializer_data)
-                #     # print('issssssssssssssssss',io_serializer_data.db_timestamp)
-                #
-                #
-                #     machine_values_data = MachineDetails.objects.filter(machine_id=io_data.machine_id).order_by('-timestamp').first()
-                #     print('machine_values_data', machine_values_data)
-                #
-                #     # last_valies_data = machineSerializer(machine_values_data).data if machine_values_data else {}
-                #     last_valies_data_1 = machineSerializer(machine_values_data)
-                #     last_valies_data=last_valies_data_1.data
-                #     # print('last_valies_data',machine_values_data.db_timestamp)
-                #     print('last_valies_data',last_valies_data)
-                #
-                #     # for i in range(len(io_serializer_data)):
-                #     #     print('i', i)
-                #     io_data = io_serializer_data
-                #     # print('lllllllllllllllll',io_data)
-                #     io_data['db_timestamp'] = str(last_valies_data.get('timestamp'))
-                #     # io_data['db_timestamp'] = last_valies_data.get('timestamp', str(None))
-                #     # io_data['db_timestamp'] = machine_values_data.db_timestamp
-                #     # Create a new list of dictionaries with the desired format for digital_input
-                #     # ###### digital_input
-                #     digital_input_data = []
-                #     for key, value in zip(io_data['digital_input'], last_valies_data.get('digital_input', [])):
-                #         value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
-                #
-                #         digital_input_data.append({"name": key, "value": value_str})
-                #     # print('digital_input_data',digital_input_data)
-                #     io_data['digital_input'] = digital_input_data
-                #
-                #     # ###### digital_output
-                #
-                #     digital_output_data = []
-                #     for key, value in zip(io_data['digital_output'], last_valies_data.get('digital_output', [])):
-                #         value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
-                #
-                #         digital_output_data.append({"name": key, "value": value_str})
-                #     # print('digital_output_data', digital_output_data)
-                #     io_data['digital_output'] = digital_output_data
-                #
-                #     # ###### analog_input
-                #
-                #     analog_input_data = []
-                #     for key, value in zip(io_data['analog_input'], last_valies_data.get('analog_input', [])):
-                #         analog_input_data.append({"name": key, "value": str(value)})
-                #     # print('analog_input_data', analog_input_data)
-                #     io_data['analog_input'] = analog_input_data
-                #
-                #     # ###### analog_output
-                #
-                #     analog_output_data = []
-                #     for key, value in zip(io_data['analog_output'], last_valies_data.get('analog_output', [])):
-                #         analog_output_data.append({"name": key, "value": str(value)})
-                #     # print('analog_input_data', analog_output_data)
-                #     io_data['analog_output'] = analog_output_data
-                # # print('llllllllllllll',io_data)
-                #
-                #
-                #
-                #
-                #
-                #     data = {'iostatus': io_serializer_data}
-
-                    # for i in range(len(io_serializer_data)):
-                    #     print('i', i)
-                    #     io_serializer_data[i]['db_timestamp'] = last_valies_data.get('db_timestamp', None)
-                    #
-                    #     di = dict(zip(io_serializer_data[i]['digital_input'], last_valies_data.get('digital_input', [])))
-                    #     print('di',di)
-                    #     print(' last_valies_data.get', last_valies_data.get('digital_input', []))
-                    #     name=io_serializer_data[i]['digital_output']
-                    #     value= last_valies_data.get('digital_output', [])
-                    #
-                    #     do = dict(zip(io_serializer_data[i]['digital_output'], last_valies_data.get('digital_output', [])))
-                    #     ai = dict(zip(io_serializer_data[i]['analog_input'], last_valies_data.get('analog_input', [])))
-                    #     ao = dict(zip(io_serializer_data[i]['analog_output'], last_valies_data.get('analog_output', [])))
-                    #
-                    #     io_serializer_data[i]['digital_input'] = di
-                    #     io_serializer_data[i]['digital_output'] = do
-                    #     io_serializer_data[i]['analog_input'] = ai
-                    #     io_serializer_data[i]['analog_output'] = ao
-                    #
-                    # data = {'iostatus': io_serializer_data}
-
-                    # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(io_status).json"))
                 else:
                     data = {
                         'status': 'please_enter_correct_module_name'
@@ -541,6 +459,8 @@ class MachinesView(ViewSet):
             return JsonResponse(data)
         else:
             return JsonResponse({"status": "login_required"})
+
+
 
 
 

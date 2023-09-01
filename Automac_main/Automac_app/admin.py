@@ -25,7 +25,8 @@ class Plant_ListAdmin(admin.ModelAdmin):
 
 @admin.register(Machine_Kpi_List)
 class Machine_Kpi_ListAdmin(admin.ModelAdmin):
-    list_display = ['id','kpi_name','kpi_data','kpi_unit']
+    # list_display = ['id','kpi_name','kpi_data','kpi_unit']
+    list_display = ['id','timestamp','kpi_name','kpi_data','kpi_unit','Total_Water_Generated','Daily_Water_Generated']
 
 @admin.register(Machines_List)
 class Machines_ListAdmin(admin.ModelAdmin):

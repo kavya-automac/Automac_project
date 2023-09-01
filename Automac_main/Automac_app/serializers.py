@@ -238,6 +238,10 @@ class IO_list_serializer(serializers.ModelSerializer):
         fields = ('machine_id','IO_type','IO_name','IO_value','IO_color','IO_Unit')
 
 
+class Kpi_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Machine_Kpi_List
+        fields = '__all__'
 
 
 

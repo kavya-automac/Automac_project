@@ -44,9 +44,9 @@ def store_data(mqtt_machines_data):
     #         v= False
     #     print('v',v)
 
-    digital_input =[True if value == 'on' else False for value in digital_input]
+    digital_input =[True if value == 'On' else False for value in digital_input]
 
-    digital_output = [True if value == 'on' else False for value in digital_output]
+    digital_output = [True if value == 'On' else False for value in digital_output]
 
     # Create an instance of the SensorData model
     sensor_data = MachineDetails(

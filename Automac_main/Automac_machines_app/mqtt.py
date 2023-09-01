@@ -59,7 +59,7 @@ client.connect(
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully on aws')
-       client_1.subscribe('Maithri/Device_7inch')
+       # client_1.subscribe('Maithri/Device_7inch')
    else:
        print('Bad connection. Code:', rc)
 

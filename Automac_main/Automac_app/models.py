@@ -59,9 +59,12 @@ class Company_List(models.Model):
 
 class Machine_Kpi_List(models.Model):
     objects = models.Manager()
-    kpi_name=models.CharField(max_length=100)
-    kpi_data=models.IntegerField()
+    timestamp = models.DateField()
+    kpi_name=models.CharField(max_length=100,blank=True)
+    kpi_data=models.IntegerField(default=0)
     kpi_unit=models.CharField(max_length=10,blank=True)
+    Total_Water_Generated=models.CharField(max_length=10,blank=True)
+    Daily_Water_Generated=models.CharField(max_length=10,blank=True)
 
     class Meta:
         app_label = 'Automac_app'
