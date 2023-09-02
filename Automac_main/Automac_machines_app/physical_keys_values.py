@@ -313,9 +313,9 @@ def Device_7inch(mqtt_machines_data):
 
     # Extract keys for digital_input, digital_output, analog_input, and analog_output
     input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
-    print('input_output_data', input_output_data)
+    # print('input_output_data', input_output_data)
     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
-    print('input_output_data_serializer', input_output_data_serializer.data)
+    # print('input_output_data_serializer', input_output_data_serializer.data)
     input_output_data_serializer_data = input_output_data_serializer.data
 
 
@@ -344,7 +344,10 @@ def Device_7inch(mqtt_machines_data):
     digital_keyvalue_input_data = []
 
     for key, value in zip(digital_input_keys, digital_input):
-        value_str = "On" if value else "Off"
+        value = value.capitalize()
+
+        # value_str = "Off" if not value else "On"
+
         color = None
         for i in range(len(input_output_data)):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
@@ -355,13 +358,17 @@ def Device_7inch(mqtt_machines_data):
             else:
                 pass
 
-        digital_keyvalue_input_data.append({"name": key, "value": value_str, "color": color})
+        digital_keyvalue_input_data.append({"name": key, "value": value, "color": color})
     print('digital_keyvalue_input_data', digital_keyvalue_input_data)
 
     digital_keyvalue_output_data = []
 
     for key, value in zip(digital_output_keys, digital_output):
-        value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+        # a = dict(zip(digital_output_keys, digital_output))
+        # print('aaaaaaaaaaaaa', a)
+        value = value.capitalize()
+
+        # value_str = "Off" if not value else "On"
         color = None
         for i in range(len(input_output_data)):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
@@ -372,8 +379,8 @@ def Device_7inch(mqtt_machines_data):
             else:
                 pass
 
-        digital_keyvalue_output_data.append({"name": key, "value": value_str, "color": color})
-    print('digital_keyvalue_output_data', digital_keyvalue_output_data)
+        digital_keyvalue_output_data.append({"name": key, "value": value, "color": color})
+        print('digital_keyvalue_output_data', digital_keyvalue_output_data)
 
     analog_keyvalue_input_data = []
     for key, value in zip(analog_input_keys, analog_input):
@@ -388,7 +395,7 @@ def Device_7inch(mqtt_machines_data):
                 pass
 
         analog_keyvalue_input_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
-    print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+        print('analog_keyvalue_input_data', analog_keyvalue_input_data)
 
     analog_keyvalue_output_data = []
     for key, value in zip(analog_output_keys, analog_output):
@@ -404,7 +411,7 @@ def Device_7inch(mqtt_machines_data):
                 pass
 
         analog_keyvalue_output_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
-    print('analog_keyvalue_output_data', analog_keyvalue_output_data)
+        print('analog_keyvalue_output_data', analog_keyvalue_output_data)
 
     # Create dictionaries for data to be sent
 

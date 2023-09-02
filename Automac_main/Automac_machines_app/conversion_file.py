@@ -72,7 +72,7 @@ def store_data(mqtt_machines_data):
 def MID004_store_data(mqtt_machines_data):
 
     payload = json.loads(mqtt_machines_data)
-    # print('payload',payload)
+    print('payload',payload)
 
     # Extract the data from the JSON payload
     timestamp = payload['timestamp']
@@ -136,7 +136,10 @@ def MID004_store_data(mqtt_machines_data):
        other=other
     )
 
+    print("sensor_data ", sensor_data.digital_input)
     print("sensor_data ", sensor_data.digital_output)
+    print("sensor_data ", sensor_data.analog_input)
+    print("sensor_data ", sensor_data.analog_output)
 
 
     # Save the instance to the database
