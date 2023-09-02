@@ -353,7 +353,7 @@ def Device_7inch(mqtt_machines_data):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
                     input_output_data_serializer_data[i]['IO_name'] == key:
                 db_color = input_output_data_serializer_data[i]['IO_color']
-                color = db_color[0] if value else db_color[1]
+                color = db_color[0] if value == "On" else db_color[1]
                 break  # Exit loop once the correct key is found
             else:
                 pass
@@ -374,7 +374,7 @@ def Device_7inch(mqtt_machines_data):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
                     input_output_data_serializer_data[i]['IO_name'] == key:
                 db_color = input_output_data_serializer_data[i]['IO_color']
-                color = db_color[0] if value else db_color[1]
+                color = db_color[0] if value == "On" else db_color[1]
                 break  # Exit loop once the correct key is found
             else:
                 pass
