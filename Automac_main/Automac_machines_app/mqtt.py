@@ -31,9 +31,9 @@ def on_message(client, userdata, msg):
     mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
     payload_json = json.loads(mqtt_machines_data)
     topic=msg.topic
-    print('mqtt_machines_data',msg.topic)
-    print('timestamp :', payload_json['timestamp'])
-    print('machineid :', payload_json['info']['mid'])
+    # print('mqtt_machines_data',msg.topic)
+    # print('timestamp :', payload_json['timestamp'])
+    # print('machineid :', payload_json['info']['mid'])
 
     multi_topic_file.all_topics(mqtt_machines_data,topic)
 
@@ -70,7 +70,7 @@ def on_message_1(client_1, userdata, msg):
     mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
     topic=msg.topic
     # print('mqtt_machines_data',mqtt_machines_data)
-    print('payload1',msg.topic)
+    # print('payload1',msg.topic)
 
 
     multi_topic_file.all_topics(mqtt_machines_data,topic)

@@ -5,7 +5,7 @@ from django.apps import apps
 def store_data(mqtt_machines_data):
 
     payload = json.loads(mqtt_machines_data)
-    print('payload store_data',payload['timestamp'])
+    # print('payload store_data',payload['timestamp'])
 
 
     # Extract the data from the JSON payload
@@ -16,6 +16,8 @@ def store_data(mqtt_machines_data):
     digital_output =[payload.get('Compressor_1'),payload.get('Compressor_2'),payload.get('Pump1'),payload.get('Pump2'),payload.get('Pump3')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
+    print('machine', machine_id )
+
 
     # digital_input = [payload['LP1'], payload['LP2'], payload['HP1'], payload['HP2'],
     #                  payload['Dosing'], payload['3PhasePreventer']]
@@ -63,7 +65,7 @@ def store_data(mqtt_machines_data):
        other=other
     )
 
-    print("sensor_data ", sensor_data)
+    # print("sensor_data ", sensor_data)
     # Save the instance to the database
     sensor_data.save()
 
@@ -72,7 +74,7 @@ def store_data(mqtt_machines_data):
 def MID004_store_data(mqtt_machines_data):
 
     payload = json.loads(mqtt_machines_data)
-    print('payload',payload)
+    # print('payload',payload)
 
     # Extract the data from the JSON payload
     timestamp = payload['timestamp']
@@ -82,7 +84,9 @@ def MID004_store_data(mqtt_machines_data):
     digital_output =[payload.get('Compressor_1'),payload.get('Pump')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
-    print("digital_output",digital_output)
+    print('machine', machine_id )
+
+    # print("digital_output",digital_output)
 
     # digital_input = [payload['Dosing']]
     # digital_output = [payload['Compressor_1'], payload['Pump']]
@@ -98,7 +102,7 @@ def MID004_store_data(mqtt_machines_data):
         payload.get('Temp_Subzero'),
         payload.get('Hum_Suzero')
     ]
-    print('digital_input',digital_input)
+    # print('digital_input',digital_input)
 
 
     MachineDetails = apps.get_model('Automac_machines_app', 'MachineDetails')
@@ -136,10 +140,10 @@ def MID004_store_data(mqtt_machines_data):
        other=other
     )
 
-    print("sensor_data ", sensor_data.digital_input)
-    print("sensor_data ", sensor_data.digital_output)
-    print("sensor_data ", sensor_data.analog_input)
-    print("sensor_data ", sensor_data.analog_output)
+    # print("sensor_data ", sensor_data.digital_input)
+    # print("sensor_data ", sensor_data.digital_output)
+    # print("sensor_data ", sensor_data.analog_input)
+    # print("sensor_data ", sensor_data.analog_output)
 
 
     # Save the instance to the database
