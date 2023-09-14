@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from .serializers import *
 
-from . import calculations
+# from . import calculations
 
 from django.http import JsonResponse
 from django.http import JsonResponse
