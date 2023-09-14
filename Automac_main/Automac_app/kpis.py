@@ -23,6 +23,9 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.http import JsonResponse
 
+from datetime import datetime
+from django.http import JsonResponse
+
 def get_kpis_data(user, machine):
     kpis = []
 
@@ -35,7 +38,7 @@ def get_kpis_data(user, machine):
     today = datetime.now().date()
 
     for machine_data in user_data:
-        if machine_data.kpi is not None:  # Check if kpi is not None
+        if machine_data.kpi is not None:
             kpitype = machine_data.kpi.Kpi_Type
             kpiname = machine_data.kpi.kpi_name
             kpi_labels = machine_data.kpi.labels
@@ -48,8 +51,8 @@ def get_kpis_data(user, machine):
                     kpi_id__kpi_name=kpiname,
                     kpi_id__Kpi_Type=kpitype
                 ).order_by('-timestamp')[:10]  # Order by timestamp in descending order
-                kpiserializer=kpi_data_Serializer(kpidata,many=True)
-                kpiserializer_data=kpiserializer.data
+                kpiserializer = kpi_data_Serializer(kpidata, many=True)
+                kpiserializer_data = kpiserializer.data
                 x_axis = []  # List to store x-axis (timestamp)
                 y_axis = []  # List to store y-axis (values)
                 for kpidatatype in kpidata:
@@ -62,10 +65,13 @@ def get_kpis_data(user, machine):
                 kpi_result['x_axis'] = x_axis
                 kpi_result['y_axis'] = y_axis
 
-
+                # If x_axis and y_axis are empty, set them to empty lists
+                if not kpi_result['x_axis']:
+                    kpi_result['x_axis'] = []
+                if not kpi_result['y_axis']:
+                    kpi_result['y_axis'] = []
 
             elif kpitype == 'cummulative':
-
                 # Retrieve the most recent record for today's date
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
@@ -73,22 +79,19 @@ def get_kpis_data(user, machine):
                     kpi_id__Kpi_Type=kpitype,
                     timestamp__date=today
                 ).order_by('-timestamp').first()
-                print('---------------------------',kpidata)
-                # kpiserializer = kpi_data_Serializer(kpidata, many=True)
-                # kpiserializer_data = kpiserializer.data
+                print('---------------------------', kpidata)
 
                 kpitype = 'text'
                 if kpidata:
-
                     name = kpidata.kpi_id.kpi_name
-
-
                     value = kpidata.kpi_data
-                    print('value',value)
-
+                    print('value', value)
 
                     kpi_result['value'] = value
 
+                # If 'value' is missing, set it to an empty string
+                if 'value' not in kpi_result:
+                    kpi_result['value'] = ''
 
             kpi_entry = {
                 'card': kpitype,
@@ -103,6 +106,91 @@ def get_kpis_data(user, machine):
         'kpi': kpis,
     }
     return result
+
+
+
+
+
+# def get_kpis_data(user, machine):
+#     kpis = []
+#
+#     try:
+#         user_data = all_Machine_data.objects.filter(user_name=user, machine_id=machine)
+#     except Machines_List.DoesNotExist:
+#         error_message = "Please enter a valid machine_id."
+#         return JsonResponse({"status": error_message}, status=400)  # Return an error response
+#
+#     today = datetime.now().date()
+#
+#     for machine_data in user_data:
+#         if machine_data.kpi is not None:  # Check if kpi is not None
+#             kpitype = machine_data.kpi.Kpi_Type
+#             kpiname = machine_data.kpi.kpi_name
+#             kpi_labels = machine_data.kpi.labels
+#             kpi_result = {}
+#
+#             if kpitype == 'Line_Graph':
+#                 # Retrieve the latest 10 records for line_graph
+#                 kpidata = Machine_KPI_Data.objects.filter(
+#                     machine_id=machine_data,
+#                     kpi_id__kpi_name=kpiname,
+#                     kpi_id__Kpi_Type=kpitype
+#                 ).order_by('-timestamp')[:10]  # Order by timestamp in descending order
+#                 kpiserializer=kpi_data_Serializer(kpidata,many=True)
+#                 kpiserializer_data=kpiserializer.data
+#                 x_axis = []  # List to store x-axis (timestamp)
+#                 y_axis = []  # List to store y-axis (values)
+#                 for kpidatatype in kpidata:
+#                     time = kpidatatype.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
+#                     value = kpidatatype.kpi_data
+#
+#                     x_axis.append(time)
+#                     y_axis.append(value)
+#
+#                 kpi_result['x_axis'] = x_axis
+#                 kpi_result['y_axis'] = y_axis
+#
+#
+#
+#             elif kpitype == 'cummulative':
+#
+#                 # Retrieve the most recent record for today's date
+#                 kpidata = Machine_KPI_Data.objects.filter(
+#                     machine_id=machine_data,
+#                     kpi_id__kpi_name=kpiname,
+#                     kpi_id__Kpi_Type=kpitype,
+#                     timestamp__date=today
+#                 ).order_by('-timestamp').first()
+#                 print('---------------------------',kpidata)
+#                 # kpiserializer = kpi_data_Serializer(kpidata, many=True)
+#                 # kpiserializer_data = kpiserializer.data
+#
+#                 kpitype = 'text'
+#                 if kpidata:
+#
+#                     name = kpidata.kpi_id.kpi_name
+#
+#
+#                     value = kpidata.kpi_data
+#                     print('value',value)
+#
+#
+#                     kpi_result['value'] = value
+#
+#
+#             kpi_entry = {
+#                 'card': kpitype,
+#                 'title': kpiname,
+#                 'labels': kpi_labels,
+#                 'data': kpi_result,
+#             }
+#
+#             kpis.append(kpi_entry)
+#
+#     result = {
+#         'kpi': kpis,
+#     }
+#     return result
 
 
 
