@@ -1,5 +1,7 @@
 import datetime
 
+from django.db.models import Sum
+from django.db.models.functions import Extract
 from django.http import JsonResponse
 from rest_framework.response import Response
 
@@ -11,6 +13,7 @@ from Automac_machines_app.models import MachineDetails
 
 def history_fun(machine_id,date):
     machine_value_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
+
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
     # print('details',details)
 
@@ -71,8 +74,8 @@ def history_fun(machine_id,date):
     input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
     # print('input_output_data_serializer', input_output_data_serializer)
     input_output_data_serializer_data = input_output_data_serializer.data
-    print('iddddddddddd',input_output_data_serializer_data[0]['machine_id'])
-    print('iiii',r_s2_d['machine_id'])
+    # print('iddddddddddd',input_output_data_serializer_data[0]['machine_id'])
+    # print('iiii',r_s2_d['machine_id'])
 
 
 
@@ -141,7 +144,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 d_i_res.append({'name': key, 'value': value, 'color': color,'unit':db_unit})
-                print('inputttt', d_i_res)
+                # print('inputttt', d_i_res)
 
             d_o_res = []
 
@@ -163,7 +166,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 d_o_res.append({'name': key, 'value': value, 'color': color,'unit':db_unit})
-                print('d outputttt', d_o_res)
+                # print('d outputttt', d_o_res)
 
             a_i_res = []
 
@@ -181,7 +184,7 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 a_i_res.append({'name': key, 'value': value,'color':color, 'unit': db_unit})
-                print('aa inputputttt', a_i_res)
+                # print('aa inputputttt', a_i_res)
 
             a_o_res = []
 
@@ -199,10 +202,10 @@ def history_fun(machine_id,date):
                     else:
                         pass
                 a_o_res.append({'name': key, 'value': value,'color':color, 'unit': db_unit})
-                print('aaa outputttt', a_o_res)
+                # print('aaa outputttt', a_o_res)
 
             data_entries = d_i_res + d_o_res + a_i_res + a_o_res
-            print('dtaaaaaaaaaaaaa',data_entries)
+            # print('dtaaaaaaaaaaaaa',data_entries)
 
 
             entry = {

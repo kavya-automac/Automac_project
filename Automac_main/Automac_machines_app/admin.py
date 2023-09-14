@@ -4,3 +4,4 @@ from django.contrib import admin
 from .models import *
 
 admin.site.register(MachineDetails)
+admin.site.register(Machine_KPI_Data)

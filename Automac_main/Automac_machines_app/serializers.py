@@ -18,3 +18,14 @@ class analog_ip_op_Serializer(serializers.ModelSerializer):
         model=MachineDetails
         fields=('timestamp','machine_id','machine_location','analog_input','analog_output')
 
+class kpi_data_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=Machine_KPI_Data
+        fields='__all__'
+
+
+class kpi_cummulative_serilaizer(serializers.ModelSerializer):
+    class Meta:
+        model=Machine_KPI_Data
+        fields=('machine_id','kpi_id','kpi_data')
+

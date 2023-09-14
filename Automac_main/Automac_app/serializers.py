@@ -244,6 +244,11 @@ class Kpi_Serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+#
+# class Kpi_Serializer2(serializers.ModelSerializer):
+#     class Meta:
+#         model = Machine_Kpi_List
+#         fields = ('Daily_Water_Generated',)
 
 
 

@@ -26,7 +26,9 @@ class Plant_ListAdmin(admin.ModelAdmin):
 @admin.register(Machine_Kpi_List)
 class Machine_Kpi_ListAdmin(admin.ModelAdmin):
     # list_display = ['id','kpi_name','kpi_data','kpi_unit']
-    list_display = ['id','timestamp','kpi_name','kpi_data','kpi_unit','Total_Water_Generated','Daily_Water_Generated']
+    list_display = ['id','kpi_name','kpi_data','kpi_unit','Kpi_Type','labels']
+
+
 
 @admin.register(Machines_List)
 class Machines_ListAdmin(admin.ModelAdmin):
@@ -43,7 +45,7 @@ class Company_ListAdmin(admin.ModelAdmin):
 
 @admin.register(all_Machine_data)
 class all_Machine_dataAdmin(admin.ModelAdmin):
-    list_display = ['id','user_name','company_name','plant_name','machine_id','model_name']
+    list_display = ['id','user_name','company_name','plant_name','machine_id','model_name','kpi']
 
 # admin.site.register(all_Machine_data)
 

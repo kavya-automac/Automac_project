@@ -57,21 +57,24 @@ class Company_List(models.Model):
 
 
 
+
+
 class Machine_Kpi_List(models.Model):
     objects = models.Manager()
-    timestamp = models.DateField()
+    # timestamp = models.DateField()
+    # machine_id=models.CharField(max_length=100,blank=True)
     kpi_name=models.CharField(max_length=100,blank=True)
     kpi_data=models.IntegerField(default=0)
     kpi_unit=models.CharField(max_length=10,blank=True)
-    Total_Water_Generated=models.CharField(max_length=10,blank=True)
-    Daily_Water_Generated=models.CharField(max_length=10,blank=True)
+    Kpi_Type = models.CharField(max_length=20,blank=True)
+    labels=models.JSONField()
 
     class Meta:
         app_label = 'Automac_app'
         db_table = 'users_schema"."Machine_Kpi_List'
 
     def __str__(self):
-        return str(self.kpi_name)
+        return "%s %s" %(self.kpi_name,self.Kpi_Type)
 
 
 
@@ -91,7 +94,7 @@ class Machines_List(models.Model):
 
     def __str__(self):
         return str(self.machine_name)
-#
+
 
 
 class all_Machine_data(models.Model):
@@ -103,6 +106,7 @@ class all_Machine_data(models.Model):
     machine_id = models.ForeignKey(Machines_List, on_delete=models.CASCADE)
     model_name = models.ForeignKey(Model_List, on_delete=models.CASCADE)
     line_name = models.ForeignKey(Line_List, null=True,blank=True,on_delete=models.CASCADE)
+    kpi=models.ForeignKey(Machine_Kpi_List,null=True,blank=True,on_delete=models.CASCADE)
 
     class Meta:
         app_label = 'Automac_app'
