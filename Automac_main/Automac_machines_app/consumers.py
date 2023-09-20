@@ -2,6 +2,10 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
+from . import kpi_websocket
+import schedule
+import time
+from asgiref.sync import sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -56,3 +60,106 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # await self.send(text_data=json.dumps(event["text"]))
         await asyncio.sleep(1)
 
+#
+# # @sync_to_async
+# def test(self):
+#     # machine_id = 'MI'
+#     print('task function')
+#
+#
+# class myscheduler:
+#     def __init__(self,machine):
+#         self.machine_id=machine
+#         print(self.machine_id)
+#         # Initialize any class-specific variables here
+#         # self.counter = 0
+#         pass
+#
+#     async def my_task(self):
+#         await kpi_websocket.kpi_socket(self.machine_id)
+#         # await kpi_websocket.kpi_socket(self.machine_id)
+#         # loop = asyncio.new_event_loop()
+#         # asyncio.set_event_loop(loop)
+#         # loop.run_until_complete(kpi_websocket.kpi_socket(self.machine_id))
+#
+#
+#     def start_scheduling(self):
+#         # Schedule my_task to run every 2 seconds
+#         schedule.every(2).seconds.do(self.my_task)
+#
+#         while True:
+#             schedule.run_pending()
+#             time.sleep(1)
+#
+
+
+class KpiConsumer(AsyncWebsocketConsumer):
+
+    async def connect(self):
+        query_string = self.scope['query_string'].decode()
+        machine_id = query_string.split('=')[1]
+        if not machine_id:
+            await self.close()
+            return
+        await self.channel_layer.group_add(machine_id, self.channel_name)
+
+        await self.accept()
+
+        # Start calling kpi_socket function periodically
+        self.machine_id = machine_id
+        self.scheduler_task = asyncio.create_task(self.schedule_kpi_socket())
+
+    async def disconnect(self, close_code):
+        # Cancel the scheduler task when disconnecting
+        if hasattr(self, 'scheduler_task'):# hasattr() function is an inbuilt utility function,\
+            # which is used to check if an object has the given named attribute and return true if present, else false.
+            self.scheduler_task.cancel()
+
+        await self.channel_layer.group_discard(self.machine_id, self.channel_name)
+
+    async def schedule_kpi_socket(self):
+        while True:
+            try:
+                await kpi_websocket.kpi_socket(self.machine_id)
+                # Adjust the sleep duration as needed (e.g., call every 10 seconds)
+                await asyncio.sleep(2)
+            except asyncio.CancelledError:
+                # Task was canceled due to disconnection
+                break
+
+    async def kpiweb(self, event):
+        await self.send(text_data=event["text"])
+
+
+
+# class KpiConsumer(AsyncWebsocketConsumer):
+#
+#
+#     async def connect(self):
+#         query_string = self.scope['query_string'].decode()
+#         machine_id= query_string.split('=')[1]
+#         if  not machine_id:
+#             await self.close()
+#             return
+#         await self.channel_layer.group_add(machine_id, self.channel_name)
+#
+#         await self.accept()
+#
+#     async def disconnect(self, close_code):
+#         # await self.send("disconnected")
+#         self.websocket_closed = True
+#         # schedule.cancel_job(task)
+#
+#
+#
+#         print('disconnecteddd')
+#         # self.connected = False
+#
+#
+#
+#     async def kpiweb(self, event):
+#
+#         print('event',event)
+#         await self.send(text_data=event["text"])
+#
+#

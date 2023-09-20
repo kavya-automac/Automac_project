@@ -31,6 +31,7 @@ def get_kpis_data(user, machine):
 
     try:
         user_data = all_Machine_data.objects.filter(user_name=user, machine_id=machine)
+        print('userrrrrrrr',user_data)
     except Machines_List.DoesNotExist:
         error_message = "Please enter a valid machine_id."
         return JsonResponse({"status": error_message}, status=400)  # Return an error response

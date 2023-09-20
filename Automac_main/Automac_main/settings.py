@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-&svdzsu#n-4ir3!w3d=mle%2w31$=5%m(&6)0ortj)4kh1(&27
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ["65.0.154.172","127.0.0.1","192.168.29.144"]
+ALLOWED_HOSTS = ["65.0.154.172","127.0.0.1","192.168.29.144","192.168.94.216"]
 
 # Application definition
 
@@ -58,11 +58,21 @@ MIDDLEWARE = [
 ]
 
 CSRF_COOKIE_NAME = "csrftoken"
-
-
-CORS_ALLOW_CREDENTIALS = True
+#
+# CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
+
+
+CORS_ORIGIN_WHITELIST= [
+    'http://192.168.29.30:49337',
+    'http://localhost:3000',
+]
+
+CORS_ALLOWED_ORIGINS=[
+    'http://192.168.29.30:49337',
+    'http://localhost:3000',
+]
 
 
 ROOT_URLCONF = 'Automac_main.urls'
@@ -171,7 +181,7 @@ CAPATH = "Automac_machines_app/certificates/AmazonRootCA1.pem"
 CERTPATH = "Automac_machines_app/certificates/09ca209df4cc77d7fe5273ee62a21455a54874bdf75651a63323847989b625ec-certificate.pem.crt"
 KEYPATH = "Automac_machines_app/certificates/09ca209df4cc77d7fe5273ee62a21455a54874bdf75651a63323847989b625ec-private.pem.key"
 # /Automac_main/Automac_machines_app
-
-REST_FRAMEWORK ={
-    'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
-}
+#
+# REST_FRAMEWORK ={
+#     'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
+# }

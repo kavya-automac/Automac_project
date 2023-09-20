@@ -296,7 +296,7 @@ def Device_7inch(mqtt_machines_data):
     res = json.dumps(result)
     channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
-    # print('channel_layer',channel_layer)
+    print('channel_layer',channel_layer)
     async_to_sync(channel_layer.group_send)(machine_id, {"type": "chat.message", "text": res})
 
 

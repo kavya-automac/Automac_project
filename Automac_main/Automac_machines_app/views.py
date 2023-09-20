@@ -10,6 +10,7 @@ from . models import *
 from Automac_app.models import Machines_List
 from Automac_app.serializers import usermachineSerializer
 
+from Automac_app import  calculations
 
 
 
@@ -34,6 +35,8 @@ class machine_data(APIView):
         user_data = Machines_List.objects.all()
         user_serializer = usermachineSerializer(user_data, many=True)
         data2=user_serializer.data
+        info = calculations.kpi_data_to_database()
+        print('infoooooooooooooooooooooooooooo',info)
 
         return Response(data2)
 

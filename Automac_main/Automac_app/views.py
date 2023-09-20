@@ -182,16 +182,31 @@ class MachinesView(ViewSet):
     @action(detail=False, methods=['get'])
     def machine_list(self, request):
         if request.user.is_authenticated:
+            user=request.user
 
 
             print('userssss', request.user)
             # get_user_data = all_Machine_data.objects.filter(user_name=request.user).values('machine_id').distinct()
             get_user_data= all_Machine_data.objects.filter(user_name=request.user)
+            # get_user_data= all_Machine_data.objects.all().distinct()
+
+            # get_user_data=all_Machine_data.objects.using("default").distinct(user,"machine_id")
+            # get_user_data = all_Machine_data.objects.using("default").filter(user_name=user).values('machine_id__machine_id').distinct()
+            # get_user_data = all_Machine_data.objects.using("default").filter(user_name=user).distinct()
+            # get_user_data = all_Machine_data.objects.using("default").filter(user_name=user).values(
+            #     'machine_id__machine_id',
+            #     'company_name__company_name',
+            #     'plant_name__plant_name',
+            #     'model_name__model_name',
+            #     'machine_id__machine_name',
+            #     'line_name'
+            # ).distinct()
             print('get_user_data',get_user_data)
-            # print('get_user_data',get_user_data[0].company_name.company_name)
+            print('get_user_data',get_user_data[0].company_name.company_name)
             get_user_data_s= all_Machine_data_Serializer2(get_user_data,many=True)
             get_user_data_s_data= get_user_data_s.data
-            print('get_user_data_s_data',get_user_data_s_data)
+            # print('get_user_data_s_data',get_user_data_s_data)
+
             for i in range(0,len(get_user_data_s_data)):
                 get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
                 get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
@@ -199,7 +214,7 @@ class MachinesView(ViewSet):
                 get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
                 # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
                 get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
-            print('get_user_data_s_data',get_user_data_s_data)
+            # print('get_user_data_s_data',get_user_data_s_data)
 
 
 

@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from Automac_app.models import Machine_Kpi_List
-
+import time
 
 class MachineDetails(models.Model):
     objects = models.Manager()
@@ -41,6 +41,10 @@ class Machine_KPI_Data(models.Model):
         # return "%s,%s %s" % (self.db_timestamp, self.machine_id,self.timestamp)
         return "%s %s %s" % (self.machine_id, self.timestamp, self.kpi_id)
 
+
+
+
+
 #
 # from Automac_app import  calculations
 #
@@ -52,8 +56,20 @@ class Machine_KPI_Data(models.Model):
 #         machine=instance.machine_id
 #         print('instanceee',instance)
 #         print('machine......',machine)
-#         calculations.cummulative_data(instance)
+#
+#         calculations.kpi_data_to_database(instance)
 #         # signal_data = kpis.get_kpis_data(machine)
 #         # print('signalllllllllllllll',signal_data)
 
 
+
+
+# from . import kpi_websocket
+#
+# @receiver(post_save,sender=Machine_KPI_Data)
+# def kpisignal(sender,instance,created,**kwargs):
+#     if created:
+#
+#         print("new data arrived")
+#         machine_id=instance.machine_id
+#         kpi_websocket.kpi_socket(machine_id)
