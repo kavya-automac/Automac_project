@@ -10,7 +10,7 @@ from . models import *
 from Automac_app.models import Machines_List
 from Automac_app.serializers import usermachineSerializer
 
-from Automac_app import  calculations
+# from Automac_app import  calculations
 
 
 
