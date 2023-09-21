@@ -8,12 +8,12 @@ import json
 from datetime import datetime
 
 # from Automac_app.models import all_Machine_data,Machines_List
-from  . models import Machine_KPI_Data
 from asgiref.sync import sync_to_async
 
 @sync_to_async
 def kpi_socket(machine_id):
     print('kkk')
+    from .models import Machine_KPI_Data
     from Automac_app.models import all_Machine_data, Machines_List
 
     kpis = []
