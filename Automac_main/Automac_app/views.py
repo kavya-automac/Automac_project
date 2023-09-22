@@ -1,24 +1,11 @@
 from datetime import datetime
 from pathlib import Path
 import datetime
-# from django.contrib.auth.decorators import login_required
-# from django.http import JsonResponse
-# from django.shortcuts import render, redirect
-# from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
-# from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes
-# from rest_framework.views import APIView
-# from django.views.generic import View
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
-# from . models import *
-# from . serializers import *
-# from.signals import *
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -30,12 +17,12 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.apps import apps
 from . history import history_fun
-from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,machineSerializer_two,analog_ip_op_Serializer
+from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,kpi_data_Serializer,machineSerializer_two,analog_ip_op_Serializer
 # from Automac_machines_app.serializers import *
-from Automac_machines_app.models import MachineDetails
+from Automac_machines_app.models import MachineDetails,Machine_KPI_Data
 from . import kpis
 # from .Automac_machines_app.models import MachineDetails
-
+from .models import all_Machine_data
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -77,7 +64,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             print("logged in:", request.user.username)
-            return JsonResponse({"status": "user_validated"})
+            return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key})
 
         else:
             return JsonResponse({"status": "unauthorized_user"})
@@ -182,7 +169,18 @@ class MachinesView(ViewSet):
     @action(detail=False, methods=['get'])
     def machine_list(self, request):
         if request.user.is_authenticated:
-            user=request.user
+            print('requesttttttt',request.META)
+            # print('requesttttttt',request.META)
+            # machine_id='ABD2'
+            # machine=Machines_List.objects.get(machine_id=machine_id)
+            # io=IO_List.objects.filter(machine_id__machine_id=machine).order_by('id')
+            # inputs=[]
+            # for i in io:
+            #     inputs.append(i.IO_type)
+            #
+            # print('...................',inputs)
+            #
+
 
 
             print('userssss', request.user)
@@ -211,17 +209,18 @@ class MachinesView(ViewSet):
                 get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
                 get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
                 get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
-                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
+                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
                 # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
                 get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
-            # print('get_user_data_s_data',get_user_data_s_data)
-
+                # print('get_user_data_s_data',get_user_data_s_data)
+                get_user_data_s_data[i]['machine_name']=get_user_data[i].machine_id.machine_name
 
 
             return JsonResponse({"machine_list": get_user_data_s_data})
 
             # form_fun = forms_data()
         else:
+            print('requesttttt',request.META)
             print("else")
             return JsonResponse({"status": "login_required"})
 
@@ -311,12 +310,18 @@ class MachinesView(ViewSet):
                 elif module == "kpis":
                     try:
                         machine = Machines_List.objects.get(machine_id=machine_id)
+                        # print('machineeeeeeeee',machine.machine_id)
+                        # print('machineenameee',machine.machine_name)
                     except Machines_List.DoesNotExist:
                         error_message = "Please enter a valid machine_id."
                         return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
                     user=request.user
                     data = kpis.get_kpis_data(user,machine)
+                    data['machine_id']=machine.machine_id
+                    data['machine_name']=machine.machine_name
+
+
 
 
 
@@ -530,7 +535,7 @@ class Trails(ViewSet):
             BASE_DIR = Path(__file__).resolve().parent.parent
             get_user_data = all_Machine_data.objects.filter(user_name=request.user)
             # print('get_user_data',get_user_data[0].company_name.company_name)
-            get_user_data_s = all_Machine_data_Serializer2(get_user_data, many=True)
+            get_user_data_s = all_Machine_data_Serializer4(get_user_data, many=True)
             get_user_data_s_data = get_user_data_s.data
 
             print('get_user_data_s_data', get_user_data_s_data)
@@ -538,9 +543,11 @@ class Trails(ViewSet):
                 get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
                 get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
                 get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
-                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
+                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
                 # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
                 get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
+                get_user_data_s_data[i]['machine_name']=get_user_data[i].machine_id.machine_name
+
             print('get_user_data_s_data', get_user_data_s_data)
 
             return JsonResponse({"Trail_list": get_user_data_s_data})
@@ -553,31 +560,59 @@ class Trails(ViewSet):
 
 
 
-
 @authentication_classes([SessionAuthentication])
-# @permission_classes([IsAuthenticated])
-class Reports_view(ViewSet):
+class ReportsView(ViewSet):
     @action(detail=False, method=['get'])
-    def Reports(self,request):
+    def Report_List(self, request):
         if request.user.is_authenticated:
-            # report_type = request.POST.get('report_type')
-            # machine_id = request.POST.get('machine_id')
-            # start_datetime = request.POST.get('start_datetime')
-            # end_datetime = request.POST.get('end_datetime')
+            print("if")
 
+            BASE_DIR = Path(__file__).resolve().parent.parent
+            get_user_data = all_Machine_data.objects.filter(user_name=request.user)
+            # print('get_user_data',get_user_data[0].company_name.company_name)
+            get_user_data_s = all_Machine_data_Serializer2(get_user_data, many=True)
+            get_user_data_s_data = get_user_data_s.data
 
+            print('get_user_data_s_data', get_user_data_s_data)
+
+            for i in range(0, len(get_user_data_s_data)):
+                if get_user_data[i].kpi is not None:
+
+                    get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
+                    get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
+                    get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
+                    get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_name)
+                    # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
+                    get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
+                    get_user_data_s_data[i].update(kpi=str(get_user_data[i].kpi.kpi_name))
+                else:
+                    # Handle the case where get_user_data[i].kpi is None
+                    # You can choose to skip this update or handle it differently
+                    pass
+
+                    # get_user_data_s_data[i].update(kpi=str(get_user_data[i].kpi))
+
+            print('get_user_data_s_data', get_user_data_s_data)
+
+            return JsonResponse({"Trail_list": get_user_data_s_data})
+
+    @action(detail=False, methods=['get'])
+    def Reports(self, request):
+        if request.user.is_authenticated:
             try:
                 request_data = json.loads(request.body)
+                print('request_data',request_data)
             except json.JSONDecodeError:
                 return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
 
-            report_type = request_data.get('report_type')
+            # Extract user-selected parameters
+            kpi_name = request_data.get('report_type')
             machine_id = request_data.get('machine_id')
             start_datetime = request_data.get('start_datetime')
             end_datetime = request_data.get('end_datetime')
 
-            if not start_datetime or not end_datetime:
-                return JsonResponse({"error": "start_datetime and end_datetime are required."},
+            if not kpi_name or not machine_id or not start_datetime or not end_datetime:
+                return JsonResponse({"error": "kpi_name, machine_id, start_datetime, and end_datetime are required."},
                                     status=status.HTTP_400_BAD_REQUEST)
 
             try:
@@ -585,65 +620,137 @@ class Reports_view(ViewSet):
                 start_datetime = datetime.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
                 end_datetime = datetime.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
             except ValueError:
-                return Response({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
-                                status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-            # Fetch the machine from Machines_List model
-            machine = Machines_List.objects.get(machine_id=machine_id)
-            Io_machine_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
-            Io_machine_data_serializer = IO_list_serializer(Io_machine_data, many=True)
-            Io_machine_data_serializer_data = Io_machine_data_serializer.data
-            print('machine',machine)
-            if not machine:
-                return Response({"error": "Machine not found"}, status=400)
+            # Check if the user has access to the selected machine and KPI name
+            try:
+                machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name=request.user,kpi__kpi_name=kpi_name)
+            except all_Machine_data.DoesNotExist:
+                return JsonResponse({"error": "Machine not found for the user"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Fetch relevant data from MachineDetails model for the given machine_id and date range
-            filtered_data = MachineDetails.objects.filter(
+            # Fetch relevant data from Machine_KPI_Data model for the given machine_id, kpi_name, and date range
+            filtered_data = Machine_KPI_Data.objects.filter(
                 machine_id=machine_id,
+                kpi_id__kpi_name=kpi_name,  # Assuming there's a field for KPI ID in the Machine_KPI_Data model
                 timestamp__range=[start_datetime, end_datetime],
-            )
-            filtered_data_s = analog_ip_op_Serializer(filtered_data, many=True)
-            filtered_data_s_data = filtered_data_s.data
-            # print('filtered_data_s_data',filtered_data_s_data)
-
-            plant_model_data = all_Machine_data.objects.filter(machine_id=machine.id,user_name=request.user)
-
-            print('plant_model_data_s', plant_model_data)
-
+            ).order_by('timestamp')
+            print('filtered_data',filtered_data)
 
             response_data = []
-            for entry in filtered_data_s_data:
-                timestamp = entry['timestamp']
-                machine_location = entry['machine_location']
+            for entry in filtered_data:
+                timestamp = entry.timestamp
+                kpi_data = entry.kpi_data
 
-                # Determine the relevant data based on the selected report_type
-                # for i in range(len(Io_machine_data)):
-                #     if Io_machine_data_serializer_data[i]['IO_type'] == "analog_input" and \
-                #             Io_machine_data_serializer_data[i]['IO_name'] == key:
-                if report_type in machine.analog_input:
-                    relevant_data = {report_type: entry['analog_input'][machine.analog_input.index(report_type)]}
-                elif report_type in machine.analog_output:
-                    relevant_data = {report_type: entry['analog_output'][machine.analog_output.index(report_type)]}
-                else:
-                    relevant_data = {}
-
+                # Extract the relevant KPI data
+                relevant_data = {kpi_name: entry.kpi_data}
 
                 response_data.append({
-
                     "timestamp": timestamp,
                     "machine_id": machine_id,
-                    "machine_location": machine_location,
-                    "plant":plant_model_data[0].plant_name.plant_name,
-                    "model": plant_model_data[0].model_name.model_name,
 
+                    "kpi_name": kpi_name,
                     "data": relevant_data,
                 })
-            print('len', len(response_data))
 
             return JsonResponse({"data": response_data})
+
         else:
-            print("else")
             return JsonResponse({"status": "login_required"})
+#
+# @authentication_classes([SessionAuthentication])
+# # @permission_classes([IsAuthenticated])
+# class Reports_view(ViewSet):
+#     @action(detail=False, method=['get'])
+#     def Reports(self,request):
+#         if request.user.is_authenticated:
+#             # report_type = request.POST.get('report_type')
+#             # machine_id = request.POST.get('machine_id')
+#             # start_datetime = request.POST.get('start_datetime')
+#             # end_datetime = request.POST.get('end_datetime')
+#
+#
+#             try:
+#                 request_data = json.loads(request.body)
+#             except json.JSONDecodeError:
+#                 return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             report_type = request_data.get('report_type')
+#             machine_id = request_data.get('machine_id')
+#             start_datetime = request_data.get('start_datetime')
+#             end_datetime = request_data.get('end_datetime')
+#
+#             if not start_datetime or not end_datetime:
+#                 return JsonResponse({"error": "start_datetime and end_datetime are required."},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             try:
+#                 # Convert the start_datetime and end_datetime strings to datetime objects
+#                 start_datetime = datetime.datetime.strptime(start_datetime, '%Y-%m-%d %H:%M:%S')
+#                 end_datetime = datetime.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
+#             except ValueError:
+#                 return Response({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
+#                                 status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Fetch the machine from Machines_List model
+#             machine = Machines_List.objects.get(machine_id=machine_id)
+#             Io_machine_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
+#             Io_machine_data_serializer = IO_list_serializer(Io_machine_data, many=True)
+#             Io_machine_data_serializer_data = Io_machine_data_serializer.data
+#             print('machine',machine)
+#             if not machine:
+#                 return Response({"error": "Machine not found"}, status=400)
+#
+#             # Fetch relevant data from MachineDetails model for the given machine_id and date range
+#             filtered_data = Machine_KPI_Data.objects.filter(
+#                 machine_id=machine_id,
+#                 timestamp__range=[start_datetime, end_datetime],
+#             )
+#             filtered_data_s = kpi_data_Serializer(filtered_data, many=True)
+#             filtered_data_s_data = kpi_data_Serializer.data
+#             # print('filtered_data_s_data',filtered_data_s_data)
+#
+#             plant_model_data = all_Machine_data.objects.filter(machine_id=machine.id,user_name=request.user)
+#
+#             print('plant_model_data_s', plant_model_data)
+#
+#
+#             response_data = []
+#             for entry in filtered_data_s_data:
+#                 timestamp = entry['timestamp']
+#                 machine_location = entry['machine_location']
+#
+#                 # Determine the relevant data based on the selected report_type
+#                 # for i in range(len(Io_machine_data)):
+#                 #     if Io_machine_data_serializer_data[i]['IO_type'] == "analog_input" and \
+#                 #             Io_machine_data_serializer_data[i]['IO_name'] == key:
+#                 if report_type in machine.analog_input:
+#                     relevant_data = {report_type: entry['analog_input'][machine.analog_input.index(report_type)]}
+#                 elif report_type in machine.analog_output:
+#                     relevant_data = {report_type: entry['analog_output'][machine.analog_output.index(report_type)]}
+#                 else:
+#                     relevant_data = {}
+#
+#
+#                 response_data.append({
+#
+#                     "timestamp": timestamp,
+#                     "machine_id": machine_id,
+#                     "machine_location": machine_location,
+#                     "plant":plant_model_data[0].plant_name.plant_name,
+#                     "model": plant_model_data[0].model_name.model_name,
+#
+#                     "data": relevant_data,
+#                 })
+#             print('len', len(response_data))
+#
+#             return JsonResponse({"data": response_data})
+#         else:
+#             print("else")
+#             return JsonResponse({"status": "login_required"})
+
+
+
 
 #
 # @csrf_exempt
