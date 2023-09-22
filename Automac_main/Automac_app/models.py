@@ -100,11 +100,11 @@ class Machines_List(models.Model):
 class all_Machine_data(models.Model):
     objects = models.Manager()
     user_name=models.ForeignKey(User,on_delete=models.CASCADE)
-    company_name=models.ForeignKey(Company_List,on_delete=models.CASCADE)
+    company_name=models.ForeignKey(Company_List,null=True,blank=True,on_delete=models.CASCADE)
     # company_name=models.CharField(max_length=50,blank=True)
     plant_name = models.ForeignKey(Plant_List,null=True,blank=True, on_delete=models.CASCADE)
-    machine_id = models.ForeignKey(Machines_List, on_delete=models.CASCADE)
-    model_name = models.ForeignKey(Model_List, on_delete=models.CASCADE)
+    machine_id = models.ForeignKey(Machines_List,null=True,blank=True,on_delete=models.CASCADE)
+    model_name = models.ForeignKey(Model_List,null=True,blank=True,on_delete=models.CASCADE)
     line_name = models.ForeignKey(Line_List, null=True,blank=True,on_delete=models.CASCADE)
     kpi=models.ForeignKey(Machine_Kpi_List,null=True,blank=True,on_delete=models.CASCADE)
 
