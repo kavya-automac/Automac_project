@@ -36,6 +36,8 @@ def get_kpis_data(user, machine):
         error_message = "Please enter a valid machine_id."
         return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
+
+
     today = datetime.now().date()
 
     for machine_data in user_data:
@@ -104,8 +106,9 @@ def get_kpis_data(user, machine):
             kpis.append(kpi_entry)
 
     result = {
-        'kpi': kpis,
+        'data': kpis,
     }
+
     return result
 
 

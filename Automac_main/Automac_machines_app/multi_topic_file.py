@@ -14,6 +14,7 @@ from . import conversion_file
 #     else:
 #         pass
 
+
 def all_topics(mqtt_machines_data,topic):
     if topic == 'maithri/abu_dabhi':
         conversion_file.store_data(mqtt_machines_data)
@@ -22,3 +23,6 @@ def all_topics(mqtt_machines_data,topic):
         conversion_file.store_data(mqtt_machines_data)
     elif topic == 'Maithri/Device_7inch':
         conversion_file.MID004_store_data(mqtt_machines_data)
+    elif topic =='demo_app':
+        conversion_file.mqtt_test_machine_data(mqtt_machines_data)
+

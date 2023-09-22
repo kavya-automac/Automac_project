@@ -149,3 +149,38 @@ def MID004_store_data(mqtt_machines_data):
     # Save the instance to the database
     sensor_data.save()
 
+
+
+def mqtt_test_machine_data(mqtt_machines_data):
+
+
+    payload = json.loads(mqtt_machines_data)
+
+
+
+    timestamp = payload['timestamp']
+    machine_id = payload['machine_id']
+    machine_location = payload['machine_location']
+    digital_input = payload.get('digital_inputs')
+    digital_output = payload.get('digital_outputs')
+    analog_input = payload.get('analog_inputs')
+    analog_output = payload.get('analog_outputs')
+    other=payload.get('other')
+
+
+    MachineDetails = apps.get_model('Automac_machines_app', 'MachineDetails')
+
+
+    sensor_data = MachineDetails(
+        # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
+        test_timestamp=timestamp,
+        timestamp=timestamp,
+        machine_id=machine_id,
+        machine_location=machine_location,
+        digital_input=digital_input,
+        digital_output=digital_output,
+        analog_input=analog_input,
+        analog_output=analog_output,
+        other=other
+    )
+    sensor_data.save()

@@ -224,7 +224,7 @@ class all_Machine_data_Serializer(serializers.ModelSerializer):
 
 
 
-class all_Machine_data_Serializer2(serializers.ModelSerializer):
+class all_Machine_data_Serializer2(serializers.ModelSerializer):#for reports api
     class Meta:
         model=all_Machine_data
         # fields = '__all__'

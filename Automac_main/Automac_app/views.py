@@ -201,22 +201,73 @@ class MachinesView(ViewSet):
             # ).distinct()
             print('get_user_data',get_user_data)
             print('get_user_data',get_user_data[0].company_name.company_name)
-            get_user_data_s= all_Machine_data_Serializer2(get_user_data,many=True)
+            get_user_data_s= all_Machine_data_Serializer4(get_user_data,many=True)
             get_user_data_s_data= get_user_data_s.data
             # print('get_user_data_s_data',get_user_data_s_data)
+            # for i in range(0, len(get_user_data_s_data)):
+            #     if get_user_data[i].company_name is not None:
+            #         get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
+            #
+            #     if get_user_data[i].plant_name is not None:
+            #         get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
+            #
+            #     if get_user_data[i].model_name is not None:
+            #         get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
+            #
+            #     if get_user_data[i].machine_id is not None:
+            #         get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
+            #         # Optionally, you can update machine_location if it's not None
+            #         # get_user_data_s_data[i].update(machine_location=get_user_data[i].machine_id.machine_location)
+            #
+            #     if get_user_data[i].line_name is not None:
+            #         get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name.line_name))
+            #
+            #     # Check if machine_id is not None before accessing machine_name
+            #     if get_user_data[i].machine_id is not None:
+            #         get_user_data_s_data[i]['machine_name'] = get_user_data[i].machine_id.machine_name
+            #
+            # return JsonResponse({"machine_list": get_user_data_s_data})
+            machine_list_data=[]
 
             for i in range(0,len(get_user_data_s_data)):
-                get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
-                get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
-                get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
-                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
-                # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
-                get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
-                # print('get_user_data_s_data',get_user_data_s_data)
-                get_user_data_s_data[i]['machine_name']=get_user_data[i].machine_id.machine_name
+                machine_id = get_user_data[i].machine_id.machine_id
+                company_name = get_user_data[i].company_name.company_name if get_user_data[
+                                                                                 i].company_name is not None else "None"
+                plant_name = get_user_data[i].plant_name.plant_name if get_user_data[
+                                                                           i].plant_name is not None else "None"
+                model_name = get_user_data[i].model_name.model_name if get_user_data[
+                                                                           i].model_name is not None else "None"
+                line_name = get_user_data[i].line_name if get_user_data[i].line_name is not None else "None"
+                machine_name = get_user_data[i].machine_id.machine_name if get_user_data[
+                                                                               i].machine_id is not None else "None"
+
+                machine_id = str(machine_id) if machine_id is not None else "None"
+
+                machine_list_data.append({
+                        "company_name": company_name,
+                        "plant_name": plant_name,
+                        "machine_id": machine_id,
+                        "model_name": model_name,
+                        "line_name": line_name,
+                        "machine_name": machine_name
+                    })
 
 
-            return JsonResponse({"machine_list": get_user_data_s_data})
+
+                #
+                # get_user_data[i].machine_id.machine_id
+                #
+                # get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
+                # get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
+                # get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
+                # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
+                # # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
+                # get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
+                # # print('get_user_data_s_data',get_user_data_s_data)
+                # get_user_data_s_data[i]['machine_name']=get_user_data[i].machine_id.machine_name
+
+
+            return JsonResponse({"machine_list": machine_list_data})
 
             # form_fun = forms_data()
         else:
@@ -271,15 +322,32 @@ class MachinesView(ViewSet):
                     s_data=all_Machine_data_Serializer(plant_line_data,many=True)
                     s_data_d=s_data.data
                     print('plant_line_data',plant_line_data[0].plant_name,type(plant_line_data))
+
                     for f_names in range(0,len(plant_line_data)):
-                        s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
-                        s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
-                        s_data_d[f_names].update(line_name=str(plant_line_data[f_names].line_name))
-                        print('s_data',s_data_d)
-                        general_serialzer_data_1.update(dict(s_data_d[0]))
-                        # general_serialzer_data_1=dict(s_data_d)
+                        if plant_line_data[f_names] is not None:
+                            s_data_d[f_names].update(
+                                plant_name=plant_line_data[f_names].plant_name.plant_name if plant_line_data[
+                                                                                                 f_names].plant_name is not None else "None")
+                            s_data_d[f_names].update(
+                                model_name=plant_line_data[f_names].model_name.model_name if plant_line_data[
+                                                                                                 f_names].model_name is not None else "None")
+                            s_data_d[f_names].update(
+                                line_name=str(plant_line_data[f_names].line_name) if plant_line_data[
+                                                                                         f_names].line_name is not None else "None")
+                            print('s_data', s_data_d)
+                            general_serialzer_data_1.update(dict(s_data_d[0]))
+                            # general_serialzer_data_1 = dict(s_data_d)
+
                     if not s_data_d:
                         return JsonResponse({"general_data": general_serialzer_data_1})
+                    #     s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
+                    #     s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
+                    #     s_data_d[f_names].update(line_name=str(plant_line_data[f_names].line_name))
+                    #     print('s_data',s_data_d)
+                    #     general_serialzer_data_1.update(dict(s_data_d[0]))
+                    #     # general_serialzer_data_1=dict(s_data_d)
+                    # if not s_data_d:
+                    #     return JsonResponse({"general_data": general_serialzer_data_1})
 
                     Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
                                        "Uploaded_by":"harsha",
@@ -539,18 +607,32 @@ class Trails(ViewSet):
             get_user_data_s_data = get_user_data_s.data
 
             print('get_user_data_s_data', get_user_data_s_data)
+            Trail_list_data = []
+
             for i in range(0, len(get_user_data_s_data)):
-                get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
-                get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
-                get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
-                get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
-                # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
-                get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
-                get_user_data_s_data[i]['machine_name']=get_user_data[i].machine_id.machine_name
+                machine_id = get_user_data[i].machine_id.machine_id
+                company_name = get_user_data[i].company_name.company_name if get_user_data[
+                                                                                 i].company_name is not None else "None"
+                plant_name = get_user_data[i].plant_name.plant_name if get_user_data[
+                                                                           i].plant_name is not None else "None"
+                model_name = get_user_data[i].model_name.model_name if get_user_data[
+                                                                           i].model_name is not None else "None"
+                line_name = get_user_data[i].line_name if get_user_data[i].line_name is not None else "None"
+                machine_name = get_user_data[i].machine_id.machine_name if get_user_data[
+                                                                               i].machine_id is not None else "None"
 
-            print('get_user_data_s_data', get_user_data_s_data)
+                machine_id = str(machine_id) if machine_id is not None else "None"
 
-            return JsonResponse({"Trail_list": get_user_data_s_data})
+                Trail_list_data.append({
+                    "company_name": company_name,
+                    "plant_name": plant_name,
+                    "machine_id": machine_id,
+                    "model_name": model_name,
+                    "line_name": line_name,
+                    "machine_name": machine_name
+                })
+
+            return JsonResponse({"Trail_list": Trail_list_data})
 
 
 

@@ -29,7 +29,7 @@ def on_message(client, userdata, msg):
     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
     mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
-    payload_json = json.loads(mqtt_machines_data)
+    # payload_json = json.loads(mqtt_machines_data)
     topic=msg.topic
     # print('mqtt_machines_data',msg.topic)
     # print('timestamp :', payload_json['timestamp'])
@@ -42,6 +42,7 @@ def on_message(client, userdata, msg):
         physical_keys_values.mqtt_data_to_channels(mqtt_machines_data)
     else:
         pass
+
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -59,7 +60,7 @@ client.connect(
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully on aws')
-       client_1.subscribe('Maithri/Device_7inch')
+       # client_1.subscribe('Maithri/Device_7inch')
    else:
        print('Bad connection. Code:', rc)
 
@@ -95,5 +96,48 @@ client_1.connect(
 
    host=settings.AWSHOST,
    port=settings.AWSPORT,
+   keepalive=settings.MQTT_KEEPALIVE
+)
+
+
+
+
+#--------------------------------------------------testingg--------------------
+
+
+
+def on_connect_2(client_2, userdata, flags, rc):
+   if rc == 0:
+       print('Connected successfully on hive(testingggg)')
+       client_2.subscribe('demo_app')
+   else:
+       print('Bad connection. Code:', rc)
+
+def on_message_2(client_2, userdata, msg):
+    # print("on_message")
+    # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
+
+    mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
+    print('mqtt_machines_data',mqtt_machines_data)
+    topic=msg.topic
+
+    multi_topic_file.all_topics(mqtt_machines_data,topic)
+
+    # from . import physical_keys_values
+    if topic =='Maithri/Device_7inch':
+        from . import physical_keys_values
+
+        physical_keys_values.Device_7inch(mqtt_machines_data)
+
+
+
+
+client_2 = mqtt.Client()
+client_2.on_connect = on_connect_2
+client_2.on_message = on_message_2
+client_2.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)
+client_2.connect(
+   host=settings.MQTT_SERVER,
+   port=settings.MQTT_PORT,
    keepalive=settings.MQTT_KEEPALIVE
 )
