@@ -228,6 +228,12 @@ class all_Machine_data_Serializer2(serializers.ModelSerializer):
     class Meta:
         model=all_Machine_data
         # fields = '__all__'
+        fields = ('company_name','plant_name','machine_id','model_name','line_name','kpi')
+
+class all_Machine_data_Serializer4(serializers.ModelSerializer):
+    class Meta:
+        model=all_Machine_data
+        # fields = '__all__'
         fields = ('company_name','plant_name','machine_id','model_name','line_name')
 
 
