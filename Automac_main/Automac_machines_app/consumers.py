@@ -16,22 +16,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # print('qery_stringggg', self.scope['query_string'].decode())
         query_string=self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1]
-        # print('machine_id',machine_id)
+        print('machine_id connect ',machine_id)
 
 
 
         # paramsssssssssssss [(b'sec-websocket-version', b'13'), (b'sec-websocket-key', b'PID+IdLq/ts0PQ8qVc2xUQ=='), (b'connection', b'Upgrade'), (b'upgrade', b'websocket'),
  # (b'sec-websocket-extensions', b'permessage-deflate; client_max_window_bits'), (b'host', b'127.0.0.1:8000')]
 
-        await self.channel_layer.group_add(machine_id, self.channel_name)
+        await self.channel_layer.group_add(str(machine_id)+'_io', self.channel_name)
         # group_name=self.scope["url_route"]["kwargs"]["group_name"]
         # print('group_name',group_name)
         await self.accept()
 
 
     async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(str(self.machine_id)+'_io', self.channel_name)
+
         # Remove the consumer from the "chat" channel group
-        await self.channel_layer.group_discard("mqtt_data", self.channel_name)
+        # await self.channel_layer.group_discard("mqtt_data", self.channel_name)
+
 
     async def receive(self, text_data):
         print('text',text_data)
@@ -52,13 +55,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # # selff <Automac_machines_app.consumers.ChatConsumer object at 0x0000022389CD89D0>
         # print('scope',self.scope)
         # print('qery_stringggg',self.scope['query_string'].decode())
+        print('event' , event)
+        print('event text' , event["text"])
 
-
-        # Send the received data to the WebSocket connection
-        await self.send(text_data=event["text"])
-        # print(event)
-        # await self.send(text_data=json.dumps(event["text"]))
-        await asyncio.sleep(1)
+        try:
+            # Send the received data to the WebSocket connection
+            await self.send(text_data=event["text"])
+            print("eventtttttttttttttttttttttttttt")
+            # await self.send(text_data=json.dumps(event["text"]))
+            await asyncio.sleep(1)
+        except Exception as e:
+            print("chat message error - ", e)
 
 #
 # # @sync_to_async
@@ -96,18 +103,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 class KpiConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
-        query_string = self.scope['query_string'].decode()
-        machine_id = query_string.split('=')[1]
-        if not machine_id:
-            await self.close()
-            return
-        await self.channel_layer.group_add(machine_id, self.channel_name)
+        try:
+            query_string = self.scope['query_string'].decode()
+            machine_id = query_string.split('=')[1]
+            # if not machine_id:
+            #     await self.close()
+            #     return
+            await self.channel_layer.group_add(str(machine_id)+'_kpi', self.channel_name)
 
-        await self.accept()
+            await self.accept()
 
-        # Start calling kpi_socket function periodically
-        self.machine_id = machine_id
-        self.scheduler_task = asyncio.create_task(self.schedule_kpi_socket())
+            # Start calling kpi_socket function periodically
+            self.machine_id = machine_id
+            self.scheduler_task = asyncio.create_task(self.schedule_kpi_socket())
+        except:
+            print("errorrrrr")
 
     async def disconnect(self, close_code):
         # Cancel the scheduler task when disconnecting
@@ -115,11 +125,13 @@ class KpiConsumer(AsyncWebsocketConsumer):
             # which is used to check if an object has the given named attribute and return true if present, else false.
             self.scheduler_task.cancel()
 
-        await self.channel_layer.group_discard(self.machine_id, self.channel_name)
+        await self.channel_layer.group_discard(str(self.machine_id)+'_kpi', self.channel_name)
 
     async def schedule_kpi_socket(self):
         while True:
             try:
+                print("-----------------------------------------------")
+                print("-----------------------------------------------")
                 await kpi_websocket.kpi_socket(self.machine_id)
                 # Adjust the sleep duration as needed (e.g., call every 10 seconds)
                 await asyncio.sleep(2)
@@ -128,7 +140,10 @@ class KpiConsumer(AsyncWebsocketConsumer):
                 break
 
     async def kpiweb(self, event):
-        await self.send(text_data=event["text"])
+        try:
+            await self.send(text_data=event["text"])
+        except Exception as e:
+            print("kpi message error - ", e)
 
 
 

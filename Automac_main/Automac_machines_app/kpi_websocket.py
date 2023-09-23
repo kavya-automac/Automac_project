@@ -10,6 +10,8 @@ from datetime import datetime
 # from Automac_app.models import all_Machine_data,Machines_List
 from asgiref.sync import sync_to_async
 
+channel_layer_KPI = get_channel_layer()
+
 @sync_to_async
 def kpi_socket(machine_id):
     print('kkk')
@@ -79,8 +81,11 @@ def kpi_socket(machine_id):
     print('result_data', result_data)
     res = json.dumps(result_data)
 
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(machine_id, {"type": "kpiweb", "text": res})
+    # channel_layer = get_channel_layer()
+    try:
+        async_to_sync(channel_layer_KPI.group_send)(str(machine_id)+'_kpi', {"type": "kpiweb", "text": res})
+    except Exception as e:
+        print("kpi ws error ", e)
 
 
 

@@ -21,6 +21,7 @@ def on_connect(client, userdata, flags, rc):
        print('Connected successfully on hive')
        client.subscribe('maithri/abu_dabhi')
        client.subscribe('Topic_name')
+       client.subscribe('demo_app')
    else:
        print('Bad connection. Code:', rc)
 
@@ -40,6 +41,12 @@ def on_message(client, userdata, msg):
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
         from . import physical_keys_values
         physical_keys_values.mqtt_data_to_channels(mqtt_machines_data)
+    if topic == 'demo_app':
+        from . import physical_keys_values
+
+
+        physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+
     else:
         pass
 
@@ -104,40 +111,39 @@ client_1.connect(
 
 #--------------------------------------------------testingg--------------------
 
-
-
-def on_connect_2(client_2, userdata, flags, rc):
-   if rc == 0:
-       print('Connected successfully on hive(testingggg)')
-       client_2.subscribe('demo_app')
-   else:
-       print('Bad connection. Code:', rc)
-
-def on_message_2(client_2, userdata, msg):
-    # print("on_message")
-    # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
-
-    mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
-    print('mqtt_machines_data',mqtt_machines_data)
-    topic=msg.topic
-
-    multi_topic_file.all_topics(mqtt_machines_data,topic)
-
-    # from . import physical_keys_values
-    if topic =='Maithri/Device_7inch':
-        from . import physical_keys_values
-
-        physical_keys_values.Device_7inch(mqtt_machines_data)
-
-
-
-
-client_2 = mqtt.Client()
-client_2.on_connect = on_connect_2
-client_2.on_message = on_message_2
-client_2.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)
-client_2.connect(
-   host=settings.MQTT_SERVER,
-   port=settings.MQTT_PORT,
-   keepalive=settings.MQTT_KEEPALIVE
-)
+#
+#
+# def on_connect_2(client_2, userdata, flags, rc):
+#    if rc == 0:
+#        print('Connected successfully on hive(testingggg)')
+#        client_2.subscribe('demo_app')
+#    else:
+#        print('Bad connection. Code:', rc)
+#
+# def on_message_2(client_2, userdata, msg):
+#     # print("on_message")
+#     # print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
+#
+#     mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
+#     print('mqtt_machines_data',mqtt_machines_data)
+#     topic=msg.topic
+#
+#     multi_topic_file.all_topics(mqtt_machines_data,topic)
+#
+#     if topic =='demo_app':
+#         from . import physical_keys_values
+#
+#         physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+#
+#
+#
+#
+# client_2 = mqtt.Client()
+# client_2.on_connect = on_connect_2
+# client_2.on_message = on_message_2
+# client_2.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)
+# client_2.connect(
+#    host=settings.MQTT_SERVER,
+#    port=settings.MQTT_PORT,
+#    keepalive=settings.MQTT_KEEPALIVE
+# )
