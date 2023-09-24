@@ -34,6 +34,8 @@ def kpi_socket(machine_id):
         return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
     today = datetime.now().date()
+    kpis = []
+
 
     for machine_data in user_data:
         if machine_data.kpi is not None:
@@ -48,13 +50,17 @@ def kpi_socket(machine_id):
                     kpi_id__kpi_name=kpiname,
                     kpi_id__Kpi_Type=kpitype
                 ).order_by('-timestamp').first()
+                x_axis = []  # List to store x-axis (timestamp)
+                y_axis = []
 
                 if kpidata:
                     time = kpidata.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
                     value = kpidata.kpi_data
+                    x_axis.append(time)
+                    y_axis.append(value)
 
-                    kpi_result['x_axis'] = time
-                    kpi_result['y_axis'] = value
+                kpi_result['x_axis'] = x_axis
+                kpi_result['y_axis'] = y_axis
             elif kpitype == 'cummulative':
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
