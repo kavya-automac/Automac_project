@@ -187,8 +187,6 @@ class MachinesView(ViewSet):
 
 
             print('userssss', request.user)
-            # get_user_data = all_Machine_data.objects.filter(user_name=request.user).values('machine_id').distinct()
-            # get_user_data= all_Machine_data.objects.filter(user_name=request.user)
 
 
             unique_data=all_Machine_data.objects.filter(user_name=request.user).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\

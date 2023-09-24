@@ -19,11 +19,17 @@ def kpi_socket(machine_id):
     from Automac_app.models import all_Machine_data, Machines_List
 
     kpis = []
+    try:
+        machinelist= Machines_List.objects.get(machine_id=machine_id)
+        print('machinelist',machinelist)
+    except Machines_List.DoesNotExist:
+        return JsonResponse({"status": 'machine not avaiable'}, status=400)  # Return an error response
+
 
     try:
-        user_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id)
+        user_data = all_Machine_data.objects.filter(machine_id__machine_id=machinelist)
         print('users_data', user_data)
-    except Machines_List.DoesNotExist:
+    except all_Machine_data.DoesNotExist:
         error_message = "Please enter a valid machine_id."
         return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
@@ -78,7 +84,11 @@ def kpi_socket(machine_id):
     result_data = {
         'kpi': kpis,
     }
+    result_data['machine_id']=machinelist.machine_id
+    result_data['machine_name']=machinelist.machine_name
     print('result_data', result_data)
+
+
     res = json.dumps(result_data)
 
     # channel_layer = get_channel_layer()
