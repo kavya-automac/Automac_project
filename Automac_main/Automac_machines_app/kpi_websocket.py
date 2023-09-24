@@ -82,7 +82,7 @@ def kpi_socket(machine_id):
             kpis.append(kpi_entry)
 
     result_data = {
-        'kpi': kpis,
+        'data': kpis,
     }
     result_data['machine_id']=machinelist.machine_id
     result_data['machine_name']=machinelist.machine_name
