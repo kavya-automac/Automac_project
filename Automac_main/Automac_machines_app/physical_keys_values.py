@@ -63,11 +63,16 @@ def mqtt_data_to_channels(mqtt_machines_data):
                                                payload.get('Pump2'), payload.get('Pump3')]
     analog_input = [payload.get('Temperature'), payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
+    print('digital_input',digital_input)
+    print('digital_output',digital_output)
 
     digital_keyvalue_input_data = []
 
     for key, value in zip(digital_input_keys, digital_input):
-        value_str = "On" if value else "Off"
+        value_str = value.capitalize()
+
+        print('valuee',value_str)
+        # value_str = "On" if value else "Off"
         color = None
         for i in range(len(input_output_data)):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
@@ -78,13 +83,16 @@ def mqtt_data_to_channels(mqtt_machines_data):
             else:
                 pass
 
-        digital_keyvalue_input_data.append({"name": key, "value": value_str, "color": color})
+        digital_keyvalue_input_data.append({"name": key, "value": str(value_str), "color": color})
     # print('digital_keyvalue_input_data', digital_keyvalue_input_data)
 
     digital_keyvalue_output_data = []
 
     for key, value in zip(digital_output_keys, digital_output):
-        value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+        value_str = value.capitalize()
+
+        # value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+
         color = None
         for i in range(len(input_output_data)):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
@@ -95,7 +103,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
             else:
                 pass
 
-        digital_keyvalue_output_data.append({"name": key, "value": value_str, "color": color})
+        digital_keyvalue_output_data.append({"name": key, "value": str(value_str), "color": color})
     # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
 
     analog_keyvalue_input_data = []
