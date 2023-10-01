@@ -27,6 +27,8 @@ from .models import all_Machine_data
 from django.core import serializers
 from Automac_machines_app.mqtt import client
 
+from django.views.decorators.csrf import csrf_exempt
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
@@ -668,8 +670,8 @@ class MachinesView(ViewSet):
         # else:
         #     return JsonResponse({"status": "login_required"})
 
-
-@api_view(['GET'])
+@csrf_exempt
+@api_view(['PUT'])
 def machine_control(request):
     print('******',request.data)
 
