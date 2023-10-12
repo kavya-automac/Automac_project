@@ -1,11 +1,7 @@
 import os
-from datetime import time
 from django.apps import apps
 import paho.mqtt.client as mqtt
 from django.conf import settings
-import json
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 from . import multi_topic_file
 import ssl
 
@@ -67,7 +63,7 @@ client.connect(
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully on aws')
-       # client_1.subscribe('Maithri/Device_7inch')
+       client_1.subscribe('Maithri/Device_7inch')
    else:
        print('Bad connection. Code:', rc)
 
@@ -77,7 +73,7 @@ def on_message_1(client_1, userdata, msg):
 
     mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
     topic=msg.topic
-    # print('mqtt_machines_data',mqtt_machines_data)
+    print('mqtt_machines_data MID004',mqtt_machines_data)
     # print('payload1',msg.topic)
 
 

@@ -77,7 +77,7 @@ def MID004_store_data(mqtt_machines_data):
     # print('payload',payload)
 
     # Extract the data from the JSON payload
-    timestamp = payload['timestamp']
+    timestamp = payload['timestamp'].split('.')[0]
     machine_id = payload['info']['mid']
     machine_location = payload['info']['location']
     digital_input =[payload.get('Dosing')]
@@ -127,27 +127,35 @@ def MID004_store_data(mqtt_machines_data):
 
 
     # Create an instance of the SensorData model
-    sensor_data = MachineDetails(
-       # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
-        test_timestamp=timestamp,
-        timestamp=timestamp,
-       machine_id=machine_id,
-       machine_location=machine_location,
-       digital_input=digital_input,
-       digital_output=digital_output,
-       analog_input=analog_input,
-       analog_output=analog_output,
-       other=other
-    )
+    existing_record = MachineDetails.objects.filter(timestamp=timestamp).first()
+    print('existing_record MID004', existing_record)
+    print('timestamp', timestamp)
+    if existing_record is None:
+        print('existing_record MID004.......................', existing_record)
+        sensor_data = MachineDetails(
+           # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
+            test_timestamp=timestamp,
+            timestamp=timestamp,
+           machine_id=machine_id,
+           machine_location=machine_location,
+           digital_input=digital_input,
+           digital_output=digital_output,
+           analog_input=analog_input,
+           analog_output=analog_output,
+           other=other
+        )
 
-    # print("sensor_data ", sensor_data.digital_input)
-    # print("sensor_data ", sensor_data.digital_output)
-    # print("sensor_data ", sensor_data.analog_input)
-    # print("sensor_data ", sensor_data.analog_output)
+        # print("sensor_data ", sensor_data.digital_input)
+        # print("sensor_data ", sensor_data.digital_output)
+        # print("sensor_data ", sensor_data.analog_input)
+        # print("sensor_data ", sensor_data.analog_output)
 
 
-    # Save the instance to the database
-    sensor_data.save()
+        # Save the instance to the database
+
+        sensor_data.save()
+    else:
+        pass
 
 
 
@@ -158,7 +166,7 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
 
 
-    timestamp = payload['timestamp']
+    timestamp = payload['timestamp'].split('.')[0]
     machine_id = payload['machine_id']
     machine_location = payload['machine_location']
     digital_input = payload.get('digital_inputs')
@@ -169,7 +177,6 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
 
     MachineDetails = apps.get_model('Automac_machines_app', 'MachineDetails')
-
 
     sensor_data = MachineDetails(
         # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
@@ -183,4 +190,10 @@ def mqtt_test_machine_data(mqtt_machines_data):
         analog_output=analog_output,
         other=other
     )
-    sensor_data.save()
+    existing_record = MachineDetails.objects.filter(timestamp=timestamp).first()
+    print('existing_record', existing_record)
+    if existing_record is None:
+
+        sensor_data.save()
+    else:
+        pass
