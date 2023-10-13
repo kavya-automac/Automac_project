@@ -12,7 +12,9 @@ from Automac_machines_app.models import MachineDetails
 
 
 def history_fun(machine_id,date):
-    machine_value_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
+    machine_value_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).\
+    values('timestamp','machine_id','machine_location','digital_input','digital_output','analog_input','analog_output').distinct('timestamp').order_by('-timestamp')[:50]
+    # machine_value_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
     # print('details',details)
