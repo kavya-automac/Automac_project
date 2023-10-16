@@ -13,7 +13,7 @@ from Automac_machines_app.models import MachineDetails
 
 def history_fun(machine_id,date):
     machine_value_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).\
-    values('timestamp','machine_id','machine_location','digital_input','digital_output','analog_input','analog_output').distinct('timestamp').order_by('-timestamp')[:50]
+    values('timestamp','machine_id','machine_location','digital_input','digital_output','analog_input','analog_output','other').distinct('timestamp').order_by('-timestamp')[:50]
     # machine_value_data = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=date).order_by('-timestamp')[:50]
@@ -29,12 +29,15 @@ def history_fun(machine_id,date):
     digital_output_value = []
     analog_input_value = []
     analog_output_value = []
+    other_value=[]
 
     for d in range(0, len(r_s_d)):
         digital_input_value.append(r_s_d[d]['digital_input'])
         digital_output_value.append(r_s_d[d]['digital_output'])
         analog_input_value.append(r_s_d[d]['analog_input'])
         analog_output_value.append(r_s_d[d]['analog_output'])
+        other_value.append(r_s_d[d]['other'])
+
     # print('digital_input_value',digital_input_value)
 
     from .views import null_to_str
@@ -42,6 +45,7 @@ def history_fun(machine_id,date):
     digital_output_value = null_to_str(digital_output_value)
     analog_input_value = null_to_str(analog_input_value)
     analog_output_value = null_to_str(analog_output_value)
+    other_value = null_to_str(other_value)
     for inner_list in digital_input_value:
         for i in range(len(inner_list)):
             if inner_list[i] == 'True':
@@ -87,6 +91,7 @@ def history_fun(machine_id,date):
     digital_output_keys = []
     analog_input_keys = []
     analog_output_keys = []
+    other_keys=[]
     for i in range(len(input_output_data)):
         if input_output_data_serializer_data[i]['IO_type'] == "digital_input":
             digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
@@ -98,6 +103,9 @@ def history_fun(machine_id,date):
             analog_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
         if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
             analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
+        if input_output_data_serializer_data[i]['IO_type'] == "other":
+            other_keys.append(input_output_data_serializer_data[i]['IO_name'])
+
 
 
 
@@ -206,7 +214,25 @@ def history_fun(machine_id,date):
                 a_o_res.append({'name': key, 'value': value,'color':color, 'unit': db_unit})
                 # print('aaa outputttt', a_o_res)
 
-            data_entries = d_i_res + d_o_res + a_i_res + a_o_res
+            other_res = []
+
+            for key, value in zip(other_keys, other_value[i]):
+                # Convert boolean to "On" or "Off"
+                db_unit = None
+                color = None
+                for k in range(len(input_output_data)):
+                    if input_output_data_serializer_data[k]['IO_type'] == "other" and \
+                            input_output_data_serializer_data[k]['IO_name'] == key:
+                        db_unit = input_output_data_serializer_data[k]['IO_Unit']
+                        color = input_output_data_serializer_data[k]['IO_color'][0]
+
+                        break  # Exit loop once the correct key is found
+                    else:
+                        pass
+                other_res.append({'name': key, 'value': value, 'color': color, 'unit': db_unit})
+                # print('aaa outputttt', a_o_res)
+
+            data_entries = d_i_res + d_o_res + a_i_res + a_o_res+other_res
             # print('dtaaaaaaaaaaaaa',data_entries)
 
 
