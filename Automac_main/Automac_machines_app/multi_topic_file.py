@@ -23,6 +23,6 @@ def all_topics(mqtt_machines_data,topic):
         conversion_file.store_data(mqtt_machines_data)
     elif topic == 'Maithri/Device_7inch':
         conversion_file.MID004_store_data(mqtt_machines_data)
-    elif topic =='demo_app':
+    elif topic =='demo_app' or 'CSD':
         conversion_file.mqtt_test_machine_data(mqtt_machines_data)
 

@@ -69,7 +69,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             print("logged in:", request.user.username)
-            return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key})
+            return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key,"user_name":username})
 
         else:
             return JsonResponse({"status": "unauthorized_user"})
@@ -289,7 +289,7 @@ class MachinesView(ViewSet):
                 general_serialzer_data_11=general_serialzer.data
                 # print('general_serialzer',general_serialzer_data_11)
                 general_serialzer_data_1=null_to_str(general_serialzer_data_11)
-                # print('general_serialzer_data_1',general_serialzer_data_1)
+                print('general_serialzer_data_1',general_serialzer_data_1)
 
                 plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=5)
                 print('plant_line_data',plant_line_data)
@@ -365,7 +365,7 @@ class MachinesView(ViewSet):
                     return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
                 # user=request.query_params.get('user')
-                user=5
+                user=request.user
                 # user=request.user
                 data = kpis.get_kpis_data(user,machine)
                 data['machine_id']=machine.machine_id
@@ -728,6 +728,8 @@ class Trails(ViewSet):
             date = request.GET.get('date')
             # end_datetime = request.GET.get('end_datetime')
             print('request',request.method,request.GET)
+            user=request.user
+            print('.............user',user)
 
             trail_detail_data = history_fun(machine_id,date)
             # reports_data = history_fun(machine_id,start_datetime,end_datetime)

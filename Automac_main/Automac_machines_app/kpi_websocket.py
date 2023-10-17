@@ -11,12 +11,15 @@ from datetime import datetime
 from asgiref.sync import sync_to_async
 
 channel_layer_KPI = get_channel_layer()
-
+#
 @sync_to_async
 def kpi_socket(machine_id):
-    print('kkk')
+    print('kkk1')
     from .models import Machine_KPI_Data
-    from Automac_app.models import all_Machine_data, Machines_List
+    print('kkk2')
+    from Automac_app.models import all_Machine_data, Machines_List,IO_List
+    print('kkk3')
+    print('kkk4')
 
     kpis = []
     try:
@@ -38,18 +41,23 @@ def kpi_socket(machine_id):
 
 
     for machine_data in user_data:
+        print('machine_data',machine_data)
+        print('machine_datakpiiii',machine_data.kpi )
         if machine_data.kpi is not None:
-            kpitype = machine_data.kpi.Kpi_Type
+            print('in machine_data')
+            kpitype = machine_data.kpi.kpi_inventory_id.Kpi_Type
             kpiname = machine_data.kpi.kpi_name
-            kpi_labels = machine_data.kpi.labels
+            kpi_labels = machine_data.kpi.kpi_inventory_id.labels
             kpi_result = {}
 
             if kpitype == 'Line_Graph':
+                print('lineee')
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
                     kpi_id__kpi_name=kpiname,
-                    kpi_id__Kpi_Type=kpitype
+                    kpi_id__kpi_inventory_id__Kpi_Type=kpitype
                 ).order_by('-timestamp').first()
+                print('kpidataaaa',kpidata)
                 x_axis = []  # List to store x-axis (timestamp)
                 y_axis = []
 
@@ -57,17 +65,20 @@ def kpi_socket(machine_id):
                     time = kpidata.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
                     value = kpidata.kpi_data
                     x_axis.append(time)
-                    y_axis.append(value)
+                    y_axis.append(value[0])
 
                 kpi_result['x_axis'] = x_axis
                 kpi_result['y_axis'] = y_axis
-            elif kpitype == 'cummulative':
+            elif kpitype == 'Text_Card':
+                print('texttttt')
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
                     kpi_id__kpi_name=kpiname,
-                    kpi_id__Kpi_Type=kpitype,
+                    kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
                     timestamp__date=today
                 ).order_by('-timestamp').first()
+                print('kpidataaaa in text',kpidata)
+
 
                 kpitype = 'text'
                 if kpidata:
@@ -77,6 +88,53 @@ def kpi_socket(machine_id):
                     kpi_result['value'] = value
                 if 'value' not in kpi_result:
                     kpi_result['value'] = ''
+
+            elif kpitype == "Energy_Card":
+                print('energyyy')
+                input_output_data = IO_List.objects.filter(machine_id__machine_id=machinelist).order_by('id')
+                print('input_output_data', input_output_data)
+                # from .serializers import IO_list_serializer
+
+                # input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
+                # print('input_output_data_serializer', input_output_data_serializer)
+                # input_output_data_serializer_data = input_output_data_serializer.data
+                # print('iddddddddddd',input_output_data_serializer_data[0]['machine_id'])
+                # print('iiii',r_s2_d['machine_id'])
+
+                digital_input_keys = []
+                digital_output_keys = []
+                analog_input_keys = []
+                analog_output_keys = []
+                other_keys = []
+                for i in range(len(input_output_data)):
+                    print('iiiiiiiiiiiii',input_output_data[i].IO_type)
+                    if input_output_data[i].IO_type== "digital_input":
+                        digital_input_keys.append(input_output_data[i].IO_name)
+                    #
+                    # if input_output_data_serializer_data[i]['IO_type'] == "digital_output":
+                    #     digital_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
+                    #
+                    # if input_output_data_serializer_data[i]['IO_type'] == "analog_input":
+                    #     analog_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+                    if input_output_data[i].IO_type == "analog_output":
+                        analog_output_keys.append(input_output_data[i].IO_name)
+                    if input_output_data[i].IO_type == "other":
+                        other_keys.append(input_output_data[i].IO_name)
+
+                print(other_keys)
+                digital_input_value = []
+                digital_output_value = []
+                analog_input_value = []
+                analog_output_value = []
+                other_value = []
+                kpi_data_table_values = Machine_KPI_Data.objects.filter(machine_id=machine_data,
+                                                                        kpi_id__kpi_name=kpiname, \
+                                                                        kpi_id__kpi_inventory_id__Kpi_Type=kpitype
+                                                                        ).order_by('-timestamp').first()
+                print('kpi_data_table_values', kpi_data_table_values)
+                energy_card_values = kpi_data_table_values.kpi_data
+                kpi_result['keys'] = other_keys
+                kpi_result['values'] = energy_card_values
 
             kpi_entry = {
                 'card': kpitype,
@@ -102,15 +160,6 @@ def kpi_socket(machine_id):
         async_to_sync(channel_layer_KPI.group_send)(str(machine_id)+'_kpi', {"type": "kpiweb", "text": res})
     except Exception as e:
         print("kpi ws error ", e)
-
-
-
-
-
-
-
-
-
 
 
 # @sync_to_async

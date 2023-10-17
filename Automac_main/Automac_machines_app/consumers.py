@@ -30,7 +30,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(str(self.machine_id)+'_io', self.channel_name)
+        query_string = self.scope['query_string'].decode()
+        machine_id = query_string.split('=')[1]
+        print('idddddddddddddddddddddddd',machine_id)
+        await self.channel_layer.group_discard(str(machine_id)+'_io', self.channel_name)
 
         # Remove the consumer from the "chat" channel group
         # await self.channel_layer.group_discard("mqtt_data", self.channel_name)
@@ -145,36 +148,3 @@ class KpiConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print("kpi message error - ", e)
 
-
-
-# class KpiConsumer(AsyncWebsocketConsumer):
-#
-#
-#     async def connect(self):
-#         query_string = self.scope['query_string'].decode()
-#         machine_id= query_string.split('=')[1]
-#         if  not machine_id:
-#             await self.close()
-#             return
-#         await self.channel_layer.group_add(machine_id, self.channel_name)
-#
-#         await self.accept()
-#
-#     async def disconnect(self, close_code):
-#         # await self.send("disconnected")
-#         self.websocket_closed = True
-#         # schedule.cancel_job(task)
-#
-#
-#
-#         print('disconnecteddd')
-#         # self.connected = False
-#
-#
-#
-#     async def kpiweb(self, event):
-#
-#         print('event',event)
-#         await self.send(text_data=event["text"])
-#
-#

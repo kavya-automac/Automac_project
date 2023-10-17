@@ -191,7 +191,7 @@ def mqtt_test_machine_data(mqtt_machines_data):
         other=other
     )
     existing_record = MachineDetails.objects.filter(timestamp=timestamp).first()
-    print('existing_record', existing_record)
+    # print('existing_record', existing_record)
     if existing_record is None:
 
         sensor_data.save()

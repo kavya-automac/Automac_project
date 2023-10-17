@@ -30,7 +30,7 @@ class MachineDetails(models.Model):
 class Machine_KPI_Data(models.Model):
     machine_id=models.CharField(max_length=150)
     kpi_id=models.ForeignKey(Machine_Kpi_List,null=True,blank=True,on_delete=models.CASCADE)
-    kpi_data=models.CharField(max_length=150)
+    kpi_data=ArrayField(models.CharField(max_length=150,default=True),default=list)
     timestamp= models.DateTimeField()
 
     class Meta:
@@ -45,31 +45,27 @@ class Machine_KPI_Data(models.Model):
 
 
 
-#
-# from Automac_app import  calculations
-#
-# @receiver(post_save,sender=MachineDetails)
-# def signal(sender,instance,created,**kwargs):
-#     if created:
-#
-#         print("new data arrived")
-#         machine=instance.machine_id
-#         print('instanceee',instance)
-#         print('machine......',machine)
-#
-#         calculations.kpi_data_to_database(instance)
-#         # signal_data = kpis.get_kpis_data(machine)
-#         # print('signalllllllllllllll',signal_data)
+
+from Automac_app import  calculations
 
 
 
 
-# from . import kpi_websocket
-#
-# @receiver(post_save,sender=Machine_KPI_Data)
-# def kpisignal(sender,instance,created,**kwargs):
-#     if created:
-#
-#         print("new data arrived")
-#         machine_id=instance.machine_id
-#         kpi_websocket.kpi_socket(machine_id)
+
+@receiver(post_save,sender=MachineDetails)
+def signal(sender,instance,created,**kwargs):
+    if created:
+
+        print("new data arrived")
+        # machine=instance.machine_id
+        # print('instanceee',instance)
+        # print('machine......',machine)
+        calculations.kpi_data_to_database(instance)
+#         # time.sleep(5)
+
+
+
+
+
+
+

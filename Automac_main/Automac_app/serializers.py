@@ -142,14 +142,14 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 
-class usermachineSerializer(serializers.ModelSerializer):
+class usermachineSerializer(serializers.ModelSerializer):# trail_details
     class Meta:
         model=Machines_List
         fields = "__all__"
 
 
 
-class generalmachineSerializer(serializers.ModelSerializer):
+class generalmachineSerializer(serializers.ModelSerializer):# machine_details
     class Meta:
         model=Machines_List
         fields = ('machine_id', 'machine_name', 'machine_location', 'date_of_installation')
@@ -171,43 +171,43 @@ class Machines_List_Serializer(serializers.ModelSerializer):
         fields = ('machine_name','machine_location',)
 
 
-class kpiSerializer(serializers.ModelSerializer):
+class kpiSerializer(serializers.ModelSerializer):# kpi
     class Meta:
         model = Machine_Kpi_List
         fields = "__all__"
 
-class plantSerializer(serializers.ModelSerializer):
+class plantSerializer(serializers.ModelSerializer): # just for testing post request its used in test_post
     class Meta:
         model = Plant_List
         fields="__all__"
 
-class plantSerializerr(serializers.ModelSerializer):
-    class Meta:
-        model = Plant_List
-        fields=('plant_name',)
-
-
-
-class modelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Model_List
-        fields="__all__"
-
-
-
-
-
-class companySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Company_List
-        fields=('company_name',)
-
-
-
-class lineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Line_List
-        fields="__all__"
+# class plantSerializerr(serializers.ModelSerializer):
+#     class Meta:
+#         model = Plant_List
+#         fields=('plant_name',)
+#
+#
+#
+# class modelSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Model_List
+#         fields="__all__"
+#
+#
+#
+#
+#
+# class companySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Company_List
+#         fields=('company_name',)
+#
+#
+#
+# class lineSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Line_List
+#         fields="__all__"
 
 
 
@@ -217,7 +217,7 @@ class lineSerializer(serializers.ModelSerializer):
 #
 #
 
-class all_Machine_data_Serializer(serializers.ModelSerializer):
+class all_Machine_data_Serializer(serializers.ModelSerializer):# machine_details
     class Meta:
         model=all_Machine_data
         fields = ('plant_name','model_name','line_name')
@@ -229,31 +229,31 @@ class all_Machine_data_Serializer2(serializers.ModelSerializer):#for reports api
         model=all_Machine_data
         # fields = '__all__'
         fields = ('company_name','plant_name','machine_id','model_name','line_name','kpi')
+#
+# class all_Machine_data_Serializer4(serializers.ModelSerializer):
+#     class Meta:
+#         model=all_Machine_data
+#         # fields = '__all__'
+#         fields = ('company_name','plant_name','machine_id','model_name','line_name')
+#
+#
+# class all_Machine_data_Serializer3(serializers.ModelSerializer):
+#     class Meta:
+#         model=all_Machine_data
+#         fields = '__all__'
 
-class all_Machine_data_Serializer4(serializers.ModelSerializer):
-    class Meta:
-        model=all_Machine_data
-        # fields = '__all__'
-        fields = ('company_name','plant_name','machine_id','model_name','line_name')
 
-
-class all_Machine_data_Serializer3(serializers.ModelSerializer):
-    class Meta:
-        model=all_Machine_data
-        fields = '__all__'
-
-
-class IO_list_serializer(serializers.ModelSerializer):
+class IO_list_serializer(serializers.ModelSerializer): #iostatus api # trail_details
     class Meta:
         model=IO_List
         # fields = '__all__'
         fields = ('machine_id','IO_type','IO_name','IO_value','IO_color','IO_Unit')
 
 
-class Kpi_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = Machine_Kpi_List
-        fields = '__all__'
+# class Kpi_Serializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Machine_Kpi_List
+#         fields = '__all__'
 
 
 #

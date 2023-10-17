@@ -59,24 +59,16 @@ class Company_List(models.Model):
 
 
 
-class Machine_Kpi_List(models.Model):
-    objects = models.Manager()
-    # timestamp = models.DateField()
-    # machine_id=models.CharField(max_length=100,blank=True)
-    kpi_name=models.CharField(max_length=100,blank=True)
-    kpi_data=models.IntegerField(default=0)
-    kpi_unit=models.CharField(max_length=10,blank=True)
+class Kpi_Inventory(models.Model):
     Kpi_Type = models.CharField(max_length=20,blank=True)
     labels=models.JSONField()
 
     class Meta:
         app_label = 'Automac_app'
-        db_table = 'users_schema"."Machine_Kpi_List'
+        db_table = 'users_schema"."Kpi_Inventory'
 
     def __str__(self):
-        return "%s %s" %(self.kpi_name,self.Kpi_Type)
-
-
+        return self.Kpi_Type
 
 
 class Machines_List(models.Model):
@@ -95,6 +87,24 @@ class Machines_List(models.Model):
     def __str__(self):
         return str(self.machine_name)
 
+class Machine_Kpi_List(models.Model):
+    objects = models.Manager()
+    # timestamp = models.DateField()
+    # machine_id=models.CharField(max_length=100,blank=True)
+    kpi_name=models.CharField(max_length=100,blank=True)
+    # kpi_data=models.IntegerField(default=0)
+    # kpi_unit=models.CharField(max_length=10,blank=True)
+    # Kpi_Type = models.CharField(max_length=20,blank=True)
+    # labels=models.JSONField()
+    kpi_inventory_id=models.ForeignKey(Kpi_Inventory,null=True,blank=True,on_delete=models.CASCADE)
+    data_points =ArrayField(models.CharField(max_length=100, default=True),default=list)
+
+    class Meta:
+        app_label = 'Automac_app'
+        db_table = 'users_schema"."Machine_Kpi_List'
+
+    def __str__(self):
+        return "%s %s"%(self.kpi_name,self.data_points)
 
 
 class all_Machine_data(models.Model):
