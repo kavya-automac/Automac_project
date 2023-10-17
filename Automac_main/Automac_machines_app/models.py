@@ -46,7 +46,6 @@ class Machine_KPI_Data(models.Model):
 
 
 
-from Automac_app import  calculations
 
 
 
@@ -60,6 +59,8 @@ def signal(sender,instance,created,**kwargs):
         # machine=instance.machine_id
         # print('instanceee',instance)
         # print('machine......',machine)
+        from Automac_app import calculations
+
         calculations.kpi_data_to_database(instance)
 #         # time.sleep(5)
 
