@@ -178,6 +178,10 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
     MachineDetails = apps.get_model('Automac_machines_app', 'MachineDetails')
 
+    digital_input = [True if value.lower() == 'on' else False for value in digital_input]
+
+    digital_output = [True if value.lower() == 'on' else False for value in digital_output]
+
     sensor_data = MachineDetails(
         # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
         test_timestamp=timestamp,
