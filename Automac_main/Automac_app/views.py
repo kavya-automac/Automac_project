@@ -192,7 +192,7 @@ class MachinesView(ViewSet):
         print('userssss', request.user)
 
 
-        unique_data=all_Machine_data.objects.filter(user_name=5).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
+        unique_data=all_Machine_data.objects.filter(user_name=request.user).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
             .distinct('machine_id__machine_id','plant_name__plant_name','model_name__model_name')
         # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
 
@@ -291,7 +291,7 @@ class MachinesView(ViewSet):
                 general_serialzer_data_1=null_to_str(general_serialzer_data_11)
                 print('general_serialzer_data_1',general_serialzer_data_1)
 
-                plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=5)
+                plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
                 print('plant_line_data',plant_line_data)
 
                 if not plant_line_data.exists():
@@ -399,6 +399,7 @@ class MachinesView(ViewSet):
                 digital_output_keys=[]
                 analog_input_keys=[]
                 analog_output_keys=[]
+                other_keys=[]
                 color = []
                 values = []
 
@@ -415,6 +416,9 @@ class MachinesView(ViewSet):
                     if input_output_data_serializer_data[i]['IO_type']=="digital_input":
                         # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
                         digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+                    if input_output_data_serializer_data[i]['IO_type']=="other":
+                        # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
+                        other_keys.append(input_output_data_serializer_data[i]['IO_name'])
                 print('digital_input_keys',digital_input_keys)
                 print('digital_output_keys',digital_output_keys)
                 print('analog_input_keys',analog_input_keys)
@@ -498,6 +502,22 @@ class MachinesView(ViewSet):
                     analog_keyvalue_output_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
                 # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
                 # print('timeeeeeeeeeeeeeeeeeeeeee',str(last_valies_data.get('timestamp',datetime.datetime.now())))
+                others_keyvalue_input_data = []
+                for key, value in zip(other_keys, last_valies_data.get('other', [])):
+                    db_unit = None
+                    for i in range(len(input_output_data)):
+                        if input_output_data_serializer_data[i]['IO_type'] == "other" and \
+                                input_output_data_serializer_data[i]['IO_name'] == key:
+                            db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                            color = input_output_data_serializer_data[i]['IO_color'][0]
+                            break  # Exit loop once the correct key is found
+                        else:
+                            pass
+
+                    others_keyvalue_input_data.append(
+                        {"name": key, "value": str(value), "color": color, "unit": db_unit})
+                # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+
                 timestamp = last_valies_data.get('timestamp')
                 if timestamp:
                     formatted_time = str(timestamp)
@@ -512,6 +532,7 @@ class MachinesView(ViewSet):
                     "digital_output":digital_keyvalue_output_data,
                     "analog_input":analog_keyvalue_input_data,
                     "analog_output":analog_keyvalue_output_data,
+                    "others":others_keyvalue_input_data,
                     "db_timestamp": formatted_time
 
                 }}
