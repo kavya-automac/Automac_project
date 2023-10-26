@@ -47,34 +47,19 @@ def get_kpis_data(user, machine):
             kpi_labels = machine_data.kpi.kpi_inventory_id.labels
             kpi_result = {}
 
-            # input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
-            # # print('input_output_data', input_output_data)
-            # input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
-            # # print('input_output_data_serializer', input_output_data_serializer)
-            # input_output_data_serializer_data = input_output_data_serializer.data
-            # # print('iddddddddddd',input_output_data_serializer_data[0]['machine_id'])
-            # # print('iiii',r_s2_d['machine_id'])
-            #
-            # digital_input_keys = []
-            # digital_output_keys = []
-            # analog_input_keys = []
-            # analog_output_keys = []
-            # other_keys = []
-            # for i in range(len(input_output_data)):
-            #     if input_output_data_serializer_data[i]['IO_type'] == "digital_input":
-            #         digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
-            #
-            #     if input_output_data_serializer_data[i]['IO_type'] == "digital_output":
-            #         digital_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
-            #
-            #     if input_output_data_serializer_data[i]['IO_type'] == "analog_input":
-            #         analog_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
-            #     if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
-            #         analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
-            #     if input_output_data_serializer_data[i]['IO_type'] == "other":
-            #         other_keys.append(input_output_data_serializer_data[i]['IO_name'])
+
+            input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
+            # print('input_output_data', input_output_data)
+            input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
+            # print('input_output_data_serializer', input_output_data_serializer)
+            input_output_data_serializer_data = input_output_data_serializer.data
+            # print('iddddddddddd',input_output_data_serializer_data[0]['machine_id'])
+            # print('iiii',r_s2_d['machine_id'])
+
+
 
             if kpitype == 'Line_Graph':
+
                 # Retrieve the latest 10 records for line_graph
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
@@ -90,12 +75,37 @@ def get_kpis_data(user, machine):
                     value_list = kpidatatype.kpi_data  # Assuming kpi_data is a list
                     processed_values = []  # List to store processed values
                     print('value_list',value_list)
-                    # for value in value_list:
-                    #     # Perform operations on each value within the list
-                    #     # For example, you can print each value or apply any required operations
-                    #     print('Processing value:', value)
-                    #     processed_values.append(value)  # Append the processed value to the list
-                    # print('Processing value:', processed_values)
+                    for i in range(len(input_output_data)):
+                        # print('.........')
+                        if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
+                            input_output_data_serializer_data[i]['IO_name'] == kpiname:
+                            kpi_labels['y_label']=input_output_data_serializer_data[i]['IO_Unit']
+
+
+
+
+
+                        if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
+                                input_output_data_serializer_data[i]['IO_name'] == kpiname:
+                            kpi_labels['y_label']=input_output_data_serializer_data[i]['IO_Unit']
+
+
+
+
+                        if input_output_data_serializer_data[i]['IO_type'] == "analog_input" and\
+                                input_output_data_serializer_data[i]['IO_name'] == kpiname:
+                            kpi_labels['y_label']=input_output_data_serializer_data[i]['IO_Unit']
+
+
+                        if input_output_data_serializer_data[i]['IO_type'] == "analog_output" and \
+                                input_output_data_serializer_data[i]['IO_name'] == kpiname:
+                            kpi_labels['y_label']=input_output_data_serializer_data[i]['IO_Unit']
+
+
+                        if input_output_data_serializer_data[i]['IO_type'] == "other" and \
+                                input_output_data_serializer_data[i]['IO_name'] == kpiname:
+                            kpi_labels['y_label']=input_output_data_serializer_data[i]['IO_Unit']
+
 
                     x_axis.append(time)
                     y_axis.append(value_list[0])
@@ -123,7 +133,7 @@ def get_kpis_data(user, machine):
                     kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
                     timestamp__date=today
                 ).order_by('-timestamp').first()
-                print('---------------------------', kpidata)
+                # print('---------------------------', kpidata)
 
                 kpitype = 'text'
                 if kpidata:
@@ -175,8 +185,12 @@ def get_kpis_data(user, machine):
                 ).order_by('-timestamp')[:10].first()
                 print('kpi_data_table_values',kpi_data_table_values)
                 energy_card_values=kpi_data_table_values.kpi_data
+                print('energy_card_values',energy_card_values)
+                #......none to "null"
+                energy_card_values_null_str = [str(item) if item is not None else "null" for item in energy_card_values]
+
                 kpi_result['keys'] = other_keys
-                kpi_result['values'] = energy_card_values
+                kpi_result['values'] = energy_card_values_null_str
 
 
 
@@ -201,22 +215,4 @@ def get_kpis_data(user, machine):
 
     return result
 
-
-def get_kpis_data1(user, machine):
-    kpis = []
-
-    try:
-        user_data = all_Machine_data.objects.filter(user_name=user, machine_id=machine)
-        print('userrrrrrrr',user_data)
-    except Machines_List.DoesNotExist:
-        error_message = "Please enter a valid machine_id."
-        return JsonResponse({"status": error_message}, status=400)  # Return an error response
-
-
-
-    today = datetime.now().date()
-
-    for machine_data in user_data:
-        if machine_data.kpi is not None:
-            pass
 
