@@ -133,8 +133,11 @@ def kpi_socket(machine_id):
                                                                         ).order_by('-timestamp').first()
                 print('kpi_data_table_values', kpi_data_table_values)
                 energy_card_values = kpi_data_table_values.kpi_data
+                energy_card_values_null_str = [str(item) if item is not None else "null" for item in energy_card_values]
+
                 kpi_result['keys'] = other_keys
-                kpi_result['values'] = energy_card_values
+                kpi_result['values'] = energy_card_values_null_str
+
 
             kpi_entry = {
                 'card': kpitype,
