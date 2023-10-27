@@ -938,6 +938,7 @@ class ReportsView(ViewSet):
 #             # machine_id = request.POST.get('machine_id')
 #             # start_datetime = request.POST.get('start_datetime')
 #             # end_datetime = request.POST.get('end_datetime')
+#              print(',,,,,,,,,,)
 #
 #
 #             try:
