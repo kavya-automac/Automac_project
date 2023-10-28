@@ -190,5 +190,3 @@ KEYPATH = "Automac_machines_app/certificates/09ca209df4cc77d7fe5273ee62a21455a54
 #     'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
 # }
 
-SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = True
