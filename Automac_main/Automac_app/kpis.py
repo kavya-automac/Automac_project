@@ -141,7 +141,8 @@ def get_kpis_data(user, machine):
                     value = kpidata.kpi_data
                     print('value', value)
 
-                    kpi_result['value'] = value[0]
+                    kpi_result['value'] = "On" if value[0] else "Off"
+                    # kpi_result['value'] = value[0]
 
                 # If 'value' is missing, set it to an empty string
                 if 'value' not in kpi_result:
@@ -187,7 +188,7 @@ def get_kpis_data(user, machine):
                 energy_card_values=kpi_data_table_values.kpi_data
                 print('energy_card_values',energy_card_values)
                 #......none to "null"
-                energy_card_values_null_str = [str(item) if item is not None else "null" for item in energy_card_values]
+                energy_card_values_null_str = [str(item) if item is not None else "None" for item in energy_card_values]
 
                 kpi_result['keys'] = other_keys
                 kpi_result['values'] = energy_card_values_null_str
