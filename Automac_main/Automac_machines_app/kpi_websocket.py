@@ -85,7 +85,7 @@ def kpi_socket(machine_id):
                     name = kpidata.kpi_id.kpi_name
                     value = kpidata.kpi_data
 
-                    kpi_result['value'] = value
+                    kpi_result['value'] =  kpi_result['value'] = "On" if value[0] else "Off"
                 if 'value' not in kpi_result:
                     kpi_result['value'] = ''
 
