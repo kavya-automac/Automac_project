@@ -60,7 +60,7 @@ class Company_List(models.Model):
 
 
 class Kpi_Inventory(models.Model):
-    Kpi_Type = models.CharField(max_length=20,blank=True)
+    Kpi_Type = models.CharField(max_length=100,blank=True)
     labels=models.JSONField()
 
     class Meta:
@@ -85,7 +85,7 @@ class Machines_List(models.Model):
         db_table = 'users_schema"."Machines_List'
 
     def __str__(self):
-        return str(self.machine_name)
+        return str(self.machine_id)
 
 class Machine_Kpi_List(models.Model):
     objects = models.Manager()
