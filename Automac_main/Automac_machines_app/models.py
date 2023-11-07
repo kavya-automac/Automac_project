@@ -18,7 +18,7 @@ class MachineDetails(models.Model):
     analog_input = ArrayField(models.DecimalField(max_digits=10, decimal_places=2))
     analog_output = ArrayField(models.DecimalField(max_digits=10, decimal_places=2))
     other = ArrayField(models.CharField(max_length=100, default=True))
-
+    SearchableFields=["db_timestamp","timestamp","machine_id"]
     class Meta:
         app_label = 'Automac_machines_app'
         db_table = 'machines_schema"."machinedetails_table'
@@ -32,6 +32,7 @@ class Machine_KPI_Data(models.Model):
     kpi_id=models.ForeignKey(Machine_Kpi_List,null=True,blank=True,on_delete=models.CASCADE)
     kpi_data=ArrayField(models.CharField(max_length=150,default=True),default=list)
     timestamp= models.DateTimeField()
+    SearchableFields=["machine_id","kpi_id__kpi_name"]
 
     class Meta:
         app_label = 'Automac_machines_app'
@@ -62,7 +63,7 @@ class Machine_KPI_Data(models.Model):
 #         from Automac_app import calculations
 #
 #         calculations.kpi_data_to_database(instance)
-# #         # time.sleep(5)
+#         # time.sleep(5)
 
 
 

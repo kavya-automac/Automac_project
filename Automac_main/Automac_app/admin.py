@@ -51,7 +51,7 @@ class Company_ListAdmin(admin.ModelAdmin):
 @admin.register(all_Machine_data)
 class all_Machine_dataAdmin(admin.ModelAdmin):
     list_display = ['id','user_name','company_name','plant_name','machine_id','model_name','kpi']
-
+    search_fields =all_Machine_data.SearchableFields
 # admin.site.register(all_Machine_data)
 
 

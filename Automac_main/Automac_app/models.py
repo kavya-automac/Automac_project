@@ -117,7 +117,7 @@ class all_Machine_data(models.Model):
     model_name = models.ForeignKey(Model_List,null=True,blank=True,on_delete=models.CASCADE)
     line_name = models.ForeignKey(Line_List, null=True,blank=True,on_delete=models.CASCADE)
     kpi=models.ForeignKey(Machine_Kpi_List,null=True,blank=True,on_delete=models.CASCADE)
-
+    SearchableFields=["user_name__username","machine_id__machine_id"]
     class Meta:
         app_label = 'Automac_app'
         db_table = 'users_schema"."all_Machine_data'
