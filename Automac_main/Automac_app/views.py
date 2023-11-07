@@ -26,6 +26,8 @@ from . import kpis
 from .models import all_Machine_data
 from django.core import serializers
 from Automac_machines_app.mqtt import client
+from datetime import timedelta
+
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -157,12 +159,88 @@ class Dashboard(ViewSet):
     @action(detail=False, methods=['get'])
     def dashboard(self, request):
         if request.user.is_authenticated:
-            print("if")
-            BASE_DIR = Path(__file__).resolve().parent.parent
-            print('BASE_DIR', type(BASE_DIR))
+            current_time = datetime.datetime.now(datetime.timezone.utc)
 
-            data = json.load(open(str(BASE_DIR)+"/Automac_app/dashboard.json"))
-            return JsonResponse(data)
+            today = datetime.datetime.now().date()
+            user_machine_kpi = all_Machine_data.objects.filter(user_name=request.user).values('machine_id__machine_id') \
+                .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
+            result = []
+            machine_count=0
+            inactive_count=0
+            active_count=0
+            for m_id in user_machine_kpi:
+                machines = m_id['machine_id__machine_id']
+                machine_count += 1
+
+                if MachineDetails.objects.filter(machine_id=machines).exists():
+
+                    to_fetch_lastrecord_data = MachineDetails.objects.filter(machine_id=machines).values('machine_id','timestamp').latest('timestamp')
+
+
+                    print('to_fetch_lastrecord_data',to_fetch_lastrecord_data)
+                    last_record_time = to_fetch_lastrecord_data['timestamp']
+                    print('last_record_time',last_record_time)
+                    print('current_time',current_time)
+
+
+                    time_difference = abs((current_time - last_record_time).total_seconds())
+                    # time_difference = current_time - last_record_time
+                    print('time_difference',time_difference)
+                    print(' time_difference > timedelta(seconds=30)', time_difference > 30)
+
+                    if time_difference > 60:
+                    # if time_difference > timedelta(seconds=30):
+
+                        machine_status = "inactive"
+                        inactive_count+=1
+                        print('inactive if',inactive_count)
+
+                    else:
+
+                        machine_status = "active"
+                        active_count+=1
+                        print('active else',active_count)
+
+
+                else:
+                    inactive_count += 1
+                    print('inactive else',inactive_count)
+
+
+
+                count_card_data = {
+                    "title": "count_card",
+                    "machine_count": str(machine_count),
+                    "inactive_count": str(inactive_count),
+                    "active_count": str(active_count)
+                }
+                # type = "Min_Max_values"
+                final_data = {}
+                type = "production_difference"
+                get_kpi_type = Machine_KPI_Data.objects.filter(machine_id=machines,
+                                                               kpi_id__kpi_inventory_id__Kpi_Type=type,
+                                                               timestamp__date=today)
+
+                print('get_kpi_type',get_kpi_type)
+                value_list = ["0"]
+                kpi_name = ""
+                for kpi in get_kpi_type:
+
+                    kpi_name=kpi.kpi_id.kpi_name
+                    print('kpi_name',kpi_name)
+                    # if kpi_name:
+                    #     break
+                    # # kpiname.append(kpi_name)
+                    # # print('kpiname',kpiname)
+
+                    value_list = kpi.kpi_data
+                    print("value_list",value_list)
+                # print('kpiname',kpiname)
+                result.append({"machine": machines, "values": value_list})
+                final_data = {"title": "bar_graph", "name": kpi_name, "data": result}
+
+            return JsonResponse({"count_card_data":count_card_data,"bar_graph":final_data})
+
         else:
             print("else")
             return JsonResponse({"status": "login_required"})
@@ -251,7 +329,7 @@ class MachinesView(ViewSet):
 
             return JsonResponse({"machine_list": machine_list_data})
 
-            # form_fun = forms_data()
+                # form_fun = forms_data()
         else:
             print('requesttttt',request.META)
             print("else")
@@ -526,7 +604,8 @@ class MachinesView(ViewSet):
                     if timestamp:
                         formatted_time = str(timestamp)
                     else:
-                        formatted_time = str(datetime.datetime.now())
+                        formatted_time = "0000-00-00T00:00:00Z"#change
+                        # formatted_time = str(datetime.datetime.now())
                     print('formatted_time',formatted_time)
 
                     data = {'iostatus': {
@@ -753,8 +832,8 @@ class Trails(ViewSet):
             date = request.GET.get('date')
             # end_datetime = request.GET.get('end_datetime')
             print('request',request.method,request.GET)
-            user=request.user
-            print('.............user',user)
+            # user="user1"
+            # print('.............user',user)
 
             trail_detail_data = history_fun(machine_id,date)
             # reports_data = history_fun(machine_id,start_datetime,end_datetime)
@@ -773,7 +852,7 @@ class Trails(ViewSet):
 
             BASE_DIR = Path(__file__).resolve().parent.parent
 
-            unique_data = all_Machine_data.objects.filter(user_name=request.user).values('machine_id__machine_id',
+            unique_data = all_Machine_data.objects.filter(user_name__username=request.user).values('machine_id__machine_id',
                                                                                          'plant_name__plant_name',
                                                                                          'model_name__model_name',
                                                                                          'company_name__company_name',
@@ -843,7 +922,7 @@ class ReportsView(ViewSet):
 
             BASE_DIR = Path(__file__).resolve().parent.parent
 
-            unique_data = all_Machine_data.objects.filter(user_name=request.user).values('machine_id__machine_id',
+            unique_data = all_Machine_data.objects.filter(user_name__username=request.user).values('machine_id__machine_id',
                                                                                          'plant_name__plant_name',
                                                                                          'model_name__model_name',
                                                                                          'company_name__company_name',
@@ -883,7 +962,7 @@ class ReportsView(ViewSet):
                                                                                          i][
                                                                                          'machine_id__machine_name'] is not None else "None"
 
-                reportsss = all_Machine_data.objects.filter(user_name=request.user,machine_id__machine_id=machine_id)
+                reportsss = all_Machine_data.objects.filter(user_name__username=request.user,machine_id__machine_id=machine_id)
                 machine_all_reports = []
 
                 for k in reportsss:
@@ -915,20 +994,20 @@ class ReportsView(ViewSet):
 
 
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['post'])
     def Reports(self, request):
         if request.user.is_authenticated:
             try:
-                request_data = json.loads(request.body)
+                request_data = request.data
                 print('request_data',request_data)
             except json.JSONDecodeError:
                 return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
 
             # Extract user-selected parameters
-            kpi_name = request_data.get('report_type')
-            machine_id = request_data.get('machine_id')
-            start_datetime = request_data.get('start_datetime')
-            end_datetime1 = request_data.get('end_datetime')
+            kpi_name = request.data.get('report_type')
+            machine_id = request.data.get('machine_id')
+            start_datetime = request.data.get('start_datetime')
+            end_datetime1 = request.data.get('end_datetime')
             # start_datetime = datetime.strptime(start_datetime1,'%Y-%m-%d %H:%M:%S')
             # end_datetime = datetime.strptime(end_datetime1,'%Y-%m-%d %H:%M:%S')
 
