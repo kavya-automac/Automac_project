@@ -6,6 +6,7 @@ from django.contrib import messages
 
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -24,7 +25,7 @@ from Automac_machines_app.models import MachineDetails,Machine_KPI_Data
 from . import kpis
 # from .Automac_machines_app.models import MachineDetails
 from .models import all_Machine_data
-from django.core import serializers
+# from django.core import serializers
 from Automac_machines_app.mqtt import client
 from datetime import timedelta
 
@@ -50,6 +51,10 @@ def register(request):
     # print("****",serializer.errors)
     return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def get_user(request):
+    userdata=Token.objects.get(key=request.headers['Authorization']).user
+    print('userdata',userdata)
+    return userdata
 
 @api_view(['POST'])
 def login_view(request):
@@ -69,10 +74,13 @@ def login_view(request):
         print('authenticate_user:', user)
 
         if user is not None:
-            login(request, user)
-            print("logged in:", request.user.username)
-            return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key,"user_name":username})
+            # login(request, user)
+            # print("logged in:", request.user.username)
+            token ,_ =Token.objects.get_or_create(user=user)
+            login_response = JsonResponse({"status": "user_validated",'generated_token':token.key,'username':username})
+            login_response['token'] =str(token.key)
 
+            return login_response
         else:
             return JsonResponse({"status": "unauthorized_user"})
     new_key = 'status'
@@ -108,6 +116,86 @@ def login_view(request):
     # return JsonResponse({"status": error_dict["status"][0]})
     return JsonResponse({"status": "Invalid_Input"})
 
+@api_view(['GET'])
+def logout_view(request):
+    try:
+        current_user = get_user(request)
+        print('token of user',current_user.auth_token)
+        current_user.auth_token.delete()
+
+        return JsonResponse({"status": "Logged_out"})
+    except Token.DoesNotExist:
+        return JsonResponse({"status": "Token doesnot exist"})
+
+
+
+
+
+
+
+
+#session login starts
+
+
+
+
+# @api_view(['POST'])
+# def login_view(request):
+#     serializer = LoginSerializer(data=request.data)
+#     print('serializer:', serializer)
+#     print('serializer_type:', type(serializer))
+#     if serializer.is_valid():
+#         print('serializer:', serializer)
+#         username = serializer.data.get('username')
+#         # print('serializer_username:', username)
+#         # print('type_serializer_username:', type(username))
+#         password = serializer.data.get('password')
+#         # print('serializer_password:', password)
+#         # user = User.objects.get(username=username)
+#         # print(user)
+#         user = authenticate(username=username, password=password)
+#         print('authenticate_user:', user)
+#
+#         if user is not None:
+#             login(request, user)
+#             print("logged in:", request.user.username)
+#             return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key,"user_name":username})
+#
+#         else:
+#             return JsonResponse({"status": "unauthorized_user"})
+#     new_key = 'status'
+#     error_dict = serializer.errors
+#     print("error_dict*****", error_dict)
+#     print("len****", len(error_dict))
+#     # print(error_dict['password'][0].code)
+#
+#     # if 'username' and 'password' in error_dict :
+#     #     # error_dict[new_key] = error_dict.pop('username')
+#     #     # error_dict[new_key] = error_dict.pop('password')
+#     #
+#     #     # return JsonResponse({"status": "username_and_password_cannot_be_empty"})
+#     if 'username' in error_dict and error_dict['username'][0].code == 'blank' and len(error_dict) == 1:
+#         # print("len****",len(error_dict))
+#         print(error_dict['username'][0].code == 'blank')
+#
+#         error_dict[new_key] = error_dict.pop('username')
+#         return JsonResponse({"status": error_dict["status"][0]})
+#
+#     elif 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 1:
+#         # print("len****", len(error_dict))
+#         print(error_dict['password'][0].code == 'blank')
+#         error_dict[new_key] = error_dict.pop('password')
+#         return JsonResponse({"status": error_dict["status"][0]})
+#     elif 'username' in error_dict and error_dict['username'][0].code == 'blank' and 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 2:
+#         # print(error_dict["status"][0])
+#         # print(error_dict.keys())
+#         return JsonResponse({"status": "username_and_password_cannot_be_empty"})
+#     # print("sss", serializer.errors.values()[0])
+#     # return JsonResponse({"status":error_dict["status"][0]})
+#     # return JsonResponse({"status": "test"})
+#     # return JsonResponse({"status": error_dict["status"][0]})
+#     return JsonResponse({"status": "Invalid_Input"})
+
 
 # @csrf_exempt
 # @api_view(['GET'])
@@ -139,15 +227,22 @@ def login_view(request):
 
 
 # @csrf_exempt
-@api_view(['GET'])
-# @authentication_classes([SessionAuthentication])
-# @permission_classes([IsAuthenticated])
-def logout_view(request):
-    print("entering logout")
-    print("loggedout", request.user.username)
 
-    logout(request)
-    return JsonResponse({"status": "Logged_out"})
+
+
+
+#logout starts
+
+
+# @api_view(['GET'])
+# # @authentication_classes([SessionAuthentication])
+# # @permission_classes([IsAuthenticated])
+# def logout_view(request):
+#     print("entering logout")
+#     print("loggedout", request.user.username)
+#
+#     logout(request)
+#     return JsonResponse({"status": "Logged_out"})
 
 #convert list or dict values into string
 
@@ -251,7 +346,8 @@ class Dashboard(ViewSet):
 class MachinesView(ViewSet):
     @action(detail=False, methods=['get'])
     def machine_list(self, request):
-        if request.user.is_authenticated:
+        try:
+            # if request.user.is_authenticated:
             print('requesttttttt',request.META)
 
 
@@ -270,9 +366,10 @@ class MachinesView(ViewSet):
 
 
             # print('userssss', request.user)
+            user_data=get_user(request)
+            print('user_data',user_data)
 
-
-            unique_data=all_Machine_data.objects.filter(user_name__username=request.user).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
+            unique_data=all_Machine_data.objects.filter(user_name__username=user_data).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
                 .distinct('machine_id__machine_id','plant_name__plant_name','model_name__model_name')
             # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
 
@@ -329,11 +426,13 @@ class MachinesView(ViewSet):
 
             return JsonResponse({"machine_list": machine_list_data})
 
-                # form_fun = forms_data()
-        else:
-            print('requesttttt',request.META)
-            print("else")
+        except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
+
+        # else:
+        #     print('requesttttt',request.META)
+        #     print("else")
+        #     return JsonResponse({"status": "login_required"})
 
     @action(detail=False, method=["get"])
     # @action(detail=False, method=["get","post"])
@@ -371,7 +470,7 @@ class MachinesView(ViewSet):
                     general_serialzer_data_1=null_to_str(general_serialzer_data_11)
                     print('general_serialzer_data_1',general_serialzer_data_1)
 
-                    plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name__username=request.user)
+                    plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name__username="user1")
                     # plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
                     print('plant_line_data',plant_line_data)
 
@@ -962,7 +1061,7 @@ class ReportsView(ViewSet):
                                                                                          i][
                                                                                          'machine_id__machine_name'] is not None else "None"
 
-                reportsss = all_Machine_data.objects.filter(user_name__username=request.user,machine_id__machine_id=machine_id)
+                reportsss = all_Machine_data.objects.filter(user_name__username="user1",machine_id__machine_id=machine_id)
                 machine_all_reports = []
 
                 for k in reportsss:
@@ -997,7 +1096,7 @@ class ReportsView(ViewSet):
     @action(detail=False, methods=['post'])
     def Reports(self, request):
         if request.user.is_authenticated:
-            try:
+            try:#remove try and except for next push
                 request_data = request.data
                 print('request_data',request_data)
             except json.JSONDecodeError:
@@ -1034,7 +1133,7 @@ class ReportsView(ViewSet):
 
             # Check if the user has access to the selected machine and KPI name
             try:
-                machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name=request.user,kpi__kpi_name=kpi_name)
+                machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name__username=request.user,kpi__kpi_name=kpi_name)
                 print('machine_data',machine_data)
                 if not machine_data:
                     print('No data available.')

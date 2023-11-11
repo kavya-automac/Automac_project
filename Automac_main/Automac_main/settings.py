@@ -23,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&svdzsu#n-4ir3!w3d=mle%2w31$=5%m(&6)0ortj)4kh1(&27'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ["65.0.154.172","127.0.0.1","192.168.29.144","192.168.94.216"]
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'Automac_app',
     'Automac_machines_app',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -186,7 +188,7 @@ KEYPATH = "Automac_machines_app/certificates/09ca209df4cc77d7fe5273ee62a21455a54
 
 # /Automac_main/Automac_machines_app
 #
-# REST_FRAMEWORK ={
-#     'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
-# }
+REST_FRAMEWORK ={
+    'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
+}
 

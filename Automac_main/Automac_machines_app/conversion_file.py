@@ -163,6 +163,8 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
 
     payload = json.loads(mqtt_machines_data)
+    print('CSD1 dataa demo app topic ',payload)
+
 
 
 
@@ -182,22 +184,32 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
     digital_output = [True if value.lower() == 'on' else False for value in digital_output]
 
-    sensor_data = MachineDetails(
-        # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
-        test_timestamp=timestamp,
-        timestamp=timestamp,
-        machine_id=machine_id,
-        machine_location=machine_location,
-        digital_input=digital_input,
-        digital_output=digital_output,
-        analog_input=analog_input,
-        analog_output=analog_output,
-        other=other
-    )
     existing_record = MachineDetails.objects.filter(timestamp=timestamp).first()
-    # print('existing_record', existing_record)
+
+
     if existing_record is None:
 
+        sensor_data = MachineDetails(
+            # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
+            test_timestamp=timestamp,
+            timestamp=timestamp,
+            machine_id=machine_id,
+            machine_location=machine_location,
+            digital_input=digital_input,
+            digital_output=digital_output,
+            analog_input=analog_input,
+            analog_output=analog_output,
+            other=other
+        )
+
+        print('...sensor_data',sensor_data)
+
         sensor_data.save()
+
+    # print('existing_record', existing_record)
+
+        print('......storing data')
+
+
     else:
         pass

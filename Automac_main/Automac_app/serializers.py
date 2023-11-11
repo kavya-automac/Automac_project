@@ -267,8 +267,8 @@ class IO_list_serializer(serializers.ModelSerializer): #iostatus api # trail_det
 
 
 
-class ReportEntrySerializer(serializers.Serializer):
-    machine_id = serializers.CharField(max_length=10)
-    start_datetime = serializers.DateTimeField()
-    end_datetime = serializers.DateTimeField()
-    report_type = serializers.CharField(max_length=50)
+# class ReportEntrySerializer(serializers.Serializer):
+#     machine_id = serializers.CharField(max_length=10)
+#     start_datetime = serializers.DateTimeField()
+#     end_datetime = serializers.DateTimeField()
+#     report_type = serializers.CharField(max_length=50)

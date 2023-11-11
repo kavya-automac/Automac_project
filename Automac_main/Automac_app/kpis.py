@@ -14,14 +14,11 @@ from .serializers import *
 
 # from . import calculations
 
-from django.http import JsonResponse
-from django.http import JsonResponse
-from datetime import datetime, timedelta
 
 
-from django.http import JsonResponse
+
+
 from datetime import datetime, timedelta
-from django.http import JsonResponse
 
 from datetime import datetime
 from django.http import JsonResponse
@@ -30,7 +27,7 @@ def get_kpis_data(user, machine):
     kpis = []
 
     try:
-        user_data = all_Machine_data.objects.filter(user_name=user, machine_id=machine)
+        user_data = all_Machine_data.objects.filter(user_name__username=user, machine_id=machine)
         print('userrrrrrrr',user_data)
     except all_Machine_data.DoesNotExist:
         error_message = "Please enter a valid machine_id."
