@@ -27,7 +27,7 @@ DEBUG = True
 # DEBUG = False
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ["65.0.154.172","127.0.0.1","192.168.29.144","192.168.94.216"]
+ALLOWED_HOSTS = ["65.0.154.172","127.0.0.1","192.168.29.144","192.168.94.216","atomssol.in"]
 
 # Application definition
 
