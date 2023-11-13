@@ -939,8 +939,8 @@ class Trails(ViewSet):
         current_user = get_user(request)
         if current_user.is_authenticated:
             print("if")
-            data_session=testing_sessions(request)
-            print('data_session',data_session)
+            # data_session=testing_sessions(request)
+            # print('data_session',data_session)
 
             machine_id = request.GET.get('machine_id')
             date = request.GET.get('date')
