@@ -5,7 +5,7 @@ import datetime
 from django.contrib import messages
 
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.decorators import action
@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 # from rest_framework.response import Response
 from .serializers import *
 from django.http import JsonResponse
@@ -253,11 +254,16 @@ def logout_view(request):
 class Dashboard(ViewSet):
     @action(detail=False, methods=['get'])
     def dashboard(self, request):
-        if request.user.is_authenticated:
-            current_time = datetime.datetime.now(datetime.timezone.utc)
+        current_user = get_user(request)
+
+        if current_user.is_authenticated:
+            current_time = datetime.datetime.now()
+            print('current_time', current_time)
+
+            # current_time = datetime.datetime.now()
 
             today = datetime.datetime.now().date()
-            user_machine_kpi = all_Machine_data.objects.filter(user_name=request.user).values('machine_id__machine_id') \
+            user_machine_kpi = all_Machine_data.objects.filter(user_name__username=current_user).values('machine_id__machine_id') \
                 .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
             result = []
             machine_count=0
@@ -269,11 +275,17 @@ class Dashboard(ViewSet):
 
                 if MachineDetails.objects.filter(machine_id=machines).exists():
 
-                    to_fetch_lastrecord_data = MachineDetails.objects.filter(machine_id=machines).values('machine_id','timestamp').latest('timestamp')
-
+                    # to_fetch_lastrecord_data = MachineDetails.objects.filter(machine_id=machines).values('machine_id','timestamp').latest('timestamp')
+                    to_fetch_lastrecord_data = MachineDetails.objects.filter(machine_id=machines).values('machine_id','timestamp')
+                    fetch_latest=to_fetch_lastrecord_data.latest('timestamp')
 
                     print('to_fetch_lastrecord_data',to_fetch_lastrecord_data)
-                    last_record_time = to_fetch_lastrecord_data['timestamp']
+                    print('fetch_latest',fetch_latest)
+                    last_record_time1 = fetch_latest['timestamp']
+
+                    last_record_time2 = last_record_time1.strftime("%Y-%m-%d %H:%M:%S.%f %Z")
+                    last_record_time = datetime.datetime.strptime(last_record_time2,"%Y-%m-%d %H:%M:%S.%f %Z")
+
                     print('last_record_time',last_record_time)
                     print('current_time',current_time)
 
@@ -281,7 +293,7 @@ class Dashboard(ViewSet):
                     time_difference = abs((current_time - last_record_time).total_seconds())
                     # time_difference = current_time - last_record_time
                     print('time_difference',time_difference)
-                    print(' time_difference > timedelta(seconds=30)', time_difference > 30)
+                    print(' time_difference > timedelta(seconds=30)', time_difference > 60)
 
                     if time_difference > 60:
                     # if time_difference > timedelta(seconds=30):
@@ -437,7 +449,9 @@ class MachinesView(ViewSet):
     @action(detail=False, method=["get"])
     # @action(detail=False, method=["get","post"])
     def machine_details(self, request):
-        if request.user.is_authenticated:
+        current_user = get_user(request)
+
+        if current_user.is_authenticated:
             print("if")
             BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -470,7 +484,7 @@ class MachinesView(ViewSet):
                     general_serialzer_data_1=null_to_str(general_serialzer_data_11)
                     print('general_serialzer_data_1',general_serialzer_data_1)
 
-                    plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name__username="user1")
+                    plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name__username=current_user)
                     # plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
                     print('plant_line_data',plant_line_data)
 
@@ -545,9 +559,9 @@ class MachinesView(ViewSet):
                         return JsonResponse({"status": error_message}, status=400)  # Return an error response
 
                     # user=request.query_params.get('user')
-                    user=request.user
+                    user=current_user
                     print('userrrr',user)
-                    # user=request.user
+
                     data = kpis.get_kpis_data(user,machine)
                     data['machine_id']=machine.machine_id
                     data['machine_name']=machine.machine_name
@@ -898,31 +912,32 @@ def machine_control(request):
 
 
 
-def testing_sessions(request):
-    if request.user.is_authenticated:
-        session_key = request.session.session_key
-        print("Session Key:", session_key)
-
-        request.session['dummy_data'] = 'Hello, World!'
-        json_data_1=json.dumps({"name":"kavya","company":"Automac"})
-        request.session['json_data'] =json_data_1
-        # messages.success(request, 'Dummy data successfully stored in session.')
-        dummy = request.session.get('dummy_data')
-        json_data = request.session.get('json_data')
-        print("Dummy Data:", dummy)
-        print("json data:", json_data)
-
-        # messages.warning(request, 'warning.')
-
-    else:
-        pass
+# def testing_sessions(request):
+#     if request.user.is_authenticated:
+#         session_key = request.session.session_key
+#         print("Session Key:", session_key)
+#
+#         request.session['dummy_data'] = 'Hello, World!'
+#         json_data_1=json.dumps({"name":"kavya","company":"Automac"})
+#         request.session['json_data'] =json_data_1
+#         # messages.success(request, 'Dummy data successfully stored in session.')
+#         dummy = request.session.get('dummy_data')
+#         json_data = request.session.get('json_data')
+#         print("Dummy Data:", dummy)
+#         print("json data:", json_data)
+#
+#         # messages.warning(request, 'warning.')
+#
+#     else:
+#         pass
 
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 class Trails(ViewSet):
     @action(detail=False, method=['get'])
     def Trail_details(self,request):
-        if request.user.is_authenticated:
+        current_user = get_user(request)
+        if current_user.is_authenticated:
             print("if")
             data_session=testing_sessions(request)
             print('data_session',data_session)
@@ -946,12 +961,14 @@ class Trails(ViewSet):
 
     @action(detail=False, method=['get'])
     def Trail_List(self, request):
-        if request.user.is_authenticated:
+        current_user = get_user(request)
+
+        if current_user.is_authenticated:
             print("if")
 
             BASE_DIR = Path(__file__).resolve().parent.parent
 
-            unique_data = all_Machine_data.objects.filter(user_name__username=request.user).values('machine_id__machine_id',
+            unique_data = all_Machine_data.objects.filter(user_name__username=current_user).values('machine_id__machine_id',
                                                                                          'plant_name__plant_name',
                                                                                          'model_name__model_name',
                                                                                          'company_name__company_name',
@@ -1012,16 +1029,21 @@ class Trails(ViewSet):
 
 
 
-@authentication_classes([SessionAuthentication])
+# @authentication_classes([SessionAuthentication])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+
 class ReportsView(ViewSet):
     @action(detail=False, method=['get'])
     def Report_List(self, request):
-        if request.user.is_authenticated:
+        current_user =get_user(request)
+        print('current_user',current_user)
+        if current_user.is_authenticated:
             print("if")
 
             BASE_DIR = Path(__file__).resolve().parent.parent
 
-            unique_data = all_Machine_data.objects.filter(user_name__username=request.user).values('machine_id__machine_id',
+            unique_data = all_Machine_data.objects.filter(user_name__username=current_user).values('machine_id__machine_id',
                                                                                          'plant_name__plant_name',
                                                                                          'model_name__model_name',
                                                                                          'company_name__company_name',
@@ -1095,7 +1117,8 @@ class ReportsView(ViewSet):
 
     @action(detail=False, methods=['post'])
     def Reports(self, request):
-        if request.user.is_authenticated:
+        current_user = get_user(request)
+        if current_user.is_authenticated:
             try:#remove try and except for next push
                 request_data = request.data
                 print('request_data',request_data)
@@ -1133,7 +1156,7 @@ class ReportsView(ViewSet):
 
             # Check if the user has access to the selected machine and KPI name
             try:
-                machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name__username=request.user,kpi__kpi_name=kpi_name)
+                machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name__username=current_user,kpi__kpi_name=kpi_name)
                 print('machine_data',machine_data)
                 if not machine_data:
                     print('No data available.')
