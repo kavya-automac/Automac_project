@@ -51,19 +51,19 @@ class Machine_KPI_Data(models.Model):
 
 
 
-#
-# @receiver(post_save,sender=MachineDetails)
-# def signal(sender,instance,created,**kwargs):
-#     if created:
-#
-#         print("new data arrived")
-#         # machine=instance.machine_id
-#         # print('instanceee',instance)
-#         # print('machine......',machine)
-#         from Automac_app import calculations
-#
-#         calculations.kpi_data_to_database(instance)
-#         # time.sleep(5)
+
+@receiver(post_save,sender=MachineDetails)
+def signal(sender,instance,created,**kwargs):
+    if created:
+
+        print("new data arrived")
+        # machine=instance.machine_id
+        # print('instanceee',instance)
+        # print('machine......',machine)
+        from Automac_app import calculations
+
+        calculations.kpi_data_to_database(instance)
+        # time.sleep(5)
 
 
 
