@@ -554,8 +554,8 @@ class MachinesView(ViewSet):
                     elif module == "kpis":
                         try:
                             machine = Machines_List.objects.get(machine_id=machine_id)
-                            # print('machineeeeeeeee',machine.machine_id)
-                            # print('machineenameee',machine.machine_name)
+                            print('machineeeeeeeee',machine)
+                            print('machineenameee',machine.machine_id)
                         except Machines_List.DoesNotExist:
                             error_message = "Please enter a valid machine_id."
                             return JsonResponse({"status": error_message}, status=400)  # Return an error response

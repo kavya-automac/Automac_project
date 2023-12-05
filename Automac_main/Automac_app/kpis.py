@@ -27,7 +27,7 @@ def get_kpis_data(user, machine):
     kpis = []
 
     try:
-        user_data = all_Machine_data.objects.filter(user_name__username=user, machine_id=machine)
+        user_data = all_Machine_data.objects.filter(user_name__username=user, machine_id__machine_id=machine.machine_id)
         print('userrrrrrrr',user_data)
     except all_Machine_data.DoesNotExist:
         error_message = "Please enter a valid machine_id."
