@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('backend/', include('Automac_app.urls')),
     path('machine_app/', include('Automac_machines_app.urls')),
-    # path('', TemplateView.as_view(template_name='index.html'))
+    path('', TemplateView.as_view(template_name='index.html'))
 
 ]
