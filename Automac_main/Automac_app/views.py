@@ -1212,7 +1212,8 @@ class ReportsView(ViewSet):
 
 
                     response_data.append(relevant_data)
-                    responseee["data"] = response_data
+                responseee["data"] = response_data
+                print('responseee',responseee)
 
                 return JsonResponse(responseee)
 
