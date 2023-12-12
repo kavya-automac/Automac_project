@@ -22,6 +22,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('backend/', include('Automac_app.urls')),
     path('machine_app/', include('Automac_machines_app.urls')),
-    path('', TemplateView.as_view(template_name='index.html'))
+    path('', TemplateView.as_view(template_name='index.html')),
+    path('dashboard', TemplateView.as_view(template_name='index.html')),
+    path('machinelist', TemplateView.as_view(template_name='index.html')),
+    path('trails', TemplateView.as_view(template_name='index.html')),
+    path('reports', TemplateView.as_view(template_name='index.html')),
+    path('settings', TemplateView.as_view(template_name='index.html')),
+    path('login', TemplateView.as_view(template_name='index.html'))
 
 ]
