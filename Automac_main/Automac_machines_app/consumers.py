@@ -6,7 +6,6 @@ from . import kpi_websocket
 import schedule
 import time
 from asgiref.sync import sync_to_async
-import websockets
 from .mqtt import client
 
 class ChatConsumer(AsyncWebsocketConsumer):
