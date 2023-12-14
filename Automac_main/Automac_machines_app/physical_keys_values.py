@@ -333,7 +333,7 @@ def demo_app_to_channels(mqtt_machines_data):
     # print('hhhh')
 
     payload = json.loads(mqtt_machines_data)
-    # print('payload 7inch',payload)
+    print('payload csddddddddd',payload)
     # Extract machine_id from the payload
     machine_id = payload['machine_id']
     print('machineeeeeeeeee',machine_id)
@@ -381,11 +381,21 @@ def demo_app_to_channels(mqtt_machines_data):
     digital_output = payload.get('digital_outputs')
     analog_input = payload.get('analog_inputs')
     analog_output = payload.get('analog_outputs')
+    print('digital_input',digital_input)
+    print('digital_output',digital_output)
+    print('analog_input',analog_input)
+    print('analog_output',analog_output)
+    print('///////////////////////////////////////////////////////////////////////')
+    print('digital_input_keys', digital_input_keys)
+    print('digital_output_keys', digital_output_keys)
+    print('analog_input_keys', analog_input_keys)
+    print('analog_output_keys', analog_output_keys)
 
     digital_keyvalue_input_data = []
 
     for key, value in zip(digital_input_keys, digital_input):
-        value_str = "On" if value else "Off"
+        value_str = value
+        # value_str = "On" if value else "Off"
         color = None
         for i in range(len(input_output_data)):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
@@ -397,12 +407,13 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         digital_keyvalue_input_data.append({"name": key, "value": value_str, "color": color})
-    # print('digital_keyvalue_input_data', digital_keyvalue_input_data)
+    print('digital_keyvalue_input_data', digital_keyvalue_input_data)
 
     digital_keyvalue_output_data = []
 
     for key, value in zip(digital_output_keys, digital_output):
-        value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+        value_str = value
+        # value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
         color = None
         for i in range(len(input_output_data)):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
@@ -414,7 +425,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         digital_keyvalue_output_data.append({"name": key, "value": value_str, "color": color})
-    # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
+    print('digital_keyvalue_output_data', digital_keyvalue_output_data)
 
     analog_keyvalue_input_data = []
     for key, value in zip(analog_input_keys, analog_input):
@@ -429,7 +440,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         analog_keyvalue_input_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
-    # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+    print('analog_keyvalue_input_data', analog_keyvalue_input_data)
 
     analog_keyvalue_output_data = []
     for key, value in zip(analog_output_keys, analog_output):
@@ -445,7 +456,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         analog_keyvalue_output_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
-    # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
+    print('analog_keyvalue_output_data', analog_keyvalue_output_data)
 
     # Create dictionaries for data to be sent
 
@@ -462,6 +473,7 @@ def demo_app_to_channels(mqtt_machines_data):
 
     # Convert the result dictionary to a JSON string
     res = json.dumps(result)
+    print('resssssssssssssssssssss',res)
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
     # print('channel_layer',channel_layer)

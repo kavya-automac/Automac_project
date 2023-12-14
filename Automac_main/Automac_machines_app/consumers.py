@@ -6,6 +6,8 @@ from . import kpi_websocket
 import schedule
 import time
 from asgiref.sync import sync_to_async
+import websockets
+from .mqtt import client
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -14,8 +16,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # print('paramsssssssssssss',self.scope["headers"])
         # print('scope', self.scope)
         # print('qery_stringggg', self.scope['query_string'].decode())
+
+        client.publish("ws_con", "Connected")
+
         query_string=self.scope['query_string'].decode()
-        machine_id = query_string.split('=')[1]
+        machine_id = query_string.split('=')[1].split('&')[0]
         print('machine_id connect ',machine_id)
 
 
@@ -30,6 +35,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
+        client.publish("ws_con", "Disconnected")
+
+
         query_string = self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1]
         print('idddddddddddddddddddddddd',machine_id)
@@ -107,8 +115,12 @@ class KpiConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         try:
+            client.publish("ws_test","connectedddd")
             query_string = self.scope['query_string'].decode()
-            machine_id = query_string.split('=')[1]
+            print('query_string',query_string)
+            machine_id = query_string.split('=')[1].split('&')[0]
+            username = query_string.split('=')[2]
+            print('username',username)
             # if not machine_id:
             #     await self.close()
             #     return
@@ -118,12 +130,14 @@ class KpiConsumer(AsyncWebsocketConsumer):
 
             # Start calling kpi_socket function periodically
             self.machine_id = machine_id
+            self.username=username
             self.scheduler_task = asyncio.create_task(self.schedule_kpi_socket())
-        except:
-            print("errorrrrr")
+        except Exception as e:
+            print("errorrrrr",e)
 
     async def disconnect(self, close_code):
         # Cancel the scheduler task when disconnecting
+        client.publish("ws_test", "disconnected")
         if hasattr(self, 'scheduler_task'):# hasattr() function is an inbuilt utility function,\
             # which is used to check if an object has the given named attribute and return true if present, else false.
             self.scheduler_task.cancel()
@@ -135,7 +149,7 @@ class KpiConsumer(AsyncWebsocketConsumer):
             try:
                 print("-----------------------------------------------")
                 print("-----------------------------------------------")
-                await kpi_websocket.kpi_socket(self.machine_id)
+                await kpi_websocket.kpi_socket(self.username,self.machine_id)
                 # Adjust the sleep duration as needed (e.g., call every 10 seconds)
                 await asyncio.sleep(2)
             except asyncio.CancelledError:

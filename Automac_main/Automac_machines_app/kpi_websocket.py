@@ -11,9 +11,9 @@ from datetime import datetime
 from asgiref.sync import sync_to_async
 
 channel_layer_KPI = get_channel_layer()
-#
+
 @sync_to_async
-def kpi_socket(machine_id):
+def kpi_socket(username,machine_id):
     print('kkk1')
     from .models import Machine_KPI_Data
     print('kkk2')
@@ -30,12 +30,13 @@ def kpi_socket(machine_id):
 
 
     try:
-        user_data = all_Machine_data.objects.filter(machine_id__machine_id=machinelist)
+        user_data = all_Machine_data.objects.filter(user_name__username=username,machine_id__machine_id=machinelist)
         print('users_data', user_data)
     except all_Machine_data.DoesNotExist:
         error_message = "Please enter a valid machine_id."
         return JsonResponse({"status": error_message}, status=400)  # Return an error response
-
+    except Exception as e:
+        print("eeeeeeeeee",e)
     today = datetime.now().date()
     kpis = []
 
@@ -154,6 +155,7 @@ def kpi_socket(machine_id):
     result_data['machine_id']=machinelist.machine_id
     result_data['machine_name']=machinelist.machine_name
     print('result_data', result_data)
+    result_data['user_name']=username
 
 
     res = json.dumps(result_data)

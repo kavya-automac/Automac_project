@@ -19,6 +19,7 @@ def on_connect(client, userdata, flags, rc):
        client.subscribe('Topic_name')
        client.subscribe('demo_app')
        client.subscribe('CSD')
+       client.subscribe('websocket_data')
    else:
        print('Bad connection. Code:', rc)
 
@@ -33,6 +34,8 @@ def on_message(client, userdata, msg):
     # print('timestamp :', payload_json['timestamp'])
     # print('machineid :', payload_json['info']['mid'])
 
+
+
     multi_topic_file.all_topics(mqtt_machines_data,topic)
 
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
@@ -41,6 +44,10 @@ def on_message(client, userdata, msg):
     if topic == 'demo_app'or topic == "CSD":
         from . import physical_keys_values
 
+
+        physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+    if topic == "websocket_data":
+        from . import physical_keys_values
 
         physical_keys_values.demo_app_to_channels(mqtt_machines_data)
 
