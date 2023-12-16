@@ -562,12 +562,13 @@ class MachinesView(ViewSet):
 
                         # user=request.query_params.get('user')
                         user=current_user
-                        print('userrrr',user)
+                        print('userrrr',type(user))
+
 
                         data = kpis.get_kpis_data(user,machine)
                         data['machine_id']=machine.machine_id
                         data['machine_name']=machine.machine_name
-                        data['user_name'] =user
+                        data['user_name'] =str(current_user)
 
 
 
