@@ -3,6 +3,7 @@ import asyncio
 # from . models import *
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.db.models.functions import TruncSecond
 from django.http import JsonResponse
 import json
 from datetime import datetime
@@ -20,6 +21,7 @@ def kpi_socket(username,machine_id):
     from Automac_app.models import all_Machine_data, Machines_List,IO_List
     print('kkk3')
     print('kkk4')
+    todays_date=datetime.now().date()
 
     kpis = []
     try:
@@ -53,23 +55,57 @@ def kpi_socket(username,machine_id):
 
             if kpitype == 'Line_Graph':
                 print('lineee')
+                # kpidata = Machine_KPI_Data.objects.filter(machine_id=machine_data, kpi_id__kpi_name=kpiname
+                #                                           , kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
+                #                                           timestamp__date=todays_date). \
+                #     annotate(rounded_timestamp=TruncSecond('timestamp',second=30)) \
+                #     .distinct('rounded_timestamp')
+
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
                     kpi_id__kpi_name=kpiname,
-                    kpi_id__kpi_inventory_id__Kpi_Type=kpitype
-                ).order_by('-timestamp').first()
+                    kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
+                    timestamp__date=todays_date
+                ).order_by('-timestamp')[::12]
+
+                # kpidata = Machine_KPI_Data.objects.filter(
+                #     machine_id=machine_data,
+                #     kpi_id__kpi_name=kpiname,
+                #     kpi_id__kpi_inventory_id__Kpi_Type=kpitype
+                # ).order_by('-timestamp').first()
                 print('kpidataaaa',kpidata)
                 x_axis = []  # List to store x-axis (timestamp)
                 y_axis = []
-
-                if kpidata:
-                    time = kpidata.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
-                    value = kpidata.kpi_data
+                for kpidatatype in kpidata:
+                    time = kpidatatype.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
+                    value_list = kpidatatype.kpi_data  # Assuming kpi_data is a list
+                    processed_values = []  # List to store processed values
+                    print('value_list', value_list)
                     x_axis.append(time)
-                    y_axis.append(value[0])
+                    y_axis.append(value_list[0])
+
 
                 kpi_result['x_axis'] = x_axis
                 kpi_result['y_axis'] = y_axis
+                if not kpi_result['x_axis']:
+                    kpi_result['x_axis'] = []
+                if not kpi_result['y_axis']:
+                    kpi_result['y_axis'] = []
+
+
+
+                # if kpidata:
+                #     print('in if ',kpidata.timestamp)
+                #     time = kpidata.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
+                #     value = kpidata.kpi_data
+                #     x_axis.append(time)
+                #     y_axis.append(value[0])
+                # else:
+                #     print('in else')
+                #
+                # kpi_result['x_axis'] = x_axis
+                # kpi_result['y_axis'] = y_axis
+                print('kpi_result in line',kpi_result)
             elif kpitype == 'Text_Card':
                 print('texttttt')
                 kpidata = Machine_KPI_Data.objects.filter(

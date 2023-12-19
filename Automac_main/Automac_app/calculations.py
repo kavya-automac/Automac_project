@@ -152,7 +152,7 @@ def kpi_data_to_database(instance):
             datapoints_split=datapoints.split('[')
             col=datapoints_split[0]
             index=int(datapoints_split[1][:-1])
-            # print('.........','col',col,'\\\\','index',index)
+            print('.........','col',col,'\\\\','index',index)
 
             # kpi_data = getattr(instance,datapoints)
             # kpi_data = eval(f'instance.{datapoints}')
@@ -163,15 +163,21 @@ def kpi_data_to_database(instance):
                 'timestamp')
 
             min_max_data_query = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=today)
-            # print('min_max_data_query',min_max_data_query[0].analog_input)
+            print('min_max_data_query',min_max_data_query)
             lowest = getattr(first_record, f"{col}")[index]
-            # print('lowest',lowest)
+            print('lowest',lowest)
             highest = getattr(first_record, f"{col}")[index]
-            # print('highest',highest)
+            print('highest',highest)
+            min_max_data_query = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=today)
+
 
             for m in range(len(min_max_data_query)):
-                record_data = getattr(min_max_data_query[m], f"{col}")[index]
-                # print('record_data',record_data)
+                # print('mmmmmmmmmmmmm',m)
+                print('indexxx',index)
+                record_data = getattr(min_max_data_query[m], f"{col}")
+                record_data = record_data[index]
+                # record_data = getattr(min_max_data_query[m], f"{col}")[index]
+                print('record_data',record_data)
                 if record_data > highest:
                     highest = record_data
                 elif record_data < lowest:

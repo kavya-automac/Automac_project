@@ -345,7 +345,7 @@ class Dashboard(ViewSet):
                         print("value_list",value_list)
                     # print('kpiname',kpiname)
                     result.append({"machine": machines, "values": value_list})
-                    final_data = {"title": "bar_graph", "name": kpi_name, "data": result}
+                    final_data = {"title": "bar_graph", "name": type, "data": result}
 
                 return JsonResponse({"count_card_data":count_card_data,"bar_graph":final_data})
 

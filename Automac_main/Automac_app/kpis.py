@@ -3,6 +3,7 @@ import datetime
 from Automac_machines_app.serializers import machineSerializer,analog_ip_op_Serializer,\
     machineSerializer_two,analog_ip_op_Serializer,kpi_data_Serializer,kpi_cummulative_serilaizer
 from Automac_machines_app.models import MachineDetails,Machine_KPI_Data
+from django.db.models.functions import TruncMinute,TruncSecond
 from django.http import JsonResponse
 
 from .serializers import *
@@ -25,6 +26,7 @@ from django.http import JsonResponse
 
 def get_kpis_data(user, machine):
     kpis = []
+    todays_date=datetime.now().date()
 
     try:
         user_data = all_Machine_data.objects.filter(user_name__username=user, machine_id__machine_id=machine.machine_id)
@@ -56,13 +58,31 @@ def get_kpis_data(user, machine):
 
 
             if kpitype == 'Line_Graph':
+                #every 30 mins data
+                # kpidata = Machine_KPI_Data.objects.filter(machine_id=machine_data, kpi_id__kpi_name=kpiname
+                #                                           ,kpi_id__kpi_inventory_id__Kpi_Type=kpitype,timestamp__date=todays_date).\
+                #     annotate(rounded_timestamp=TruncSecond('timestamp',second=30))\
+                #     .distinct('rounded_timestamp')
+
+                kpidata = Machine_KPI_Data.objects.filter(
+                        machine_id=machine_data,
+                        kpi_id__kpi_name=kpiname,
+                        kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
+                        timestamp__date=todays_date
+                    ).order_by('-timestamp')[::12]
+
+
+                print('every_30mins_data',kpidata)
+
 
                 # Retrieve the latest 10 records for line_graph
-                kpidata = Machine_KPI_Data.objects.filter(
-                    machine_id=machine_data,
-                    kpi_id__kpi_name=kpiname,
-                    kpi_id__kpi_inventory_id__Kpi_Type=kpitype
-                ).order_by('-timestamp')[:10]  # Order by timestamp in descending order
+                # kpidata = Machine_KPI_Data.objects.filter(
+                #     machine_id=machine_data,
+                #     kpi_id__kpi_name=kpiname,
+                #     kpi_id__kpi_inventory_id__Kpi_Type=kpitype
+                # ).order_by('-timestamp')[:10]  # Order by timestamp in descending order
+                # print('kpidata',kpidata)
+
                 kpiserializer = kpi_data_Serializer(kpidata, many=True)
                 kpiserializer_data = kpiserializer.data
                 x_axis = []  # List to store x-axis (timestamp)
@@ -182,21 +202,15 @@ def get_kpis_data(user, machine):
                         kpi_id__kpi_inventory_id__Kpi_Type = kpitype
                 ).order_by('-timestamp')[:10].first()
                 print('kpi_data_table_values',kpi_data_table_values)
-                energy_card_values=kpi_data_table_values.kpi_data
+
+                # energy_card_values= kpi_data_table_values.kpi_data   #if data is none
+                energy_card_values= kpi_data_table_values.kpi_data if kpi_data_table_values else []  #if data is none
                 print('energy_card_values',energy_card_values)
                 #......none to "null"
                 energy_card_values_null_str = [str(item) if item is not None else "None" for item in energy_card_values]
 
                 kpi_result['keys'] = other_keys
                 kpi_result['values'] = energy_card_values_null_str
-
-
-
-
-
-
-
-
 
             kpi_entry = {
                 'card': kpitype,
@@ -206,6 +220,7 @@ def get_kpis_data(user, machine):
             }
 
             kpis.append(kpi_entry)
+
 
     result = {
         'data': kpis,
