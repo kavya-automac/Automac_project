@@ -406,8 +406,14 @@ def demo_app_to_channels(mqtt_machines_data):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
                     input_output_data_serializer_data[i]['IO_name'] == key:
                 db_color = input_output_data_serializer_data[i]['IO_color']
-                color = db_color[0] if value else db_color[1]
-                break  # Exit loop once the correct key is found
+                if value_str.lower() == 'on':
+
+                    color = db_color[0]
+                else:
+                    color = db_color[1]
+                break
+
+                # color = db_color[0] if value else db_color[1]
             else:
                 pass
 
@@ -424,8 +430,15 @@ def demo_app_to_channels(mqtt_machines_data):
             if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
                     input_output_data_serializer_data[i]['IO_name'] == key:
                 db_color = input_output_data_serializer_data[i]['IO_color']
-                color = db_color[0] if value else db_color[1]
-                break  # Exit loop once the correct key is found
+                if value_str.lower() == 'on':
+
+                    color = db_color[0]
+                else:
+                    color = db_color[1]
+                break
+
+                # color = db_color[0] if value else db_color[1]
+                # break  # Exit loop once the correct key is found
             else:
                 pass
 
