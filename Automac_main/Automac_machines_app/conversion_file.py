@@ -127,7 +127,7 @@ def MID004_store_data(mqtt_machines_data):
 
 
     # Create an instance of the SensorData model
-    existing_record = MachineDetails.objects.filter(timestamp=timestamp).first()
+    existing_record = MachineDetails.objects.filter(machine_id=machine_id,timestamp=timestamp).first()
     # print('existing_record MID004', existing_record)
     # print('timestamp', timestamp)
     if existing_record is None:
