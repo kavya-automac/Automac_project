@@ -204,7 +204,8 @@ def get_kpis_data(user, machine):
                 print('kpi_data_table_values',kpi_data_table_values)
 
                 # energy_card_values= kpi_data_table_values.kpi_data   #if data is none
-                energy_card_values= kpi_data_table_values.kpi_data if kpi_data_table_values else []  #if data is none
+                none_data=['None','None','None','None','None','None','None','None']
+                energy_card_values= kpi_data_table_values.kpi_data if kpi_data_table_values else none_data  #if data is none
                 print('energy_card_values',energy_card_values)
                 #......none to "null"
                 energy_card_values_null_str = [str(item) if item is not None else "None" for item in energy_card_values]
