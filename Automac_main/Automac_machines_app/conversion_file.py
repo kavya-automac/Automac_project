@@ -163,7 +163,7 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
 
     payload = json.loads(mqtt_machines_data)
-    # print('CSD1 dataa demo app topic ',payload)
+    print('CSD1 dataa demo app topic ',payload)
 
 
 
@@ -184,7 +184,7 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
     digital_output = [True if value.lower() == 'on' else False for value in digital_output]
 
-    existing_record = MachineDetails.objects.filter(timestamp=timestamp).first()
+    existing_record = MachineDetails.objects.filter(machine_id=machine_id,timestamp=timestamp).first()
 
 
     if existing_record is None:
