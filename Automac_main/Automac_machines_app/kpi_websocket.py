@@ -166,7 +166,8 @@ def kpi_socket(username,machine_id):
                 other_value = []
                 kpi_data_table_values = Machine_KPI_Data.objects.filter(machine_id=machine_data,
                                                                         kpi_id__kpi_name=kpiname, \
-                                                                        kpi_id__kpi_inventory_id__Kpi_Type=kpitype
+                                                                        kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
+                                                                        timestamp__date=todays_date
                                                                         ).order_by('-timestamp').first()
                 print('kpi_data_table_values', kpi_data_table_values)
                 energy_card_values = kpi_data_table_values.kpi_data

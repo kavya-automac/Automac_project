@@ -199,7 +199,7 @@ def get_kpis_data(user, machine):
                 analog_output_value = []
                 other_value = []
                 kpi_data_table_values=Machine_KPI_Data.objects.filter(machine_id=machine_data,kpi_id__kpi_name=kpiname, \
-                        kpi_id__kpi_inventory_id__Kpi_Type = kpitype
+                        kpi_id__kpi_inventory_id__Kpi_Type = kpitype,timestamp__date=todays_date
                 ).order_by('-timestamp')[:10].first()
                 print('kpi_data_table_values',kpi_data_table_values)
 
