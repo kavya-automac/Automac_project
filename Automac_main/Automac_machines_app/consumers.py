@@ -114,7 +114,7 @@ class KpiConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         try:
-            client.publish("ws_test","connectedddd")
+            client.publish("ws_con","Connected")
             query_string = self.scope['query_string'].decode()
             print('query_string',query_string)
             machine_id = query_string.split('=')[1].split('&')[0]
@@ -136,7 +136,7 @@ class KpiConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Cancel the scheduler task when disconnecting
-        client.publish("ws_test", "disconnected")
+        client.publish("ws_con", "Disconnected")
         if hasattr(self, 'scheduler_task'):# hasattr() function is an inbuilt utility function,\
             # which is used to check if an object has the given named attribute and return true if present, else false.
             self.scheduler_task.cancel()
