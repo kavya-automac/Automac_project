@@ -26,14 +26,14 @@ def kpi_socket(username,machine_id):
     kpis = []
     try:
         machinelist= Machines_List.objects.get(machine_id=machine_id)
-        print('machinelist',machinelist)
+        # print('machinelist',machinelist)
     except Machines_List.DoesNotExist:
         return JsonResponse({"status": 'machine not avaiable'}, status=400)  # Return an error response
 
 
     try:
         user_data = all_Machine_data.objects.filter(user_name__username=username,machine_id__machine_id=machinelist)
-        print('users_data', user_data)
+        # print('users_data', user_data)
     except all_Machine_data.DoesNotExist:
         error_message = "Please enter a valid machine_id."
         return JsonResponse({"status": error_message}, status=400)  # Return an error response
@@ -44,10 +44,10 @@ def kpi_socket(username,machine_id):
 
 
     for machine_data in user_data:
-        print('machine_data',machine_data)
-        print('machine_datakpiiii',machine_data.kpi )
+        # print('machine_data',machine_data)
+        # print('machine_datakpiiii',machine_data.kpi )
         if machine_data.kpi is not None:
-            print('in machine_data')
+            # print('in machine_data')
             kpitype = machine_data.kpi.kpi_inventory_id.Kpi_Type
             kpiname = machine_data.kpi.kpi_name
             kpi_labels = machine_data.kpi.kpi_inventory_id.labels
@@ -73,14 +73,14 @@ def kpi_socket(username,machine_id):
                 #     kpi_id__kpi_name=kpiname,
                 #     kpi_id__kpi_inventory_id__Kpi_Type=kpitype
                 # ).order_by('-timestamp').first()
-                print('kpidataaaa',kpidata)
+                # print('kpidataaaa',kpidata)
                 x_axis = []  # List to store x-axis (timestamp)
                 y_axis = []
                 for kpidatatype in kpidata:
                     time = kpidatatype.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
                     value_list = kpidatatype.kpi_data  # Assuming kpi_data is a list
                     processed_values = []  # List to store processed values
-                    print('value_list', value_list)
+                    # print('value_list', value_list)
                     x_axis.append(time)
                     y_axis.append(value_list[0])
 
@@ -105,16 +105,16 @@ def kpi_socket(username,machine_id):
                 #
                 # kpi_result['x_axis'] = x_axis
                 # kpi_result['y_axis'] = y_axis
-                print('kpi_result in line',kpi_result)
+                # print('kpi_result in line',kpi_result)
             elif kpitype == 'Text_Card':
-                print('texttttt')
+                # print('texttttt')
                 kpidata = Machine_KPI_Data.objects.filter(
                     machine_id=machine_data,
                     kpi_id__kpi_name=kpiname,
                     kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
                     timestamp__date=today
                 ).order_by('-timestamp').first()
-                print('kpidataaaa in text',kpidata)
+                # print('kpidataaaa in text',kpidata)
 
 
                 kpitype = 'text'
@@ -129,7 +129,7 @@ def kpi_socket(username,machine_id):
             elif kpitype == "Energy_Card":
                 print('energyyy')
                 input_output_data = IO_List.objects.filter(machine_id__machine_id=machinelist).order_by('id')
-                print('input_output_data', input_output_data)
+                # print('input_output_data', input_output_data)
                 # from .serializers import IO_list_serializer
 
                 # input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
@@ -144,7 +144,7 @@ def kpi_socket(username,machine_id):
                 analog_output_keys = []
                 other_keys = []
                 for i in range(len(input_output_data)):
-                    print('iiiiiiiiiiiii',input_output_data[i].IO_type)
+                    # print('iiiiiiiiiiiii',input_output_data[i].IO_type)
                     if input_output_data[i].IO_type== "digital_input":
                         digital_input_keys.append(input_output_data[i].IO_name)
                     #
@@ -158,7 +158,7 @@ def kpi_socket(username,machine_id):
                     if input_output_data[i].IO_type == "other":
                         other_keys.append(input_output_data[i].IO_name)
 
-                print(other_keys)
+                # print(other_keys)
                 digital_input_value = []
                 digital_output_value = []
                 analog_input_value = []
@@ -169,7 +169,7 @@ def kpi_socket(username,machine_id):
                                                                         kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
                                                                         timestamp__date=todays_date
                                                                         ).order_by('-timestamp').first()
-                print('kpi_data_table_values', kpi_data_table_values)
+                # print('kpi_data_table_values', kpi_data_table_values)
                 energy_card_values = kpi_data_table_values.kpi_data
                 energy_card_values_null_str = [str(item) if item is not None else "null" for item in energy_card_values]
 
@@ -191,7 +191,7 @@ def kpi_socket(username,machine_id):
     }
     result_data['machine_id']=machinelist.machine_id
     result_data['machine_name']=machinelist.machine_name
-    print('result_data', result_data)
+    # print('result_data', result_data)
     result_data['user_name']=username
 
 

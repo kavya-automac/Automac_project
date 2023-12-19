@@ -26,7 +26,7 @@ def kpi_data_to_database(instance):
             # kpi_data = instance.datapoints  # Assuming instance.points is accessible
             # print('..................................',datapoints,'??????????',kpiname,'///////',kpi_data)
             kpi_data_queryset = Machine_KPI_Data.objects.filter(machine_id=machine_id, kpi_id__kpi_name=kpiname, timestamp__date=today)
-            print('kpi_data_queryset',kpi_data_queryset)
+            # print('kpi_data_queryset',kpi_data_queryset)
             if kpi_data_queryset.exists():
                 print('exitssssssssss')
                 # Update the existing record(s) for cumulative data

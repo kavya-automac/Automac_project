@@ -75,7 +75,7 @@ class Machines_List(models.Model):
     objects = models.Manager()
     machine_image=models.ImageField(upload_to='images',blank=True)
     machine_name=models.CharField(max_length=100)
-    machine_id=models.CharField(max_length=100,blank=True)
+    machine_id=models.CharField(max_length=100,unique=True,blank=True)
     machine_location=models.CharField(max_length=100)
     date_of_installation=models.CharField(max_length=100,null=True,blank=True)
     machine_state=models.CharField(max_length=100)

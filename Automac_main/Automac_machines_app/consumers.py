@@ -10,17 +10,21 @@ from .mqtt import client
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        connected_status=True
         # Add the consumer to the "chat" channel group
         # print(self.scope["user"])
         # print('paramsssssssssssss',self.scope["headers"])
         # print('scope', self.scope)
         # print('qery_stringggg', self.scope['query_string'].decode())
 
-        client.publish("ws_con", "Connected")
+        # client.publish("ws_con", "Connected",)
 
+        print("Connected")
         query_string=self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1].split('&')[0]
         print('machine_id connect ',machine_id)
+        client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"iostatus"}))
+
 
 
 
@@ -34,12 +38,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        client.publish("ws_con", "Disconnected")
+        connected_status = False
+
+        # client.publish("ws_con", "Disconnected")
+        print('Disconnected')
 
 
         query_string = self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1]
-        print('idddddddddddddddddddddddd',machine_id)
+        print('machineid',machine_id)
+        client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"iostatus"}))
+
         await self.channel_layer.group_discard(str(machine_id)+'_io', self.channel_name)
 
         # Remove the consumer from the "chat" channel group
@@ -114,12 +123,16 @@ class KpiConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         try:
-            client.publish("ws_con","Connected")
+            connected_status = True
+            # client.publish("ws_con","Connected")
+            print("Connected")
             query_string = self.scope['query_string'].decode()
             print('query_string',query_string)
             machine_id = query_string.split('=')[1].split('&')[0]
             username = query_string.split('=')[2]
             print('username',username)
+            client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id": machine_id, "ws_grp": "kpis"}))
+
             # if not machine_id:
             #     await self.close()
             #     return
@@ -136,7 +149,13 @@ class KpiConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Cancel the scheduler task when disconnecting
-        client.publish("ws_con", "Disconnected")
+        connected_status = False
+        query_string = self.scope['query_string'].decode()
+        machine_id = query_string.split('=')[1].split('&')[0]
+        # client.publish("ws_con", "Disconnected")
+        print("Disconnected")
+        client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id": machine_id, "ws_grp": "kpis"}))
+
         if hasattr(self, 'scheduler_task'):# hasattr() function is an inbuilt utility function,\
             # which is used to check if an object has the given named attribute and return true if present, else false.
             self.scheduler_task.cancel()

@@ -16,7 +16,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
     # print('payload 7inch',payload)
     # Extract machine_id from the payload
     machine_id = payload['info']['mid']
-    print('machineeeeeeeeee',machine_id)
+    # print('machineeeeeeeeee',machine_id)
 
     # Query the Machines_List model to get data for the specific machine_id
     # machine = Machines_List.objects.get(machine_id=machine_id)
@@ -63,15 +63,15 @@ def mqtt_data_to_channels(mqtt_machines_data):
                                                payload.get('Pump2'), payload.get('Pump3')]
     analog_input = [payload.get('Temperature'), payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
-    print('digital_input',digital_input)
-    print('digital_output',digital_output)
+    # print('digital_input',digital_input)
+    # print('digital_output',digital_output)
 
     digital_keyvalue_input_data = []
 
     for key, value in zip(digital_input_keys, digital_input):
         value_str = value.capitalize()
 
-        print('valuee',value_str)
+        # print('valuee',value_str)
         # value_str = "On" if value else "Off"
         color = None
         for i in range(len(input_output_data)):
@@ -165,7 +165,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
     # print('channel_layer',channel_layer)
-    print("machine_id", machine_id)
+    # print("machine_id", machine_id)
     try:
         async_to_sync(channel_layer.group_send)(str(machine_id)+'_io', {"type": "chat.message", "text": res})
     except Exception as e:
