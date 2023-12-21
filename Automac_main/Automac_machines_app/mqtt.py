@@ -20,6 +20,8 @@ def on_connect(client, userdata, flags, rc):
        client.subscribe('demo_app')
        client.subscribe('CSD')
        client.subscribe('websocket_data')
+       client.subscribe('Maithri_test')
+
    else:
        print('Bad connection. Code:', rc)
 
@@ -41,7 +43,7 @@ def on_message(client, userdata, msg):
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
         from . import physical_keys_values
         physical_keys_values.mqtt_data_to_channels(mqtt_machines_data)
-    if topic == 'demo_app'or topic == "CSD":
+    if topic == 'demo_app'or topic == "CSD" and topic == "Maithri_test":
         from . import physical_keys_values
 
 
@@ -71,7 +73,8 @@ client.connect(
 def on_connect_1(client_1, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully on aws')
-       # client_1.subscribe('Maithri/Device_7inch')
+       client_1.subscribe('Maithri/Device_7inch')
+       client_1.subscribe('Maithri_test')
    else:
        print('Bad connection. Code:', rc)
 
@@ -81,7 +84,7 @@ def on_message_1(client_1, userdata, msg):
 
     mqtt_machines_data = msg.payload.decode()  # Assuming the payload is a string
     topic=msg.topic
-    print('mqtt_machines_data MID004',mqtt_machines_data)
+    print('aws data MID004',mqtt_machines_data)
     # print('payload1',msg.topic)
 
 
@@ -95,6 +98,12 @@ def on_message_1(client_1, userdata, msg):
         from . import physical_keys_values
 
         physical_keys_values.Device_7inch(mqtt_machines_data)
+    if topic == "Maithri_test":
+        from . import physical_keys_values
+
+
+        physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+
 
 
 client_1 = mqtt.Client()
