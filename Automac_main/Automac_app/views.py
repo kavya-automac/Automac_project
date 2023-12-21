@@ -1,9 +1,7 @@
-import json
 from datetime import datetime
 from pathlib import Path
 import datetime
 from django.contrib import messages
-
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -29,9 +27,8 @@ from .models import all_Machine_data
 # from django.core import serializers
 from Automac_machines_app.mqtt import client
 from datetime import timedelta
-
-
 from django.views.decorators.csrf import csrf_exempt
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -52,10 +49,16 @@ def register(request):
     # print("****",serializer.errors)
     return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# token authentication (getting user based on token)
+
+
 def get_user(request):
     userdata=Token.objects.get(key=request.headers['Authorization']).user
     print('userdata',userdata)
     return userdata
+
+# ------------------------login starts here-----------------------------
+
 
 @api_view(['POST'])
 def login_view(request):
@@ -77,9 +80,9 @@ def login_view(request):
         if user is not None:
             # login(request, user)
             # print("logged in:", request.user.username)
-            token ,_ =Token.objects.get_or_create(user=user)
-            login_response = JsonResponse({"status": "user_validated",'generated_token':token.key,'username':username})
-            login_response['token'] =str(token.key)
+            token, _ = Token.objects.get_or_create(user=user)
+            login_response = JsonResponse({"status": "user_validated", 'generated_token': token.key, 'username': username})
+            login_response['token'] = str(token.key)
 
             return login_response
         else:
@@ -116,6 +119,10 @@ def login_view(request):
     # return JsonResponse({"status": "test"})
     # return JsonResponse({"status": error_dict["status"][0]})
     return JsonResponse({"status": "Invalid_Input"})
+# -----------------------------login ends --------------------------
+
+# ----------------------------logout starts here------------------------
+
 
 @api_view(['GET'])
 def logout_view(request):
@@ -128,14 +135,14 @@ def logout_view(request):
     except Token.DoesNotExist:
         return JsonResponse({"status": "Token doesnot exist"})
 
+# ------------------------------logout ends here-------------------------
 
 
 
 
 
 
-
-#session login starts
+# session login starts
 
 
 
@@ -245,10 +252,13 @@ def logout_view(request):
 #     logout(request)
 #     return JsonResponse({"status": "Logged_out"})
 
-#convert list or dict values into string
+# convert list or dict values into string
 
 
-@authentication_classes([SessionAuthentication])
+# ------------dashboard starts here-----------------------
+
+
+# @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 # @login_required(login_url='login_view')
 class Dashboard(ViewSet):
@@ -280,42 +290,33 @@ class Dashboard(ViewSet):
                         to_fetch_lastrecord_data = MachineDetails.objects.filter(machine_id=machines).values('machine_id','timestamp')
                         fetch_latest=to_fetch_lastrecord_data.latest('timestamp')
 
-                        print('to_fetch_lastrecord_data',to_fetch_lastrecord_data)
-                        print('fetch_latest',fetch_latest)
+                        print('to_fetch_lastrecord_data', to_fetch_lastrecord_data)
+                        print('fetch_latest', fetch_latest)
                         last_record_time1 = fetch_latest['timestamp']
 
                         last_record_time2 = last_record_time1.strftime("%Y-%m-%d %H:%M:%S.%f %Z")
                         last_record_time = datetime.datetime.strptime(last_record_time2,"%Y-%m-%d %H:%M:%S.%f %Z")
 
-                        print('last_record_time',last_record_time)
-                        print('current_time',current_time)
+                        print('last_record_time', last_record_time)
+                        print('current_time', current_time)
 
 
                         time_difference = abs((current_time - last_record_time).total_seconds())
                         # time_difference = current_time - last_record_time
-                        print('time_difference',time_difference)
+                        print('time_difference', time_difference)
                         print(' time_difference > timedelta(seconds=30)', time_difference > 60)
 
                         if time_difference > 60:
-                        # if time_difference > timedelta(seconds=30):
-
                             machine_status = "inactive"
-                            inactive_count+=1
-                            print('inactive if',inactive_count)
-
+                            inactive_count += 1
+                            print('inactive if', inactive_count)
                         else:
-
                             machine_status = "active"
-                            active_count+=1
-                            print('active else',active_count)
-
-
+                            active_count += 1
+                            print('active else', active_count)
                     else:
                         inactive_count += 1
-                        print('inactive else',inactive_count)
-
-
-
+                        print('inactive else', inactive_count)
                     count_card_data = {
                         "title": "count_card",
                         "machine_count": str(machine_count),
@@ -334,49 +335,39 @@ class Dashboard(ViewSet):
                     kpi_name = ""
                     for kpi in get_kpi_type:
 
-                        kpi_name=kpi.kpi_id.kpi_name
-                        print('kpi_name',kpi_name)
+                        kpi_name = kpi.kpi_id.kpi_name
+                        print('kpi_name', kpi_name)
                         # if kpi_name:
                         #     break
                         # # kpiname.append(kpi_name)
                         # # print('kpiname',kpiname)
 
                         value_list = kpi.kpi_data
-                        print("value_list",value_list)
+                        print("value_list", value_list)
                     # print('kpiname',kpiname)
                     result.append({"machine": machines, "values": value_list})
                     final_data = {"title": "bar_graph", "name": type, "data": result}
 
-                return JsonResponse({"count_card_data":count_card_data,"bar_graph":final_data})
+                return JsonResponse({"count_card_data": count_card_data, "bar_graph": final_data})
 
         except Token.DoesNotExist:
             print("else")
             return JsonResponse({"status": "login_required"})
+# -------------dashboard ends here-------------------------
 
+
+# --------------------------Machines based functions starts here--------------------
 
 # @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 class MachinesView(ViewSet):
+
+    # ---------------------------Machine List starts here--------------------------
     @action(detail=False, methods=['get'])
     def machine_list(self, request):
         try:
             # if request.user.is_authenticated:
             print('requesttttttt',request.META)
-
-
-
-            # print('requesttttttt',request.META)
-            # machine_id='ABD2'
-            # machine=Machines_List.objects.get(machine_id=machine_id)
-            # io=IO_List.objects.filter(machine_id__machine_id=machine).order_by('id')
-            # inputs=[]
-            # for i in io:
-            #     inputs.append(i.IO_type)
-            #
-            # print('...................',inputs)
-            #
-
-
 
             # print('userssss', request.user)
             user_data=get_user(request)
@@ -422,21 +413,6 @@ class MachinesView(ViewSet):
                     })
                 print('machine_list_data',machine_list_data)
 
-            #
-
-                #
-                # get_user_data[i].machine_id.machine_id
-                #
-                # get_user_data_s_data[i].update(company_name=get_user_data[i].company_name.company_name)
-                # get_user_data_s_data[i].update(plant_name=get_user_data[i].plant_name.plant_name)
-                # get_user_data_s_data[i].update(model_name=get_user_data[i].model_name.model_name)
-                # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_id)
-                # # get_user_data_s_data[i].update(machine_id=get_user_data[i].machine_id.machine_location)
-                # get_user_data_s_data[i].update(line_name=str(get_user_data[i].line_name))
-                # # print('get_user_data_s_data',get_user_data_s_data)
-                # get_user_data_s_data[i]['machine_name']=get_user_data[i].machine_id.machine_name
-
-
             return JsonResponse({"machine_list": machine_list_data})
 
         except Token.DoesNotExist:
@@ -446,6 +422,11 @@ class MachinesView(ViewSet):
         #     print('requesttttt',request.META)
         #     print("else")
         #     return JsonResponse({"status": "login_required"})
+
+        # -----------------------Machines List ends here---------------------------------------
+
+
+    # ---------------------------------Machine_details, kpis and iostatus starts here----------------------------
 
     @action(detail=False, method=["get"])
     # @action(detail=False, method=["get","post"])
@@ -475,6 +456,8 @@ class MachinesView(ViewSet):
                     #
                     #         }
                     #     ]
+
+                    # -------------------------Machine_Details starts here-------------------------------------
                     if module == "Details":
                         # id = request.query_params.get('id')
 
@@ -516,20 +499,12 @@ class MachinesView(ViewSet):
 
                         if not s_data_d:
                             return JsonResponse({"general_data": general_serialzer_data_1})
-                        #     s_data_d[f_names].update(plant_name=plant_line_data[f_names].plant_name.plant_name)
-                        #     s_data_d[f_names].update(model_name=plant_line_data[f_names].model_name.model_name)
-                        #     s_data_d[f_names].update(line_name=str(plant_line_data[f_names].line_name))
-                        #     print('s_data',s_data_d)
-                        #     general_serialzer_data_1.update(dict(s_data_d[0]))
-                        #     # general_serialzer_data_1=dict(s_data_d)
-                        # if not s_data_d:
-                        #     return JsonResponse({"general_data": general_serialzer_data_1})
 
-                        Manuals_and_Docs=[{"Document_name":"Electrical_Drawing",
+                        Manuals_and_Docs = [{"Document_name":"Electrical_Drawing",
                                            "Uploaded_by":"harsha",
                                            "Date":"27/07/2023",
                                            "Url":"https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-product-brief.pdf"}]
-                        Techincal_Details=[{
+                        Techincal_Details = [{
                             "Date":"27/07/2023",
                             "Device_name":"Compressor",
                             "Make":"ELGI",
@@ -550,31 +525,34 @@ class MachinesView(ViewSet):
 
                         data = {'general_details':general_serialzer_data_1,'Manuals_and_Docs':Manuals_and_Docs,'Techincal_Details':Techincal_Details}
                         # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details.json"))
+                    # -------------------Machine_Details ends here--------------------------------------
+
+                    # ------------------------------ Kpis starts here ----------------------------------------------
 
                     elif module == "kpis":
                         try:
                             machine = Machines_List.objects.get(machine_id=machine_id)
-                            print('machineeeeeeeee',machine)
-                            print('machineenameee',machine.machine_id)
+                            print('machineeeeeeeee', machine)
+                            print('machineenameee', machine.machine_id)
                         except Machines_List.DoesNotExist:
                             error_message = "Please enter a valid machine_id."
                             return JsonResponse({"status": error_message}, status=400)  # Return an error response
-
                         # user=request.query_params.get('user')
                         user=current_user
-                        print('userrrr',type(user))
-
-
+                        print('userrrr', type(user))
+                        # ------ in kpis  file calling get_kpis_data function
                         data = kpis.get_kpis_data(user,machine)
-                        data['machine_id']=machine.machine_id
-                        data['machine_name']=machine.machine_name
-                        data['user_name'] =str(current_user)
+                        data['machine_id'] = machine.machine_id
+                        data['machine_name'] = machine.machine_name
+                        data['user_name'] = str(current_user)
 
-
+                        # --------------------kpis ends here ---------------------------------------
 
 
 
                         # data = json.load(open(str(BASE_DIR)+"/Automac_app/machine_details(kpis).json"))
+
+                    # ---------------------------iostatus starts here--------------------------------------------
 
                     elif module == "iostatus":
                         try:
@@ -736,9 +714,16 @@ class MachinesView(ViewSet):
                             "db_timestamp": formatted_time
 
                         }}
+
+
+                        # -------------------------iostatus ends here------------------------------------------
+
+
+
+
             #------------------------ ADDING CONTROL CODE
 
-            # --------------------code starts here------------------
+            # -------------------- CONTROL code starts here------------------
 
 
 
@@ -892,6 +877,9 @@ class MachinesView(ViewSet):
                 return JsonResponse({"status": "login_required"})
         except Token.DoesNotExist:
             return JsonResponse({"status" : "login_required"})
+        # ---------------------CONTROL code ends here---------------------------------------
+
+# -----------------------------CONTROL publishing code to mqtt -----------------------
 
 
 @csrf_exempt
@@ -914,9 +902,9 @@ def machine_control(request):
     # return JsonResponse({"status":list(input_output_data).index(name)})
     return JsonResponse({"status":"data has been sent"})
 
+# ----------------------------CONTROL publishing code ends here -------------------------------------------
 
-
-
+# --------------------------------Machines based functions ends here ----------------------------------------
 
 
 # def testing_sessions(request):
@@ -938,9 +926,16 @@ def machine_control(request):
 #     else:
 #         pass
 
+
+
+# -------------------------------------Trails  based functions starts here---------------------------------
+
+
 @authentication_classes([SessionAuthentication])
 # @permission_classes([IsAuthenticated])
 class Trails(ViewSet):
+
+    # ----------------------------------Trail Details  starts here -------------------------
     @action(detail=False, method=['get'])
     def Trail_details(self,request):
         try:
@@ -967,7 +962,10 @@ class Trails(ViewSet):
         except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
 
+    # ----------------------------Trail Details ends here --------------------------------------
 
+
+    # ---------------------------Trail List starts here --------------------------------------------
 
     @action(detail=False, method=['get'])
     def Trail_List(self, request):
@@ -1041,12 +1039,20 @@ class Trails(ViewSet):
         except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
 
+    # -----------------------Trails List ends here---------------------------------------------------
+
+    #--------------------Trails  based functions starts here----------------------------------------
+
+# ---------------------------Reports based functions starts here-------------------------------
 
 # @authentication_classes([SessionAuthentication])
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated])
 
 class ReportsView(ViewSet):
+
+    # ------------------------Reports List starts here -----------------------------------------------
+
     @action(detail=False, method=['get'])
     def Report_List(self, request):
         try:
@@ -1129,9 +1135,9 @@ class ReportsView(ViewSet):
             return JsonResponse({"status": "login_required"})
 
 
+        # ----------------------------------- Reports List ends here ---------------------------------------
 
-
-
+    # ----------------------------------------Reports details starts here------------------------------------
     @action(detail=False, methods=['post'])
     def Reports(self, request):
         try:
@@ -1223,6 +1229,11 @@ class ReportsView(ViewSet):
                 return JsonResponse({"status": "login_required"})
         except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
+
+
+    # -------------------------Reports Details ends here------------------------------
+
+    # --------------------Reports based functions ends here----------------------------------------------
 
 
 #
