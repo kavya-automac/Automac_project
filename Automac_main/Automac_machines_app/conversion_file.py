@@ -16,7 +16,7 @@ def store_data(mqtt_machines_data):
     digital_output =[payload.get('Compressor_1'),payload.get('Compressor_2'),payload.get('Pump1'),payload.get('Pump2'),payload.get('Pump3')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
-    print('machine', machine_id )
+    # print('machine', machine_id )
 
 
     # digital_input = [payload['LP1'], payload['LP2'], payload['HP1'], payload['HP2'],
@@ -33,7 +33,7 @@ def store_data(mqtt_machines_data):
         payload.get('Temp_Subzero'),
         payload.get('Hum_Suzero')
     ]
-    print('digital_input abb',digital_input)
+    # print('digital_input abb',digital_input)
 
 
     MachineDetails = apps.get_model('Automac_machines_app', 'MachineDetails')
@@ -84,7 +84,7 @@ def MID004_store_data(mqtt_machines_data):
     digital_output =[payload.get('Compressor_1'),payload.get('Pump')]
     analog_input = [payload.get('Temperature'),payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
-    print('machine', machine_id )
+    # print('machine', machine_id )
 
     # print("digital_output",digital_output)
 
@@ -131,7 +131,7 @@ def MID004_store_data(mqtt_machines_data):
     # print('existing_record MID004', existing_record)
     # print('timestamp', timestamp)
     if existing_record is None:
-        print('existing_record MID004.......................', existing_record)
+        # print('existing_record MID004.......................', existing_record)
         sensor_data = MachineDetails(
            # timestamp=timezone.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f'),
             test_timestamp=timestamp,
@@ -163,7 +163,7 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
 
     payload = json.loads(mqtt_machines_data)
-    print('CSD1 dataa demo app topic ',payload)
+    # print('CSD1 dataa demo app topic ',payload)
 
 
 
@@ -208,7 +208,7 @@ def mqtt_test_machine_data(mqtt_machines_data):
 
     # print('existing_record', existing_record)
 
-        print('......storing data')
+        # print('......storing data')
 
 
     else:

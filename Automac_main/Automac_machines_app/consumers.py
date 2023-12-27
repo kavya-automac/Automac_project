@@ -19,10 +19,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # client.publish("ws_con", "Connected",)
 
-        print("Connected")
+        # print("Connected")
         query_string=self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1].split('&')[0]
-        print('machine_id connect ',machine_id)
+        # print('machine_id connect ',machine_id)
         client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"iostatus"}))
 
 
@@ -41,12 +41,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         connected_status = False
 
         # client.publish("ws_con", "Disconnected")
-        print('Disconnected')
+        # print('Disconnected')
 
 
         query_string = self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1]
-        print('machineid',machine_id)
+        # print('machineid',machine_id)
         client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"iostatus"}))
 
         await self.channel_layer.group_discard(str(machine_id)+'_io', self.channel_name)
@@ -56,8 +56,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        print('text',text_data)
-        print('reciver ........scope', self.scope)
+        # print('text',text_data)
+        # print('reciver ........scope', self.scope)
 
 
         # Send the processed data to the connected WebSocket clients
@@ -74,13 +74,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # # selff <Automac_machines_app.consumers.ChatConsumer object at 0x0000022389CD89D0>
         # print('scope',self.scope)
         # print('qery_stringggg',self.scope['query_string'].decode())
-        print('event' , event)
-        print('event text' , event["text"])
+        # print('event' , event)
+        # print('event text' , event["text"])
 
         try:
             # Send the received data to the WebSocket connection
             await self.send(text_data=event["text"])
-            print("eventtttttttttttttttttttttttttt")
+            # print("eventtttttttttttttttttttttttttt")
             # await self.send(text_data=json.dumps(event["text"]))
             await asyncio.sleep(1)
         except Exception as e:
@@ -125,12 +125,12 @@ class KpiConsumer(AsyncWebsocketConsumer):
         try:
             connected_status = True
             # client.publish("ws_con","Connected")
-            print("Connected")
+            # print("Connected")
             query_string = self.scope['query_string'].decode()
-            print('query_string',query_string)
+            # print('query_string',query_string)
             machine_id = query_string.split('=')[1].split('&')[0]
             username = query_string.split('=')[2]
-            print('username',username)
+            # print('username',username)
             client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id": machine_id, "ws_grp": "kpis"}))
 
             # if not machine_id:
@@ -153,7 +153,7 @@ class KpiConsumer(AsyncWebsocketConsumer):
         query_string = self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1].split('&')[0]
         # client.publish("ws_con", "Disconnected")
-        print("Disconnected")
+        # print("Disconnected")
         client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id": machine_id, "ws_grp": "kpis"}))
 
         if hasattr(self, 'scheduler_task'):# hasattr() function is an inbuilt utility function,\
@@ -165,8 +165,8 @@ class KpiConsumer(AsyncWebsocketConsumer):
     async def schedule_kpi_socket(self):
         while True:
             try:
-                print("-----------------------------------------------")
-                print("-----------------------------------------------")
+                # print("-----------------------------------------------")
+                # print("-----------------------------------------------")
                 await kpi_websocket.kpi_socket(self.username,self.machine_id)
                 # Adjust the sleep duration as needed (e.g., call every 10 seconds)
                 await asyncio.sleep(2)

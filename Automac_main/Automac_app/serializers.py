@@ -217,7 +217,7 @@ class plantSerializer(serializers.ModelSerializer): # just for testing post requ
 #
 #
 
-class all_Machine_data_Serializer(serializers.ModelSerializer):# machine_details
+class all_Machine_data_Serializer(serializers.ModelSerializer):# this is for plant ,model,line in machine_details response
     class Meta:
         model=all_Machine_data
         fields = ('plant_name','model_name','line_name')
@@ -243,7 +243,7 @@ class all_Machine_data_Serializer2(serializers.ModelSerializer):#for reports api
 #         fields = '__all__'
 
 
-class IO_list_serializer(serializers.ModelSerializer): #iostatus api # trail_details
+class IO_list_serializer(serializers.ModelSerializer): #iostatus api for keys # trail_details # kpis for keys
     class Meta:
         model=IO_List
         # fields = '__all__'

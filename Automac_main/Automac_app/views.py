@@ -34,12 +34,12 @@ from django.views.decorators.csrf import csrf_exempt
 @permission_classes([AllowAny])
 def register(request):
     serializer = UserSerializer(data=request.data)
-    print("request.data", request.data)
-    print("serializer", serializer)
+    # print("request.data", request.data)
+    # print("serializer", serializer)
 
     # print(User.objects.get(username=request.user.username))
     if serializer.is_valid(raise_exception=True):
-        print("if")
+        # print("if")
 
         # print(request.user, serializer.validated_data['password'], request.POST, request.GET)
         serializer.save()
@@ -54,7 +54,7 @@ def register(request):
 
 def get_user(request):
     userdata=Token.objects.get(key=request.headers['Authorization']).user
-    print('userdata',userdata)
+    # print('userdata',userdata)
     return userdata
 
 # ------------------------login starts here-----------------------------
@@ -63,10 +63,10 @@ def get_user(request):
 @api_view(['POST'])
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
-    print('serializer:', serializer)
-    print('serializer_type:', type(serializer))
+    # print('serializer:', serializer)
+    # print('serializer_type:', type(serializer))
     if serializer.is_valid():
-        print('serializer:', serializer)
+        # print('serializer:', serializer)
         username = serializer.data.get('username')
         # print('serializer_username:', username)
         # print('type_serializer_username:', type(username))
@@ -75,7 +75,7 @@ def login_view(request):
         # user = User.objects.get(username=username)
         # print(user)
         user = authenticate(username=username, password=password)
-        print('authenticate_user:', user)
+        # print('authenticate_user:', user)
 
         if user is not None:
             # login(request, user)
@@ -89,8 +89,8 @@ def login_view(request):
             return JsonResponse({"status": "unauthorized_user"})
     new_key = 'status'
     error_dict = serializer.errors
-    print("error_dict*****", error_dict)
-    print("len****", len(error_dict))
+    # print("error_dict*****", error_dict)
+    # print("len****", len(error_dict))
     # print(error_dict['password'][0].code)
 
     # if 'username' and 'password' in error_dict :
@@ -100,14 +100,14 @@ def login_view(request):
     #     # return JsonResponse({"status": "username_and_password_cannot_be_empty"})
     if 'username' in error_dict and error_dict['username'][0].code == 'blank' and len(error_dict) == 1:
         # print("len****",len(error_dict))
-        print(error_dict['username'][0].code == 'blank')
+        # print(error_dict['username'][0].code == 'blank')
 
         error_dict[new_key] = error_dict.pop('username')
         return JsonResponse({"status": error_dict["status"][0]})
 
     elif 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 1:
         # print("len****", len(error_dict))
-        print(error_dict['password'][0].code == 'blank')
+        # print(error_dict['password'][0].code == 'blank')
         error_dict[new_key] = error_dict.pop('password')
         return JsonResponse({"status": error_dict["status"][0]})
     elif 'username' in error_dict and error_dict['username'][0].code == 'blank' and 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 2:
@@ -128,7 +128,7 @@ def login_view(request):
 def logout_view(request):
     try:
         current_user = get_user(request)
-        print('token of user',current_user.auth_token)
+        # print('token of user',current_user.auth_token)
         current_user.auth_token.delete()
 
         return JsonResponse({"status": "Logged_out"})
@@ -269,7 +269,7 @@ class Dashboard(ViewSet):
 
             if current_user.is_authenticated:
                 current_time = datetime.datetime.now()
-                print('current_time', current_time)
+                # print('current_time', current_time)
 
                 # current_time = datetime.datetime.now()
 
@@ -290,33 +290,33 @@ class Dashboard(ViewSet):
                         to_fetch_lastrecord_data = MachineDetails.objects.filter(machine_id=machines).values('machine_id','timestamp')
                         fetch_latest=to_fetch_lastrecord_data.latest('timestamp')
 
-                        print('to_fetch_lastrecord_data', to_fetch_lastrecord_data)
-                        print('fetch_latest', fetch_latest)
+                        # print('to_fetch_lastrecord_data', to_fetch_lastrecord_data)
+                        # print('fetch_latest', fetch_latest)
                         last_record_time1 = fetch_latest['timestamp']
 
                         last_record_time2 = last_record_time1.strftime("%Y-%m-%d %H:%M:%S.%f %Z")
                         last_record_time = datetime.datetime.strptime(last_record_time2,"%Y-%m-%d %H:%M:%S.%f %Z")
 
-                        print('last_record_time', last_record_time)
-                        print('current_time', current_time)
+                        # print('last_record_time', last_record_time)
+                        # print('current_time', current_time)
 
 
                         time_difference = abs((current_time - last_record_time).total_seconds())
                         # time_difference = current_time - last_record_time
-                        print('time_difference', time_difference)
-                        print(' time_difference > timedelta(seconds=30)', time_difference > 60)
+                        # print('time_difference', time_difference)
+                        # print(' time_difference > timedelta(seconds=30)', time_difference > 60)
 
                         if time_difference > 60:
                             machine_status = "inactive"
                             inactive_count += 1
-                            print('inactive if', inactive_count)
+                            # print('inactive if', inactive_count)
                         else:
                             machine_status = "active"
                             active_count += 1
-                            print('active else', active_count)
+                            # print('active else', active_count)
                     else:
                         inactive_count += 1
-                        print('inactive else', inactive_count)
+                        # print('inactive else', inactive_count)
                     count_card_data = {
                         "title": "count_card",
                         "machine_count": str(machine_count),
@@ -330,20 +330,20 @@ class Dashboard(ViewSet):
                                                                    kpi_id__kpi_inventory_id__Kpi_Type=type,
                                                                    timestamp__date=today)
 
-                    print('get_kpi_type',get_kpi_type)
+                    # print('get_kpi_type',get_kpi_type)
                     value_list = ["0"]
                     kpi_name = ""
                     for kpi in get_kpi_type:
 
                         kpi_name = kpi.kpi_id.kpi_name
-                        print('kpi_name', kpi_name)
+                        # print('kpi_name', kpi_name)
                         # if kpi_name:
                         #     break
                         # # kpiname.append(kpi_name)
                         # # print('kpiname',kpiname)
 
                         value_list = kpi.kpi_data
-                        print("value_list", value_list)
+                        # print("value_list", value_list)
                     # print('kpiname',kpiname)
                     result.append({"machine": machines, "values": value_list})
                     final_data = {"title": "bar_graph", "name": type, "data": result}
@@ -351,7 +351,7 @@ class Dashboard(ViewSet):
                 return JsonResponse({"count_card_data": count_card_data, "bar_graph": final_data})
 
         except Token.DoesNotExist:
-            print("else")
+            # print("else")
             return JsonResponse({"status": "login_required"})
 # -------------dashboard ends here-------------------------
 
@@ -367,28 +367,28 @@ class MachinesView(ViewSet):
     def machine_list(self, request):
         try:
             # if request.user.is_authenticated:
-            print('requesttttttt',request.META)
+            # print('requesttttttt',request.META)
 
             # print('userssss', request.user)
             user_data=get_user(request)
-            print('user_data',user_data)
+            # print('user_data',user_data)
 
             unique_data=all_Machine_data.objects.filter(user_name__username=user_data).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
                 .distinct('machine_id__machine_id','plant_name__plant_name','model_name__model_name')
             # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
 
-            print('unique_data',unique_data)
+            # print('unique_data',unique_data)
 
             unique_data_json =json.dumps(list(unique_data))
             unique_machine_data=json.loads(unique_data_json)
             # unique_data_json =serializers.serialize('json',unique_data)
-            print('unique_data_json',unique_data_json)
-            print('unique_machine_data',unique_machine_data)
+            # print('unique_data_json',unique_data_json)
+            # print('unique_machine_data',unique_machine_data)
 
             machine_list_data=[]
             # # for data in get_user_data_s_data:
             # #     machine_id=data.plant_name.plant_name if get_user_data[ i].plant_name is not None else "None"
-            print("--------------------> ",unique_machine_data[0]['line_name__line_name'])
+            # print("--------------------> ",unique_machine_data[0]['line_name__line_name'])
             for i in range(0,len(unique_machine_data)):
                 machine_id = unique_machine_data[i]['machine_id__machine_id'] if unique_machine_data[
                                                                                  i]['machine_id__machine_id'] is not None else "None"
@@ -411,7 +411,7 @@ class MachinesView(ViewSet):
                         "line_name": line_name,
                         "machine_name": machine_name
                     })
-                print('machine_list_data',machine_list_data)
+                # print('machine_list_data',machine_list_data)
 
             return JsonResponse({"machine_list": machine_list_data})
 
@@ -441,7 +441,7 @@ class MachinesView(ViewSet):
                 machine_id=request.query_params.get('machine_id')
                 # d=Machines_List.objects.filter(machine_id=machine_id)
 
-                print("request", request.method, request.POST, request.GET)
+                # print("request", request.method, request.POST, request.GET)
                 # print("request.method",request.GET['id'])
                 # q=Machines_List.objects.filter(id=id).values('id','machine_name','machine_location','date_of_installation')
                 # print('q',q)
@@ -462,16 +462,16 @@ class MachinesView(ViewSet):
                         # id = request.query_params.get('id')
 
                         general_data = Machines_List.objects.get(machine_id=machine_id)
-                        print('general_data',general_data)
+                        # print('general_data',general_data)
                         general_serialzer=generalmachineSerializer(general_data)
                         general_serialzer_data_11=general_serialzer.data
                         # print('general_serialzer',general_serialzer_data_11)
                         general_serialzer_data_1=null_to_str(general_serialzer_data_11)
-                        print('general_serialzer_data_1',general_serialzer_data_1)
+                        # print('general_serialzer_data_1',general_serialzer_data_1)
 
                         plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name__username=current_user)
                         # plant_line_data=all_Machine_data.objects.filter(machine_id=general_data.id,user_name=request.user)
-                        print('plant_line_data',plant_line_data)
+                        # print('plant_line_data',plant_line_data)
 
                         if not plant_line_data.exists():
                             # If the plant_line_data is empty, return a response indicating that the user doesn't have access.
@@ -480,7 +480,7 @@ class MachinesView(ViewSet):
 
                         s_data=all_Machine_data_Serializer(plant_line_data,many=True)
                         s_data_d=s_data.data
-                        print('plant_line_data',plant_line_data[0].plant_name,type(plant_line_data))
+                        # print('plant_line_data',plant_line_data[0].plant_name,type(plant_line_data))
 
                         for f_names in range(0,len(plant_line_data)):
                             if plant_line_data[f_names] is not None:
@@ -493,7 +493,7 @@ class MachinesView(ViewSet):
                                 s_data_d[f_names].update(
                                     line_name=str(plant_line_data[f_names].line_name) if plant_line_data[
                                                                                              f_names].line_name is not None else "None")
-                                print('s_data', s_data_d)
+                                # print('s_data', s_data_d)
                                 general_serialzer_data_1.update(dict(s_data_d[0]))
                                 # general_serialzer_data_1 = dict(s_data_d)
 
@@ -532,14 +532,14 @@ class MachinesView(ViewSet):
                     elif module == "kpis":
                         try:
                             machine = Machines_List.objects.get(machine_id=machine_id)
-                            print('machineeeeeeeee', machine)
-                            print('machineenameee', machine.machine_id)
+                            # print('machineeeeeeeee', machine)
+                            # print('machineenameee', machine.machine_id)
                         except Machines_List.DoesNotExist:
                             error_message = "Please enter a valid machine_id."
                             return JsonResponse({"status": error_message}, status=400)  # Return an error response
                         # user=request.query_params.get('user')
                         user=current_user
-                        print('userrrr', type(user))
+                        # print('userrrr', type(user))
                         # ------ in kpis  file calling get_kpis_data function
                         data = kpis.get_kpis_data(user,machine)
                         data['machine_id'] = machine.machine_id
@@ -596,19 +596,19 @@ class MachinesView(ViewSet):
                             if input_output_data_serializer_data[i]['IO_type']=="other":
                                 # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
                                 other_keys.append(input_output_data_serializer_data[i]['IO_name'])
-                        print('digital_input_keys',digital_input_keys)
-                        print('digital_output_keys',digital_output_keys)
-                        print('analog_input_keys',analog_input_keys)
-                        print('analog_output_keys',analog_output_keys)
-                        print('color',color)
-                        print('values',values)
+                        # print('digital_input_keys',digital_input_keys)
+                        # print('digital_output_keys',digital_output_keys)
+                        # print('analog_input_keys',analog_input_keys)
+                        # print('analog_output_keys',analog_output_keys)
+                        # print('color',color)
+                        # print('values',values)
 
 
                         machine_values_data = MachineDetails.objects.filter(machine_id=machine.machine_id).order_by('-timestamp').first()
                         # print('machine_values_data', machine_values_data)
                         last_valies_data_1 = machineSerializer(machine_values_data)
                         last_valies_data = last_valies_data_1.data
-                        print('last_valies_data',last_valies_data)
+                        # print('last_valies_data',last_valies_data)
 
 
 
@@ -701,7 +701,7 @@ class MachinesView(ViewSet):
                         else:
                             formatted_time = "0000-00-00T00:00:00Z"#change
                             # formatted_time = str(datetime.datetime.now())
-                        print('formatted_time',formatted_time)
+                        # print('formatted_time',formatted_time)
 
                         data = {'iostatus': {
                             "machine_id":machine.machine_id,
@@ -766,19 +766,19 @@ class MachinesView(ViewSet):
                             if input_output_data_serializer_data[i]['IO_type']=="digital_input":
                                 # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
                                 digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
-                        print('digital_input_keys',digital_input_keys)
-                        print('digital_output_keys',digital_output_keys)
-                        print('analog_input_keys',analog_input_keys)
-                        print('analog_output_keys',analog_output_keys)
-                        print('color',color)
-                        print('values',values)
+                        # print('digital_input_keys',digital_input_keys)
+                        # print('digital_output_keys',digital_output_keys)
+                        # print('analog_input_keys',analog_input_keys)
+                        # print('analog_output_keys',analog_output_keys)
+                        # print('color',color)
+                        # print('values',values)
 
 
                         machine_values_data = MachineDetails.objects.filter(machine_id=machine.machine_id).order_by('-timestamp').first()
                         # print('machine_values_data', machine_values_data)
                         last_valies_data_1 = machineSerializer(machine_values_data)
                         last_valies_data = last_valies_data_1.data
-                        print('last_valies_data',last_valies_data)
+                        # print('last_valies_data',last_valies_data)
 
 
 
@@ -854,7 +854,7 @@ class MachinesView(ViewSet):
                             formatted_time = str(timestamp)
                         else:
                             formatted_time = str(datetime.datetime.now())
-                        print('formatted_time',formatted_time)
+                        # print('formatted_time',formatted_time)
 
                         data = {'control': {
                             "machine_id":machine.machine_id,
@@ -885,7 +885,7 @@ class MachinesView(ViewSet):
 @csrf_exempt
 @api_view(['PUT'])
 def machine_control(request):
-    print('******',request.data)
+    # print('******',request.data)
 
     machine_id=request.data.get('machine_id')
     name=request.data.get('name')
@@ -893,9 +893,9 @@ def machine_control(request):
     machine = Machines_List.objects.get(machine_id=machine_id)
     input_output_data = IO_List.objects.filter(machine_id=machine.id,IO_type='digital_output').order_by('id').values_list('IO_name',flat=True)
     output = list(input_output_data).index(name)
-    print('index***********',list(input_output_data).index(name))
-    print('input_output_data----------',input_output_data)
-    print('machine_id,name,value', machine_id,name,value)
+    # print('index***********',list(input_output_data).index(name))
+    # print('input_output_data----------',input_output_data)
+    # print('machine_id,name,value', machine_id,name,value)
 
     control_json = {"mid":machine_id, "data":{"output":output, "value":value}}
     client.publish("ieee/control", json.dumps(control_json))
@@ -941,14 +941,14 @@ class Trails(ViewSet):
         try:
             current_user = get_user(request)
             if current_user.is_authenticated:
-                print("if")
+                # print("if")
                 # data_session=testing_sessions(request)
                 # print('data_session',data_session)
 
                 machine_id = request.GET.get('machine_id')
                 date = request.GET.get('date')
                 # end_datetime = request.GET.get('end_datetime')
-                print('request',request.method,request.GET)
+                # print('request',request.method,request.GET)
                 # user="user1"
                 # print('.............user',user)
 
@@ -957,7 +957,7 @@ class Trails(ViewSet):
                 return trail_detail_data
 
             else:
-                print("else")
+                # print("else")
                 return JsonResponse({"status": "login_required"})
         except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
@@ -973,7 +973,7 @@ class Trails(ViewSet):
             current_user = get_user(request)
 
             if current_user.is_authenticated:
-                print("if")
+                # print("if")
 
                 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -986,18 +986,18 @@ class Trails(ViewSet):
                     .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
                 # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
 
-                print('unique_data', unique_data)
+                # print('unique_data', unique_data)
 
                 unique_data_json = json.dumps(list(unique_data))
                 unique_machine_data = json.loads(unique_data_json)
                 # unique_data_json =serializers.serialize('json',unique_data)
-                print('unique_data_json', unique_data_json)
-                print('unique_machine_data', unique_machine_data)
+                # print('unique_data_json', unique_data_json)
+                # print('unique_machine_data', unique_machine_data)
 
                 trail_list_data = []
                 # # for data in get_user_data_s_data:
                 # #     machine_id=data.plant_name.plant_name if get_user_data[ i].plant_name is not None else "None"
-                print("--------------------> ", unique_machine_data[0]['line_name__line_name'])
+                # print("--------------------> ", unique_machine_data[0]['line_name__line_name'])
                 for i in range(0, len(unique_machine_data)):
                     machine_id = unique_machine_data[i]['machine_id__machine_id'] if unique_machine_data[
                                                                                          i][
@@ -1025,7 +1025,7 @@ class Trails(ViewSet):
                         "line_name": line_name,
                         "machine_name": machine_name
                     })
-                    print('machine_list_data', trail_list_data)
+                    # print('machine_list_data', trail_list_data)
 
 
                 return JsonResponse({"Trail_list": trail_list_data})
@@ -1033,7 +1033,7 @@ class Trails(ViewSet):
 
 
             else:
-                print("else")
+                # print("else")
                 return JsonResponse({"status":"login_required"})
 
         except Token.DoesNotExist:
@@ -1057,9 +1057,9 @@ class ReportsView(ViewSet):
     def Report_List(self, request):
         try:
             current_user =get_user(request)
-            print('current_user',current_user)
+            # print('current_user',current_user)
             if current_user.is_authenticated:
-                print("if")
+                # print("if")
 
                 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -1072,18 +1072,18 @@ class ReportsView(ViewSet):
                     .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
                 # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
 
-                print('unique_data', unique_data)
+                # print('unique_data', unique_data)
 
                 unique_data_json = json.dumps(list(unique_data))
                 unique_machine_data = json.loads(unique_data_json)
                 # unique_data_json =serializers.serialize('json',unique_data)
-                print('unique_data_json', unique_data_json)
-                print('unique_machine_data', unique_machine_data)
+                # print('unique_data_json', unique_data_json)
+                # print('unique_machine_data', unique_machine_data)
 
                 report_list_data = []
                 # # for data in get_user_data_s_data:
                 # #     machine_id=data.plant_name.plant_name if get_user_data[ i].plant_name is not None else "None"
-                print("--------------------> ", unique_machine_data[0]['line_name__line_name'])
+                # print("--------------------> ", unique_machine_data[0]['line_name__line_name'])
                 for i in range(0, len(unique_machine_data)):
                     machine_id = unique_machine_data[i]['machine_id__machine_id'] if unique_machine_data[
                                                                                          i][
@@ -1108,7 +1108,7 @@ class ReportsView(ViewSet):
 
                     for k in reportsss:
                         data = k.kpi.kpi_name if k.kpi is not None else "None"
-                        print('dataaaaaaaaaaaaaaaa', data)
+                        # print('dataaaaaaaaaaaaaaaa', data)
                         machine_all_reports.append(data)
 
 
@@ -1121,7 +1121,7 @@ class ReportsView(ViewSet):
                         "line_name": line_name,
                         "machine_name": machine_name
                     })
-                    print('machine_list_data', report_list_data)
+                    # print('machine_list_data', report_list_data)
 
 
                 return JsonResponse({"report": report_list_data})
@@ -1129,7 +1129,7 @@ class ReportsView(ViewSet):
 
 
             else:
-                print("else")
+                # print("else")
                 return JsonResponse({"status":"login_required"})
         except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
@@ -1145,7 +1145,7 @@ class ReportsView(ViewSet):
             if current_user.is_authenticated:
                 try:#remove try and except for next push
                     request_data = request.data
-                    print('request_data',request_data)
+                    # print('request_data',request_data)
                 except json.JSONDecodeError:
                     return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1157,7 +1157,7 @@ class ReportsView(ViewSet):
                 # start_datetime = datetime.strptime(start_datetime1,'%Y-%m-%d %H:%M:%S')
                 # end_datetime = datetime.strptime(end_datetime1,'%Y-%m-%d %H:%M:%S')
 
-                print('.........................' ,end_datetime1)
+                # print('.........................' ,end_datetime1)
 
                 if not kpi_name or not machine_id or not start_datetime or not end_datetime1:
                     return JsonResponse({"error": "kpi_name, machine_id, start_datetime, and end_datetime are required."},
@@ -1166,13 +1166,13 @@ class ReportsView(ViewSet):
                 try:
                     # Convert the start_datetime and end_datetime strings to datetime objects
                     start_datetime = datetime.datetime.strptime(start_datetime, '%Y-%m-%d')
-                    print('try  start_datetime',start_datetime)
+                    # print('try  start_datetime',start_datetime)
 
 
                     # end_datetime = datetime.datetime.strptime(end_datetime, '%Y-%m-%d %H:%M:%S')
                     end_datetime2 = datetime.datetime.strptime(end_datetime1, '%Y-%m-%d')
                     end_datetime = end_datetime2 + datetime.timedelta(days=1)
-                    print('after increment end_datetime',end_datetime)
+                    # print('after increment end_datetime',end_datetime)
 
                 except ValueError:
                     return JsonResponse({"error": "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS' format."},
@@ -1181,9 +1181,9 @@ class ReportsView(ViewSet):
                 # Check if the user has access to the selected machine and KPI name
                 try:
                     machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name__username=current_user,kpi__kpi_name=kpi_name)
-                    print('machine_data',machine_data)
+                    # print('machine_data',machine_data)
                     if not machine_data:
-                        print('No data available.')
+                        # print('No data available.')
                         return JsonResponse({"status": "No data available"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -1196,7 +1196,7 @@ class ReportsView(ViewSet):
                     kpi_id__kpi_name=kpi_name,  # Assuming there's a field for KPI ID in the Machine_KPI_Data model
                     timestamp__range=[start_datetime, end_datetime],
                 ).order_by('timestamp')
-                print('filtered_data',filtered_data)
+                # print('filtered_data',filtered_data)
 
                 response_data = []
                 responseee = {"machine_id": machine_id,
@@ -1221,7 +1221,7 @@ class ReportsView(ViewSet):
 
                     response_data.append(relevant_data)
                 responseee["data"] = response_data
-                print('responseee',responseee)
+                # print('responseee',responseee)
 
                 return JsonResponse(responseee)
 
@@ -1422,7 +1422,7 @@ class test(ViewSet):
         if serializer.is_valid():
             serializer.save()
             msg=messages.success(request,'data added successfullyyyy')
-            print('msg',msg)
+            # print('msg',msg)
             return Response({'message': 'success'})
         else:
             pass

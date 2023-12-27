@@ -28,7 +28,7 @@ def kpi_data_to_database(instance):
             kpi_data_queryset = Machine_KPI_Data.objects.filter(machine_id=machine_id, kpi_id__kpi_name=kpiname, timestamp__date=today)
             # print('kpi_data_queryset',kpi_data_queryset)
             if kpi_data_queryset.exists():
-                print('exitssssssssss')
+                # print('exitssssssssss')
                 # Update the existing record(s) for cumulative data
                 kpi_data_queryset.update(kpi_data=kpi_data, timestamp=time_stamp)
             else:
@@ -40,7 +40,7 @@ def kpi_data_to_database(instance):
                     timestamp=time_stamp
                 )
         if data_kpi is not None and data_kpi.kpi_inventory_id.Kpi_Type == "Text_Card":
-            print('Text_Card')
+            # print('Text_Card')
             datapoints = data_kpi.data_points[0]
             # print('datapoints', datapoints)
             kpiname = data_kpi.kpi_name
@@ -104,19 +104,19 @@ def kpi_data_to_database(instance):
                 'timestamp')
 
 
-            print('first_record',first_record)
+            # print('first_record',first_record)
             # print('type',type(first_record))
             # print('type',dir(first_record))
 
             # # print('first_record',first_record.eval(f'instance.{datapoints}'))
             # latest_record=first_value.latest()
-            print('latest_record',latest_record)
+            # print('latest_record',latest_record)
 
             # first_record_data=first_record+"."f"{datapoints}"
             first_record_data = getattr(first_record, f"{col}")[index]
             # first_record_data=first_record.other[7]
-            print('first_record_data',first_record_data)
-            print('first_type',type(first_record_data))
+            # print('first_record_data',first_record_data)
+            # print('first_type',type(first_record_data))
 
             last_record_data=latest_record.other[7]
             # print('last_record_data',last_record_data)
@@ -124,7 +124,7 @@ def kpi_data_to_database(instance):
 
 
             result_data=int(float(last_record_data)) - int(float(first_record_data))
-            print('result_data',result_data)
+            # print('result_data',result_data)
 
             kpi_data_queryset = Machine_KPI_Data.objects.filter(machine_id=machine_id, kpi_id__kpi_name=kpiname,
                                                                 timestamp__date=today)
@@ -144,7 +144,7 @@ def kpi_data_to_database(instance):
                 )
 
         if data_kpi is not None and data_kpi.kpi_inventory_id.Kpi_Type == "Min_Max_values":
-            print('Min_Max_values')
+            # print('Min_Max_values')
             datapoints = data_kpi.data_points[0]#split coulumn_name and  value
             # print('datapoints', datapoints)
             kpiname = data_kpi.kpi_name
@@ -152,7 +152,7 @@ def kpi_data_to_database(instance):
             datapoints_split=datapoints.split('[')
             col=datapoints_split[0]
             index=int(datapoints_split[1][:-1])
-            print('.........','col',col,'\\\\','index',index)
+            # print('.........','col',col,'\\\\','index',index)
 
             # kpi_data = getattr(instance,datapoints)
             # kpi_data = eval(f'instance.{datapoints}')
@@ -163,21 +163,21 @@ def kpi_data_to_database(instance):
                 'timestamp')
 
             min_max_data_query = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=today)
-            print('min_max_data_query',min_max_data_query)
+            # print('min_max_data_query',min_max_data_query)
             lowest = getattr(first_record, f"{col}")[index]
-            print('lowest',lowest)
+            # print('lowest',lowest)
             highest = getattr(first_record, f"{col}")[index]
-            print('highest',highest)
+            # print('highest',highest)
             min_max_data_query = MachineDetails.objects.filter(machine_id=machine_id, timestamp__date=today)
 
 
             for m in range(len(min_max_data_query)):
                 # print('mmmmmmmmmmmmm',m)
-                print('indexxx',index)
+                # print('indexxx',index)
                 record_data = getattr(min_max_data_query[m], f"{col}")
                 record_data = record_data[index]
                 # record_data = getattr(min_max_data_query[m], f"{col}")[index]
-                print('record_data',record_data)
+                # print('record_data',record_data)
                 if record_data > highest:
                     highest = record_data
                 elif record_data < lowest:

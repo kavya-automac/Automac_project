@@ -9,6 +9,9 @@ from rest_framework.response import Response
 
 channel_layer = get_channel_layer()
 
+
+# ---------------maithri/abu_dabhi and Topic_name --------------------------
+
 def mqtt_data_to_channels(mqtt_machines_data):
     # print('hhhh')
 
@@ -161,7 +164,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
     # print("result ",result)
     # Convert the result dictionary to a JSON string
     res = json.dumps(result)
-    print("res ",res)
+    # print("res ",res)
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
     # print('channel_layer',channel_layer)
@@ -175,7 +178,9 @@ def mqtt_data_to_channels(mqtt_machines_data):
 
 
 
+# -----------------------Maithri/Device_7inch------------------
 
+# ---------------connection from aws ------------------
 
 def Device_7inch(mqtt_machines_data):
     # print('kkk')
@@ -319,7 +324,7 @@ def Device_7inch(mqtt_machines_data):
     res = json.dumps(result)
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
-    print('channel_layer',channel_layer)
+    # print('channel_layer',channel_layer)
     try:
         async_to_sync(channel_layer.group_send)(str(machine_id)+'_io', {"type": "chat.message", "text": res})
     except Exception as e:
@@ -328,15 +333,18 @@ def Device_7inch(mqtt_machines_data):
 
 
 
+# ----------------demo_app , CSD,Maithri_test and websocket_data-----------------------------------
+# ------------------data in the form of lists
+# -------------------- Maithri_test from aws ------------------------------
 
 def demo_app_to_channels(mqtt_machines_data):
     # print('hhhh')
 
     payload = json.loads(mqtt_machines_data)
-    print('payload csddddddddd',payload)
+    # print('payload csddddddddd',payload)
     # Extract machine_id from the payload
     machine_id = payload['machine_id']
-    print('machineeeeeeeeee',machine_id)
+    # print('machineeeeeeeeee',machine_id)
 
     # Query the Machines_List model to get data for the specific machine_id
     # machine = Machines_List.objects.get(machine_id=machine_id)
@@ -386,15 +394,15 @@ def demo_app_to_channels(mqtt_machines_data):
     analog_input = payload.get('analog_inputs')
     analog_output = payload.get('analog_outputs')
     other_values = payload.get('other')
-    print('digital_input',digital_input)
-    print('digital_output',digital_output)
-    print('analog_input',analog_input)
-    print('analog_output',analog_output)
-    print('///////////////////////////////////////////////////////////////////////')
-    print('digital_input_keys', digital_input_keys)
-    print('digital_output_keys', digital_output_keys)
-    print('analog_input_keys', analog_input_keys)
-    print('analog_output_keys', analog_output_keys)
+    # print('digital_input',digital_input)
+    # print('digital_output',digital_output)
+    # print('analog_input',analog_input)
+    # print('analog_output',analog_output)
+    # print('///////////////////////////////////////////////////////////////////////')
+    # print('digital_input_keys', digital_input_keys)
+    # print('digital_output_keys', digital_output_keys)
+    # print('analog_input_keys', analog_input_keys)
+    # print('analog_output_keys', analog_output_keys)
 
     digital_keyvalue_input_data = []
 
@@ -418,7 +426,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         digital_keyvalue_input_data.append({"name": key, "value": value_str, "color": color})
-    print('digital_keyvalue_input_data', digital_keyvalue_input_data)
+    # print('digital_keyvalue_input_data', digital_keyvalue_input_data)
 
     digital_keyvalue_output_data = []
 
@@ -443,7 +451,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         digital_keyvalue_output_data.append({"name": key, "value": value_str, "color": color})
-    print('digital_keyvalue_output_data', digital_keyvalue_output_data)
+    # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
 
     analog_keyvalue_input_data = []
     for key, value in zip(analog_input_keys, analog_input):
@@ -458,7 +466,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         analog_keyvalue_input_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
-    print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+    # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
 
     analog_keyvalue_output_data = []
     for key, value in zip(analog_output_keys, analog_output):
@@ -474,7 +482,7 @@ def demo_app_to_channels(mqtt_machines_data):
                 pass
 
         analog_keyvalue_output_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
-    print('analog_keyvalue_output_data', analog_keyvalue_output_data)
+    # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
 
 
 
@@ -508,7 +516,7 @@ def demo_app_to_channels(mqtt_machines_data):
 
     # Convert the result dictionary to a JSON string
     res = json.dumps(result)
-    print('resssssssssssssssssssss',res)
+    # print('resssssssssssssssssssss',res)
     # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
     # print('channel_layer',channel_layer)

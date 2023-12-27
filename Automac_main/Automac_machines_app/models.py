@@ -56,7 +56,7 @@ class Machine_KPI_Data(models.Model):
 def signal(sender,instance,created,**kwargs):
     if created:
 
-        print("new data arrived")
+        # print("new data arrived")
         # machine=instance.machine_id
         # print('instanceee',instance)
         # print('machine......',machine)

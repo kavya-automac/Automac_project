@@ -30,7 +30,7 @@ def get_kpis_data(user, machine):
 
     try:
         user_data = all_Machine_data.objects.filter(user_name__username=user, machine_id__machine_id=machine.machine_id)
-        print('userrrrrrrr',user_data)
+        # print('userrrrrrrr',user_data)
     except all_Machine_data.DoesNotExist:
         error_message = "Please enter a valid machine_id."
         return JsonResponse({"status": error_message}, status=400)  # Return an error response
@@ -72,7 +72,7 @@ def get_kpis_data(user, machine):
                     ).order_by('-timestamp')[::12]
 
 
-                print('every_30mins_data',kpidata)
+                # print('every_30mins_data',kpidata)
 
 
                 # Retrieve the latest 10 records for line_graph
@@ -91,7 +91,7 @@ def get_kpis_data(user, machine):
                     time = kpidatatype.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')  # Format timestamp as ISO string
                     value_list = kpidatatype.kpi_data  # Assuming kpi_data is a list
                     processed_values = []  # List to store processed values
-                    print('value_list',value_list)
+                    # print('value_list',value_list)
                     for i in range(len(input_output_data)):
                         # print('.........')
                         if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
@@ -156,7 +156,7 @@ def get_kpis_data(user, machine):
                 if kpidata:
                     name = kpidata.kpi_id.kpi_name
                     value = kpidata.kpi_data
-                    print('value', value)
+                    # print('value', value)
 
                     kpi_result['value'] = "On" if value[0] else "Off"
                     # kpi_result['value'] = value[0]
@@ -192,7 +192,7 @@ def get_kpis_data(user, machine):
                     if input_output_data_serializer_data[i]['IO_type'] == "other":
                         other_keys.append(input_output_data_serializer_data[i]['IO_name'])
 
-                print(other_keys)
+                # print(other_keys)
                 digital_input_value = []
                 digital_output_value = []
                 analog_input_value = []
@@ -201,12 +201,12 @@ def get_kpis_data(user, machine):
                 kpi_data_table_values=Machine_KPI_Data.objects.filter(machine_id=machine_data,kpi_id__kpi_name=kpiname, \
                         kpi_id__kpi_inventory_id__Kpi_Type = kpitype,timestamp__date=todays_date
                 ).order_by('-timestamp')[:10].first()
-                print('kpi_data_table_values',kpi_data_table_values)
+                # print('kpi_data_table_values',kpi_data_table_values)
 
                 # energy_card_values= kpi_data_table_values.kpi_data   #if data is none
                 none_data=['None','None','None','None','None','None','None','None']
                 energy_card_values= kpi_data_table_values.kpi_data if kpi_data_table_values else none_data  #if data is none
-                print('energy_card_values',energy_card_values)
+                # print('energy_card_values',energy_card_values)
                 #......none to "null"
                 energy_card_values_null_str = [str(item) if item is not None else "None" for item in energy_card_values]
 

@@ -20,7 +20,7 @@ def history_fun(machine_id,date):
     # print('details',details)
 
     # details = MachineDetails.objects.filter(machine_id=machine_id, timestamp__range=[start_datetime, end_datetime])
-    print('details',len(machine_value_data))
+    # print('details',len(machine_value_data))
     serializer = machineSerializer(machine_value_data, many=True)
 
     r_s_d = serializer.data
@@ -126,7 +126,7 @@ def history_fun(machine_id,date):
 
 
     if  r_s_d:
-        print('iffff',not r_s_d)
+        # print('iffff',not r_s_d)
         for i in range(len(r_s_d)):
             # d_i_res = [{'name': key, 'value': value} for key, value in zip(digital_input_keys, digital_input_value[i])]
             # # print('d_i_res',d_i_res)

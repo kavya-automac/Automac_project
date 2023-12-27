@@ -15,12 +15,12 @@ channel_layer_KPI = get_channel_layer()
 
 @sync_to_async
 def kpi_socket(username,machine_id):
-    print('kkk1')
+    # print('kkk1')
     from .models import Machine_KPI_Data
-    print('kkk2')
+    # print('kkk2')
     from Automac_app.models import all_Machine_data, Machines_List,IO_List
-    print('kkk3')
-    print('kkk4')
+    # print('kkk3')
+    # print('kkk4')
     todays_date=datetime.now().date()
 
     kpis = []
@@ -54,7 +54,7 @@ def kpi_socket(username,machine_id):
             kpi_result = {}
 
             if kpitype == 'Line_Graph':
-                print('lineee')
+                # print('lineee')
                 # kpidata = Machine_KPI_Data.objects.filter(machine_id=machine_data, kpi_id__kpi_name=kpiname
                 #                                           , kpi_id__kpi_inventory_id__Kpi_Type=kpitype,
                 #                                           timestamp__date=todays_date). \
@@ -127,7 +127,7 @@ def kpi_socket(username,machine_id):
                     kpi_result['value'] = ''
 
             elif kpitype == "Energy_Card":
-                print('energyyy')
+                # print('energyyy')
                 input_output_data = IO_List.objects.filter(machine_id__machine_id=machinelist).order_by('id')
                 # print('input_output_data', input_output_data)
                 # from .serializers import IO_list_serializer

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 # machineSerializer this is used in history page don't change any field
-class machineSerializer(serializers.ModelSerializer):# iostatus # Trail_details
+class machineSerializer(serializers.ModelSerializer):# iostatus  for values # Trail_details for values
     class Meta:
         model=MachineDetails
         # fields = "__all__"
