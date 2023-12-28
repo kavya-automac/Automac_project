@@ -23,7 +23,7 @@ urlpatterns = [
     path('backend/', include('Automac_app.urls')),
     path('machine_app/', include('Automac_machines_app.urls')),
     path('', TemplateView.as_view(template_name='index.html')),
-    path('home', TemplateView.as_view(template_name='index.html')),
+    path('home/dashboard', TemplateView.as_view(template_name='index.html')),
     path('home/machinelist', TemplateView.as_view(template_name='index.html')),
     path('home/trails', TemplateView.as_view(template_name='index.html')),
     path('home/reports', TemplateView.as_view(template_name='index.html')),

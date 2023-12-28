@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/static/css/main.6fbb7024.css",
-    "main.js": "/static/js/main.1cd4017d.js",
+    "main.css": "/static/css/main.858656f9.css",
+    "main.js": "/static/js/main.f0712cc3.js",
     "static/js/703.a2808eaf.chunk.js": "/static/js/703.a2808eaf.chunk.js",
     "static/js/513.027afff6.chunk.js": "/static/js/513.027afff6.chunk.js",
-    "static/media/20231216_200312_0000.png": "/static/media/20231216_200312_0000.267d896a249b70761d06.png",
     "static/media/Desktop.png": "/static/media/Desktop.2ac506bf3483aed5720d.png",
+    "static/media/AtomsLogo.png": "/static/media/AtomsLogo.d22103e2ac34876008c2.png",
     "static/media/AndroidScreen.png": "/static/media/AndroidScreen.e6cdb5ab106b11b7fbb3.png",
     "static/media/flag-for-flag-india-svgrepo-com.svg": "/static/media/flag-for-flag-india-svgrepo-com.71759ebba222e1661b3cd38aa828361b.svg",
     "index.html": "/index.html",
-    "main.6fbb7024.css.map": "/static/css/main.6fbb7024.css.map",
-    "main.1cd4017d.js.map": "/static/js/main.1cd4017d.js.map",
+    "main.858656f9.css.map": "/static/css/main.858656f9.css.map",
+    "main.f0712cc3.js.map": "/static/js/main.f0712cc3.js.map",
     "703.a2808eaf.chunk.js.map": "/static/js/703.a2808eaf.chunk.js.map",
     "513.027afff6.chunk.js.map": "/static/js/513.027afff6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6fbb7024.css",
-    "static/js/main.1cd4017d.js"
+    "static/css/main.858656f9.css",
+    "static/js/main.f0712cc3.js"
   ]
 }
