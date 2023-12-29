@@ -47,6 +47,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
     digital_output_keys = []
     analog_input_keys = []
     analog_output_keys = []
+    other_key = []
     for i in range(len(input_output_data)):
         if input_output_data_serializer_data[i]['IO_type'] == "digital_input":
             digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
@@ -59,6 +60,10 @@ def mqtt_data_to_channels(mqtt_machines_data):
         if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
             analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
 
+        if input_output_data_serializer_data[i]['IO_type'] == "other":
+            other_key.append(input_output_data_serializer_data[i]['IO_name'])
+
+
     # Extract values from the payload using the corresponding keys
     digital_input = [payload.get('LP1'), payload.get('LP2'), payload.get('HP1'), payload.get('HP2'),
                                               payload.get('Dosing'), payload.get('3PhasePreventer')]
@@ -68,6 +73,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
     analog_output = [payload.get('Flow')]
     # print('digital_input',digital_input)
     # print('digital_output',digital_output)
+    other_values=[]
 
     digital_keyvalue_input_data = []
 
@@ -149,6 +155,22 @@ def mqtt_data_to_channels(mqtt_machines_data):
         analog_keyvalue_output_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
     # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
 
+    others_keyvalue_input_data = []
+    for key, value in zip(other_key, other_values):
+        db_unit = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "other" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                color = input_output_data_serializer_data[i]['IO_color'][0]
+                break  # Exit loop once the correct key is found
+            else:
+                pass
+
+        others_keyvalue_input_data.append(
+            {"name": key, "value": str(value), "color": color, "unit": db_unit})
+    # print('others_keyvalue_input_data',others_keyvalue_input_data)
+
     # Create dictionaries for data to be sent
 
     # Construct the final result dictionary
@@ -159,6 +181,7 @@ def mqtt_data_to_channels(mqtt_machines_data):
         'digital_output': digital_keyvalue_output_data,
         'analog_input': analog_keyvalue_input_data,
         'analog_output': analog_keyvalue_output_data,
+        'others': others_keyvalue_input_data,
         'db_timestamp': payload['timestamp']
     }
     # print("result ",result)
@@ -217,6 +240,7 @@ def Device_7inch(mqtt_machines_data):
     digital_output_keys = []
     analog_input_keys = []
     analog_output_keys = []
+    other_key = []
     for i in range(len(input_output_data)):
         if input_output_data_serializer_data[i]['IO_type'] == "digital_input":
             digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
@@ -229,11 +253,16 @@ def Device_7inch(mqtt_machines_data):
         if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
             analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
 
+        if input_output_data_serializer_data[i]['IO_type'] == "other":
+            other_key.append(input_output_data_serializer_data[i]['IO_name'])
+
+
     # Extract values from the payload using the corresponding keys
     digital_input = [payload.get('Dosing')]
     digital_output = [payload.get('Compressor_1'),  payload.get('Pump')]
     analog_input = [payload.get('Temperature'), payload.get('Humidity')]
     analog_output = [payload.get('Flow')]
+    other_values = []
 
     digital_keyvalue_input_data = []
 
@@ -306,6 +335,22 @@ def Device_7inch(mqtt_machines_data):
 
         analog_keyvalue_output_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit})
         # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
+    others_keyvalue_input_data = []
+    for key, value in zip(other_key, other_values):
+        db_unit = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "other" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                color = input_output_data_serializer_data[i]['IO_color'][0]
+                break  # Exit loop once the correct key is found
+            else:
+                pass
+
+        others_keyvalue_input_data.append(
+            {"name": key, "value": str(value), "color": color, "unit": db_unit})
+    # print('others_keyvalue_input_data',others_keyvalue_input_data)
+
 
     # Create dictionaries for data to be sent
 
@@ -317,6 +362,7 @@ def Device_7inch(mqtt_machines_data):
         'digital_output': digital_keyvalue_output_data,
         'analog_input': analog_keyvalue_input_data,
         'analog_output': analog_keyvalue_output_data,
+        'others': others_keyvalue_input_data,
         'db_timestamp': payload['timestamp']
     }
 
@@ -500,6 +546,8 @@ def demo_app_to_channels(mqtt_machines_data):
 
         others_keyvalue_input_data.append(
             {"name": key, "value": str(value), "color": color, "unit": db_unit})
+    # print('others_keyvalue_input_data',others_keyvalue_input_data)
+
     # Create dictionaries for data to be sent
 
     # Construct the final result dictionary

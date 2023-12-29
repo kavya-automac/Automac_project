@@ -47,7 +47,7 @@ class Company_List(models.Model):
     objects = models.Manager()
     company_name=models.CharField(max_length=100)
     company_location=models.CharField(max_length=100)
-
+    company_logo=models.URLField(blank=True,null=True)
     class Meta:
         app_label = 'Automac_app'
         db_table = 'users_schema"."Company_List'

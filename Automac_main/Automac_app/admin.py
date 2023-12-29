@@ -46,7 +46,7 @@ class Machines_ListAdmin(admin.ModelAdmin):
 
 @admin.register(Company_List)
 class Company_ListAdmin(admin.ModelAdmin):
-    list_display = ['id','company_name','company_location']
+    list_display = ['id','company_name','company_location','company_logo']
 
 @admin.register(all_Machine_data)
 class all_Machine_dataAdmin(admin.ModelAdmin):
