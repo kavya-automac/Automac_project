@@ -81,7 +81,12 @@ def login_view(request):
             # login(request, user)
             # print("logged in:", request.user.username)
             token, _ = Token.objects.get_or_create(user=user)
-            login_response = JsonResponse({"status": "user_validated", 'generated_token': token.key, 'username': username})
+            user_company = all_Machine_data.objects.filter(user_name__username=username).values(
+                'company_name__company_logo') \
+                .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
+            print('user_company',user_company)
+            login_response = JsonResponse({"status": "user_validated", 'generated_token': token.key, 'username': username,
+                                           'logo_url':user_company[0]['company_name__company_logo']})
             login_response['token'] = str(token.key)
 
             return login_response
