@@ -28,7 +28,7 @@ urlpatterns = [
     path('home/machine', TemplateView.as_view(template_name='index.html')),
     path('home/trail', TemplateView.as_view(template_name='index.html')),
     path('home/report', TemplateView.as_view(template_name='index.html')),
-    path('home/settings', TemplateView.as_view(template_name='index.html')),
+    # path('home/settings', TemplateView.as_view(template_name='index.html')),
     path('login', TemplateView.as_view(template_name='index.html')),
     path('about', TemplateView.as_view(template_name='index.html'))
 
