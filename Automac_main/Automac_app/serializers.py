@@ -247,7 +247,7 @@ class IO_list_serializer(serializers.ModelSerializer): #iostatus api for keys # 
     class Meta:
         model=IO_List
         # fields = '__all__'
-        fields = ('machine_id','IO_type','IO_name','IO_value','IO_color','IO_Unit')
+        fields = ('machine_id','IO_type','IO_name','IO_value','IO_color','IO_Unit','Control')
 
 
 # class Kpi_Serializer(serializers.ModelSerializer):

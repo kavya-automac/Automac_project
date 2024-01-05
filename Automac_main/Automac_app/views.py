@@ -755,6 +755,7 @@ class MachinesView(ViewSet):
                         digital_output_keys=[]
                         analog_input_keys=[]
                         analog_output_keys=[]
+                        other_keys = []
                         color = []
                         values = []
 
@@ -771,6 +772,10 @@ class MachinesView(ViewSet):
                             if input_output_data_serializer_data[i]['IO_type']=="digital_input":
                                 # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
                                 digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+                            if input_output_data_serializer_data[i]['IO_type'] == "other":
+                                # print('iiiiiiiiiiiiiiiiiiiii',i ,input_output_data_serializer_data[i]['IO_name'])
+                                other_keys.append(input_output_data_serializer_data[i]['IO_name'])
+
                         # print('digital_input_keys',digital_input_keys)
                         # print('digital_output_keys',digital_output_keys)
                         # print('analog_input_keys',analog_input_keys)
@@ -798,11 +803,12 @@ class MachinesView(ViewSet):
                                 if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and input_output_data_serializer_data[i]['IO_name'] == key:
                                     db_color = input_output_data_serializer_data[i]['IO_color']
                                     color = db_color[0] if value else db_color[1]
+                                    controller=input_output_data_serializer_data[i]['Control']
                                     break  # Exit loop once the correct key is found
                                 else:
                                     pass
 
-                            digital_keyvalue_input_data.append({"name": key, "value": value_str,"color":color})
+                            digital_keyvalue_input_data.append({"name": key, "value": value_str,"color":color,"control":controller})
                         # print('digital_keyvalue_input_data',digital_keyvalue_input_data)
 
 
@@ -815,12 +821,14 @@ class MachinesView(ViewSet):
                                         input_output_data_serializer_data[i]['IO_name'] == key:
                                     db_color = input_output_data_serializer_data[i]['IO_color']
                                     color = db_color[0] if value else db_color[1]
+                                    controller=input_output_data_serializer_data[i]['Control']
+
                                     break  # Exit loop once the correct key is found
                                 else:
                                     pass
 
 
-                            digital_keyvalue_output_data.append({"name": key, "value": value_str,"color":color})
+                            digital_keyvalue_output_data.append({"name": key, "value": value_str,"color":color,"control":controller})
                         # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
 
                         analog_keyvalue_input_data=[]
@@ -831,11 +839,13 @@ class MachinesView(ViewSet):
                                         input_output_data_serializer_data[i]['IO_name'] == key:
                                     db_unit = input_output_data_serializer_data[i]['IO_Unit']
                                     color= input_output_data_serializer_data[i]['IO_color'][0]
+                                    controller=input_output_data_serializer_data[i]['Control']
+
                                     break  # Exit loop once the correct key is found
                                 else:
                                     pass
 
-                            analog_keyvalue_input_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
+                            analog_keyvalue_input_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit,"control":controller})
                         # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
 
                         analog_keyvalue_output_data = []
@@ -846,25 +856,48 @@ class MachinesView(ViewSet):
                                         input_output_data_serializer_data[i]['IO_name'] == key:
                                     db_unit = input_output_data_serializer_data[i]['IO_Unit']
                                     color= input_output_data_serializer_data[i]['IO_color'][0]
+                                    controller=input_output_data_serializer_data[i]['Control']
+
 
                                     break  # Exit loop once the correct key is found
                                 else:
                                     pass
 
-                            analog_keyvalue_output_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit})
+                            analog_keyvalue_output_data.append({"name": key, "value": str(value),"color":color,"unit":db_unit,"control":controller})
                         # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
                         # print('timeeeeeeeeeeeeeeeeeeeeee',str(last_valies_data.get('timestamp',datetime.datetime.now())))
+                        others_keyvalue_input_data = []
+                        for key, value in zip(other_keys, last_valies_data.get('other', [])):
+                            db_unit = None
+                            for i in range(len(input_output_data)):
+                                if input_output_data_serializer_data[i]['IO_type'] == "other" and \
+                                        input_output_data_serializer_data[i]['IO_name'] == key:
+                                    db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                                    color = input_output_data_serializer_data[i]['IO_color'][0]
+                                    controller=input_output_data_serializer_data[i]['Control']
+
+                                    break  # Exit loop once the correct key is found
+                                else:
+                                    pass
+
+                            others_keyvalue_input_data.append(
+                                {"name": key, "value": str(value), "color": color, "unit": db_unit,"control":controller})
+                        # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+
                         timestamp = last_valies_data.get('timestamp')
                         if timestamp:
                             formatted_time = str(timestamp)
                         else:
-                            formatted_time = str(datetime.datetime.now())
-                        # print('formatted_time',formatted_time)
+                            formatted_time = "0000-00-00T00:00:00Z"  # change
 
                         data = {'control': {
-                            "machine_id":machine.machine_id,
-                            "machine_name":machine.machine_name,
-                            "digital_output":digital_keyvalue_output_data,
+                            "machine_id": machine.machine_id,
+                            "machine_name": machine.machine_name,
+                            "digital_input": digital_keyvalue_input_data,
+                            "digital_output": digital_keyvalue_output_data,
+                            "analog_input": analog_keyvalue_input_data,
+                            "analog_output": analog_keyvalue_output_data,
+                            "others": others_keyvalue_input_data,
                             "db_timestamp": formatted_time
 
                         }}
@@ -889,21 +922,24 @@ class MachinesView(ViewSet):
 
 @csrf_exempt
 @api_view(['PUT'])
-def machine_control(request):
+def machine_control(request):#????
     # print('******',request.data)
 
     machine_id=request.data.get('machine_id')
     name=request.data.get('name')
     value=request.data.get('value')
+    Type=request.data.get('type')
     machine = Machines_List.objects.get(machine_id=machine_id)
-    input_output_data = IO_List.objects.filter(machine_id=machine.id,IO_type='digital_output').order_by('id').values_list('IO_name',flat=True)
+    input_output_data = IO_List.objects.filter(machine_id=machine.id,IO_type=Type).order_by('id').values_list('IO_name',flat=True)
     output = list(input_output_data).index(name)
     # print('index***********',list(input_output_data).index(name))
-    # print('input_output_data----------',input_output_data)
+    print('input_output_data----------',input_output_data)
+    print('output----------',output)
     # print('machine_id,name,value', machine_id,name,value)
 
-    control_json = {"mid":machine_id, "data":{"output":output, "value":value}}
-    client.publish("ieee/control", json.dumps(control_json))
+    control_json = {"mid":machine_id,"parameter_type":Type, "data":{"output":output, "value":value}}
+    # client.publish("websocket_data", json.dumps(control_json))
+    client.publish("controls", json.dumps(control_json))
     # return JsonResponse({"status":list(input_output_data).index(name)})
     return JsonResponse({"status":"data has been sent"})
 

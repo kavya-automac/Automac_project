@@ -569,6 +569,207 @@ def demo_app_to_channels(mqtt_machines_data):
     # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
     # print('channel_layer',channel_layer)
     async_to_sync(channel_layer.group_send)(str(machine_id)+"_io", {"type": "chat.message", "text": res})
+    # async_to_sync(channel_layer.group_send)(str(machine_id)+"_io", {"type": "chat.message", "text": res})
+
+
+
+
+
+def control_websocket(mqtt_machines_data):
+    # print('hhhh')
+
+    payload = json.loads(mqtt_machines_data)
+    # print('payload csddddddddd',payload)
+    # Extract machine_id from the payload
+    machine_id = payload['machine_id']
+    # print('machineeeeeeeeee',machine_id)
+
+    # Query the Machines_List model to get data for the specific machine_id
+    # machine = Machines_List.objects.get(machine_id=machine_id)
+    # print('machine',machine)
+
+    try:
+        machine = Machines_List.objects.get(machine_id=machine_id)
+    except Machines_List.DoesNotExist:
+        error_message = "Please enter a valid machine_id."
+        return JsonResponse({"status": error_message}, status=400)  # Return an error response
+
+    # self.scope['query_string']['machine_id']
+    # user_serializer = usermachineSerializer(machine.first())  # Get a single instance
+    # data2 = user_serializer.data
+
+    # Extract keys for digital_input, digital_output, analog_input, and analog_output
+    input_output_data = IO_List.objects.filter(machine_id=machine.id).order_by('id')
+    # print('input_output_data', input_output_data)
+    input_output_data_serializer = IO_list_serializer(input_output_data, many=True)
+    # print('input_output_data_serializer', input_output_data_serializer.data)
+    input_output_data_serializer_data = input_output_data_serializer.data
+
+
+    digital_input_keys = []
+    digital_output_keys = []
+    analog_input_keys = []
+    analog_output_keys = []
+    other_key=[]
+    for i in range(len(input_output_data)):
+        if input_output_data_serializer_data[i]['IO_type'] == "digital_input":
+            digital_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+
+        if input_output_data_serializer_data[i]['IO_type'] == "digital_output":
+            digital_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
+
+        if input_output_data_serializer_data[i]['IO_type'] == "analog_input":
+            analog_input_keys.append(input_output_data_serializer_data[i]['IO_name'])
+        if input_output_data_serializer_data[i]['IO_type'] == "analog_output":
+            analog_output_keys.append(input_output_data_serializer_data[i]['IO_name'])
+        if input_output_data_serializer_data[i]['IO_type'] == "other":
+            other_key.append(input_output_data_serializer_data[i]['IO_name'])
+
+
+    # Extract values from the payload using the corresponding keys
+    digital_input = payload.get('digital_inputs')
+    digital_output = payload.get('digital_outputs')
+    analog_input = payload.get('analog_inputs')
+    analog_output = payload.get('analog_outputs')
+    other_values = payload.get('other')
+    # print('digital_input',digital_input)
+    # print('digital_output',digital_output)
+    # print('analog_input',analog_input)
+    # print('analog_output',analog_output)
+    # print('///////////////////////////////////////////////////////////////////////')
+    # print('digital_input_keys', digital_input_keys)
+    # print('digital_output_keys', digital_output_keys)
+    # print('analog_input_keys', analog_input_keys)
+    # print('analog_output_keys', analog_output_keys)
+
+    digital_keyvalue_input_data = []
+
+    for key, value in zip(digital_input_keys, digital_input):
+        value_str = value
+        # value_str = "On" if value else "Off"
+        color = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "digital_input" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_color = input_output_data_serializer_data[i]['IO_color']
+                controller = input_output_data_serializer_data[i]['Control']
+
+                if value_str.lower() == 'on':
+
+                    color = db_color[0]
+                else:
+                    color = db_color[1]
+                break
+
+                # color = db_color[0] if value else db_color[1]
+            else:
+                pass
+
+        digital_keyvalue_input_data.append({"name": key, "value": value_str, "color": color,"control":controller})
+    # print('digital_keyvalue_input_data', digital_keyvalue_input_data)
+
+    digital_keyvalue_output_data = []
+
+    for key, value in zip(digital_output_keys, digital_output):
+        value_str = value
+        # value_str = "On" if value else "Off"  # Convert boolean to "On" or "Off"
+        color = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "digital_output" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_color = input_output_data_serializer_data[i]['IO_color']
+                controller = input_output_data_serializer_data[i]['Control']
+
+                if value_str.lower() == 'on':
+
+                    color = db_color[0]
+                else:
+                    color = db_color[1]
+                break
+
+                # color = db_color[0] if value else db_color[1]
+                # break  # Exit loop once the correct key is found
+            else:
+                pass
+
+        digital_keyvalue_output_data.append({"name": key, "value": value_str, "color": color,"control":controller})
+    # print('digital_keyvalue_output_data', digital_keyvalue_output_data)
+
+    analog_keyvalue_input_data = []
+    for key, value in zip(analog_input_keys, analog_input):
+        db_unit = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "analog_input" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                color = input_output_data_serializer_data[i]['IO_color'][0]
+                controller = input_output_data_serializer_data[i]['Control']
+
+                break  # Exit loop once the correct key is found
+            else:
+                pass
+
+        analog_keyvalue_input_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit,"control":controller})
+    # print('analog_keyvalue_input_data', analog_keyvalue_input_data)
+
+    analog_keyvalue_output_data = []
+    for key, value in zip(analog_output_keys, analog_output):
+        db_unit = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "analog_output" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                color = input_output_data_serializer_data[i]['IO_color'][0]
+                controller = input_output_data_serializer_data[i]['Control']
+
+                break  # Exit loop once the correct key is found
+            else:
+                pass
+
+        analog_keyvalue_output_data.append({"name": key, "value": str(value), "color": color, "unit": db_unit,"control":controller})
+    # print('analog_keyvalue_output_data', analog_keyvalue_output_data)
+
+
+
+    others_keyvalue_input_data = []
+    for key, value in zip(other_key, other_values):
+        db_unit = None
+        for i in range(len(input_output_data)):
+            if input_output_data_serializer_data[i]['IO_type'] == "other" and \
+                    input_output_data_serializer_data[i]['IO_name'] == key:
+                db_unit = input_output_data_serializer_data[i]['IO_Unit']
+                color = input_output_data_serializer_data[i]['IO_color'][0]
+                controller = input_output_data_serializer_data[i]['Control']
+
+                break  # Exit loop once the correct key is found
+            else:
+                pass
+
+        others_keyvalue_input_data.append(
+            {"name": key, "value": str(value), "color": color, "unit": db_unit,"control":controller})
+    # print('others_keyvalue_input_data',others_keyvalue_input_data)
+
+    # Create dictionaries for data to be sent
+
+    # Construct the final result dictionary
+    result = {
+        'machine_id': machine_id,
+        'machine_name': machine.machine_name,
+        'digital_input': digital_keyvalue_input_data,
+        'digital_output': digital_keyvalue_output_data,
+        'analog_input': analog_keyvalue_input_data,
+        'analog_output': analog_keyvalue_output_data,
+        'others':others_keyvalue_input_data,
+        'db_timestamp': payload['timestamp']
+    }
+
+    # Convert the result dictionary to a JSON string
+    res = json.dumps(result)
+    # print('resssssssssssssssssssss',res)
+    # channel_layer = get_channel_layer()  # get default channel layer  RedisChannelLayer(hosts=[{'address': 'redis://65.2.3.42:6379'}])
+    # async_to_sync(channel_layer.group_send)(user_data, {"type": "chat.message", "text": res})
+    # print('channel_layer',channel_layer)
+    async_to_sync(channel_layer.group_send)(str(machine_id)+"_control", {"type": "control.message", "text": res})
 
 
 

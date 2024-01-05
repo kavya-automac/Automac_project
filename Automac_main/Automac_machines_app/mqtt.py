@@ -21,7 +21,7 @@ def on_connect(client, userdata, flags, rc):
        client.subscribe('maithri/abu_dabhi')
        client.subscribe('Topic_name')
        client.subscribe('demo_app')
-       client.subscribe('CSD')
+       client.subscribe('machine_data')
        client.subscribe('websocket_data')
        client.subscribe('Maithri_test')
 
@@ -46,15 +46,23 @@ def on_message(client, userdata, msg):
     if topic =='maithri/abu_dabhi' or topic =='Topic_name':
         from . import physical_keys_values
         physical_keys_values.mqtt_data_to_channels(mqtt_machines_data)
-    if topic == 'demo_app'or topic == "CSD" and topic == "Maithri_test":
+    if topic == 'demo_app'or topic == "machine_data" and topic == "Maithri_test":
         from . import physical_keys_values
 
 
         physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+        # physical_keys_values.control_websocket(mqtt_machines_data)
+    if topic == "machine_data"  or topic == "websocket_data":
+        from . import physical_keys_values
+
+        physical_keys_values.control_websocket(mqtt_machines_data)
+
     if topic == "websocket_data":
         from . import physical_keys_values
 
         physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+        # physical_keys_values.control_websocket(mqtt_machines_data)
+
 
     else:
         pass

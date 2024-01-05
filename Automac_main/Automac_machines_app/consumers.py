@@ -22,7 +22,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # print("Connected")
         query_string=self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1].split('&')[0]
-        # print('machine_id connect ',machine_id)
+        print('machine_id connect ',machine_id)
         client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"iostatus"}))
 
 
@@ -46,7 +46,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         query_string = self.scope['query_string'].decode()
         machine_id = query_string.split('=')[1]
-        # print('machineid',machine_id)
+        print('machineid',machine_id)
         client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"iostatus"}))
 
         await self.channel_layer.group_discard(str(machine_id)+'_io', self.channel_name)
@@ -180,3 +180,82 @@ class KpiConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print("kpi message error - ", e)
 
+
+
+class ControlSocket(AsyncWebsocketConsumer):
+    async def connect(self):
+        connected_status=True
+        # Add the consumer to the "chat" channel group
+        # print(self.scope["user"])
+        # print('paramsssssssssssss',self.scope["headers"])
+        # print('scope', self.scope)
+        # print('qery_stringggg', self.scope['query_string'].decode())
+
+        # client.publish("ws_con", "Connected",)
+
+        # print("Connected")
+        query_string=self.scope['query_string'].decode()
+        machine_id = query_string.split('=')[1]
+        print('machine_id connect ',machine_id)
+        client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"control"}))
+
+
+
+
+        await self.channel_layer.group_add(str(machine_id)+'_control', self.channel_name)
+        # group_name=self.scope["url_route"]["kwargs"]["group_name"]
+        # print('group_name',group_name)
+        await self.accept()
+
+
+    async def disconnect(self, close_code):
+        connected_status = False
+
+        # client.publish("ws_con", "Disconnected")
+        # print('Disconnected')
+
+
+        query_string = self.scope['query_string'].decode()
+        machine_id = query_string.split('=')[1]
+        print('machineid',machine_id)
+        client.publish("ws_con", json.dumps({"con_status": connected_status, "machine_id":machine_id,"ws_grp":"control"}))
+
+        await self.channel_layer.group_discard(str(machine_id)+'_control', self.channel_name)
+
+        # Remove the consumer from the "chat" channel group
+        # await self.channel_layer.group_discard("mqtt_data", self.channel_name)
+
+
+    async def receive(self, text_data):
+        query_string = self.scope['query_string'].decode()
+
+        machine_id = query_string.split('=')[1]
+        # print('text',text_data)
+        # print('reciver ........scope', self.scope)
+
+
+        # Send the processed data to the connected WebSocket clients
+        await self.channel_layer.group_send("mqtt_data", {
+            "type": "control.message",
+            "text": text_data  # Send the processed data as the message
+        })
+        # await self.channel_layer.group_send(str(machine_id)+'_control',{
+        #     "type": "control.message",
+        #     "text": text_data  # Send the processed data as the message
+        # })
+
+
+        # print('receive text_data',text_data)
+        # await asyncio.sleep(5)
+
+    async def control_message(self, event):
+
+
+        try:
+            # Send the received data to the WebSocket connection
+            await self.send(text_data=event["text"])
+            # print("eventtttttttttttttttttttttttttt")
+            # await self.send(text_data=json.dumps(event["text"]))
+            await asyncio.sleep(1)
+        except Exception as e:
+            print("control message error - ", e)

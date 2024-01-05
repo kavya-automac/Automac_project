@@ -135,6 +135,7 @@ class IO_List(models.Model):
     IO_color=ArrayField(models.CharField(max_length=100,blank=True))
     IO_Range=models.CharField(max_length=100,blank=True)
     IO_Unit=models.CharField(max_length=100,blank=True)
+    Control=models.BooleanField(default=False)
 
     class Meta:
         app_label = 'Automac_app'
@@ -145,8 +146,15 @@ class IO_List(models.Model):
 
 
 
-
-
+#
+# class
+#
+#
+#
+# class Profile_details(models.Model):
+#     objects=models.Manager()
+#     user_id=models.OneToOneField(User,on_delete=models.CASCADE)
+#     page_access=ArrayField(models.CharField(max_length=100, blank=True))
 
 
 

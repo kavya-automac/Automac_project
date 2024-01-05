@@ -59,4 +59,4 @@ class all_Machine_dataAdmin(admin.ModelAdmin):
 
 @admin.register(IO_List)
 class all_Machine_dataAdmin(admin.ModelAdmin):
-    list_display = ['machine_id','IO_type','IO_name','IO_value','IO_color','IO_Range','IO_Unit']
+    list_display = ['machine_id','IO_type','IO_name','IO_value','IO_color','IO_Unit','Control']
