@@ -70,12 +70,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 CORS_ORIGIN_WHITELIST = [
-    'http://192.168.29.30:49337',
+    'http://192.168.29.30:3000',
     'http://localhost:3000',
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://192.168.29.30:49337',
+    'http://192.168.29.30:3000',
     'http://localhost:3000',
 ]
 
@@ -196,7 +196,7 @@ KEYPATH = "Automac_machines_app/certificates/09ca209df4cc77d7fe5273ee62a21455a54
 
 # /Automac_main/Automac_machines_app
 #
-REST_FRAMEWORK ={
-    'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
-}
+# REST_FRAMEWORK ={
+#     'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication',]
+# }
 

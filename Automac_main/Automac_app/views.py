@@ -50,115 +50,24 @@ def register(request):
     return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # token authentication (getting user based on token)
-
-
-def get_user(request):
-    userdata=Token.objects.get(key=request.headers['Authorization']).user
-    # print('userdata',userdata)
-    return userdata
-
-# ------------------------login starts here-----------------------------
-
-
-@api_view(['POST'])
-def login_view(request):
-    serializer = LoginSerializer(data=request.data)
-    # print('serializer:', serializer)
-    # print('serializer_type:', type(serializer))
-    if serializer.is_valid():
-        # print('serializer:', serializer)
-        username = serializer.data.get('username')
-        # print('serializer_username:', username)
-        # print('type_serializer_username:', type(username))
-        password = serializer.data.get('password')
-        # print('serializer_password:', password)
-        # user = User.objects.get(username=username)
-        # print(user)
-        user = authenticate(username=username, password=password)
-        # print('authenticate_user:', user)
-
-        if user is not None:
-            # login(request, user)
-            # print("logged in:", request.user.username)
-            token, _ = Token.objects.get_or_create(user=user)
-            user_company = all_Machine_data.objects.filter(user_name__username=username).values(
-                'company_name__company_logo') \
-                .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
-            print('user_company',user_company)
-            login_response = JsonResponse({"status": "user_validated", 'generated_token': token.key, 'username': username,
-                                           'logo_url':user_company[0]['company_name__company_logo']})
-            login_response['token'] = str(token.key)
-
-            return login_response
-        else:
-            return JsonResponse({"status": "unauthorized_user"})
-    new_key = 'status'
-    error_dict = serializer.errors
-    # print("error_dict*****", error_dict)
-    # print("len****", len(error_dict))
-    # print(error_dict['password'][0].code)
-
-    # if 'username' and 'password' in error_dict :
-    #     # error_dict[new_key] = error_dict.pop('username')
-    #     # error_dict[new_key] = error_dict.pop('password')
-    #
-    #     # return JsonResponse({"status": "username_and_password_cannot_be_empty"})
-    if 'username' in error_dict and error_dict['username'][0].code == 'blank' and len(error_dict) == 1:
-        # print("len****",len(error_dict))
-        # print(error_dict['username'][0].code == 'blank')
-
-        error_dict[new_key] = error_dict.pop('username')
-        return JsonResponse({"status": error_dict["status"][0]})
-
-    elif 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 1:
-        # print("len****", len(error_dict))
-        # print(error_dict['password'][0].code == 'blank')
-        error_dict[new_key] = error_dict.pop('password')
-        return JsonResponse({"status": error_dict["status"][0]})
-    elif 'username' in error_dict and error_dict['username'][0].code == 'blank' and 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 2:
-        # print(error_dict["status"][0])
-        # print(error_dict.keys())
-        return JsonResponse({"status": "username_and_password_cannot_be_empty"})
-    # print("sss", serializer.errors.values()[0])
-    # return JsonResponse({"status":error_dict["status"][0]})
-    # return JsonResponse({"status": "test"})
-    # return JsonResponse({"status": error_dict["status"][0]})
-    return JsonResponse({"status": "Invalid_Input"})
-# -----------------------------login ends --------------------------
-
-# ----------------------------logout starts here------------------------
-
-
-@api_view(['GET'])
-def logout_view(request):
-    try:
-        current_user = get_user(request)
-        # print('token of user',current_user.auth_token)
-        current_user.auth_token.delete()
-
-        return JsonResponse({"status": "Logged_out"})
-    except Token.DoesNotExist:
-        return JsonResponse({"status": "Token doesnot exist"})
-
-# ------------------------------logout ends here-------------------------
-
-
-
-
-
-
-# session login starts
-
-
-
-
+#
+#
+# def get_user(request):
+#     # userdata=Token.objects.get(key=request.headers['Authorization']).user
+#     userdata=Token.objects.get(key=request.headers['Authorization']).user
+#     # print('userdata',userdata)
+#     return userdata
+#
+# # ------------------------login starts here-----------------------------
+#
+#
 # @api_view(['POST'])
 # def login_view(request):
 #     serializer = LoginSerializer(data=request.data)
-#     print('serializer:', serializer)
-#     print('serializer_type:', type(serializer))
+#     # print('serializer:', serializer)
+#     # print('serializer_type:', type(serializer))
 #     if serializer.is_valid():
-#         print('serializer:', serializer)
+#         # print('serializer:', serializer)
 #         username = serializer.data.get('username')
 #         # print('serializer_username:', username)
 #         # print('type_serializer_username:', type(username))
@@ -167,19 +76,27 @@ def logout_view(request):
 #         # user = User.objects.get(username=username)
 #         # print(user)
 #         user = authenticate(username=username, password=password)
-#         print('authenticate_user:', user)
+#         # print('authenticate_user:', user)
 #
 #         if user is not None:
-#             login(request, user)
-#             print("logged in:", request.user.username)
-#             return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key,"user_name":username})
+#             # login(request, user)
+#             # print("logged in:", request.user.username)
+#             token, _ = Token.objects.get_or_create(user=user)
+#             user_company = all_Machine_data.objects.filter(user_name__username=username).values(
+#                 'company_name__company_logo') \
+#                 .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
+#             print('user_company',user_company)
+#             login_response = JsonResponse({"status": "user_validated", 'generated_token': token.key, 'username': username,
+#                                            'logo_url':user_company[0]['company_name__company_logo']})
+#             login_response['token'] = str(token.key)
 #
+#             return login_response
 #         else:
 #             return JsonResponse({"status": "unauthorized_user"})
 #     new_key = 'status'
 #     error_dict = serializer.errors
-#     print("error_dict*****", error_dict)
-#     print("len****", len(error_dict))
+#     # print("error_dict*****", error_dict)
+#     # print("len****", len(error_dict))
 #     # print(error_dict['password'][0].code)
 #
 #     # if 'username' and 'password' in error_dict :
@@ -189,14 +106,14 @@ def logout_view(request):
 #     #     # return JsonResponse({"status": "username_and_password_cannot_be_empty"})
 #     if 'username' in error_dict and error_dict['username'][0].code == 'blank' and len(error_dict) == 1:
 #         # print("len****",len(error_dict))
-#         print(error_dict['username'][0].code == 'blank')
+#         # print(error_dict['username'][0].code == 'blank')
 #
 #         error_dict[new_key] = error_dict.pop('username')
 #         return JsonResponse({"status": error_dict["status"][0]})
 #
 #     elif 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 1:
 #         # print("len****", len(error_dict))
-#         print(error_dict['password'][0].code == 'blank')
+#         # print(error_dict['password'][0].code == 'blank')
 #         error_dict[new_key] = error_dict.pop('password')
 #         return JsonResponse({"status": error_dict["status"][0]})
 #     elif 'username' in error_dict and error_dict['username'][0].code == 'blank' and 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 2:
@@ -208,6 +125,96 @@ def logout_view(request):
 #     # return JsonResponse({"status": "test"})
 #     # return JsonResponse({"status": error_dict["status"][0]})
 #     return JsonResponse({"status": "Invalid_Input"})
+# # -----------------------------login ends --------------------------
+#
+# # ----------------------------logout starts here------------------------
+#
+#
+# @api_view(['GET'])
+# def logout_view(request):
+#     try:
+#         current_user = get_user(request)
+#         # print('token of user',current_user.auth_token)
+#         current_user.auth_token.delete()
+#
+#         return JsonResponse({"status": "Logged_out"})
+#     except Token.DoesNotExist:
+#         return JsonResponse({"status": "Token doesnot exist"})
+#
+# # ------------------------------logout ends here-------------------------
+#
+#
+
+
+
+
+# session login starts
+
+
+
+
+@api_view(['POST'])
+def login_view(request):
+    serializer = LoginSerializer(data=request.data)
+    print('serializer:', serializer)
+    print('serializer_type:', type(serializer))
+    if serializer.is_valid():
+        print('serializer:', serializer)
+        username = serializer.data.get('username')
+        # print('serializer_username:', username)
+        # print('type_serializer_username:', type(username))
+        password = serializer.data.get('password')
+        # print('serializer_password:', password)
+        # user = User.objects.get(username=username)
+        # print(user)
+        user = authenticate(username=username, password=password)
+        print('authenticate_user:', user)
+
+        if user is not None:
+            login(request, user)
+            user_company = all_Machine_data.objects.filter(user_name__username=username).values(
+                                'company_name__company_logo') \
+                                .distinct('machine_id__machine_id', 'plant_name__plant_name', 'model_name__model_name')
+            # print('user_company',user_company)
+
+            print("logged in:", request.user.username)
+            print("session:",  request.session.session_key)
+            return JsonResponse({"status": "user_validated",'session_key' : request.session.session_key,"username":username, 'logo_url':user_company[0]['company_name__company_logo']})
+
+        else:
+            return JsonResponse({"status": "unauthorized_user"})
+    new_key = 'status'
+    error_dict = serializer.errors
+    print("error_dict*****", error_dict)
+    print("len****", len(error_dict))
+    # print(error_dict['password'][0].code)
+
+    # if 'username' and 'password' in error_dict :
+    #     # error_dict[new_key] = error_dict.pop('username')
+    #     # error_dict[new_key] = error_dict.pop('password')
+    #
+    #     # return JsonResponse({"status": "username_and_password_cannot_be_empty"})
+    if 'username' in error_dict and error_dict['username'][0].code == 'blank' and len(error_dict) == 1:
+        # print("len****",len(error_dict))
+        print(error_dict['username'][0].code == 'blank')
+
+        error_dict[new_key] = error_dict.pop('username')
+        return JsonResponse({"status": error_dict["status"][0]})
+
+    elif 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 1:
+        # print("len****", len(error_dict))
+        print(error_dict['password'][0].code == 'blank')
+        error_dict[new_key] = error_dict.pop('password')
+        return JsonResponse({"status": error_dict["status"][0]})
+    elif 'username' in error_dict and error_dict['username'][0].code == 'blank' and 'password' in error_dict and error_dict['password'][0].code == 'blank' and len(error_dict) == 2:
+        # print(error_dict["status"][0])
+        # print(error_dict.keys())
+        return JsonResponse({"status": "username_and_password_cannot_be_empty"})
+    # print("sss", serializer.errors.values()[0])
+    # return JsonResponse({"status":error_dict["status"][0]})
+    # return JsonResponse({"status": "test"})
+    # return JsonResponse({"status": error_dict["status"][0]})
+    return JsonResponse({"status": "Invalid_Input"})
 
 
 # @csrf_exempt
@@ -247,15 +254,15 @@ def logout_view(request):
 #logout starts
 
 
-# @api_view(['GET'])
-# # @authentication_classes([SessionAuthentication])
-# # @permission_classes([IsAuthenticated])
-# def logout_view(request):
-#     print("entering logout")
-#     print("loggedout", request.user.username)
-#
-#     logout(request)
-#     return JsonResponse({"status": "Logged_out"})
+@api_view(['GET'])
+# @authentication_classes([SessionAuthentication])
+# @permission_classes([IsAuthenticated])
+def logout_view(request):
+    print("entering logout")
+    print("loggedout", request.user.username)
+
+    logout(request)
+    return JsonResponse({"status": "Logged_out"})
 
 # convert list or dict values into string
 
@@ -270,7 +277,8 @@ class Dashboard(ViewSet):
     @action(detail=False, methods=['get'])
     def dashboard(self, request):
         try:
-            current_user = get_user(request)
+            # current_user = get_user(request)
+            current_user = request.user
 
             if current_user.is_authenticated:
                 current_time = datetime.datetime.now()
@@ -375,7 +383,8 @@ class MachinesView(ViewSet):
             # print('requesttttttt',request.META)
 
             # print('userssss', request.user)
-            user_data=get_user(request)
+            # user_data=get_user(request)
+            user_data=request.user
             # print('user_data',user_data)
 
             unique_data=all_Machine_data.objects.filter(user_name__username=user_data).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
@@ -437,7 +446,8 @@ class MachinesView(ViewSet):
     # @action(detail=False, method=["get","post"])
     def machine_details(self, request):
         try:
-            current_user = get_user(request)
+            # current_user = get_user(request)
+            current_user = request.user
 
             if current_user.is_authenticated:
                 print("if")
@@ -922,7 +932,7 @@ class MachinesView(ViewSet):
 
 @csrf_exempt
 @api_view(['PUT'])
-def machine_control(request):#????
+def machine_control(request):
     # print('******',request.data)
 
     machine_id=request.data.get('machine_id')
@@ -980,7 +990,8 @@ class Trails(ViewSet):
     @action(detail=False, method=['get'])
     def Trail_details(self,request):
         try:
-            current_user = get_user(request)
+            # current_user = get_user(request)
+            current_user = request.user
             if current_user.is_authenticated:
                 # print("if")
                 # data_session=testing_sessions(request)
@@ -1011,7 +1022,8 @@ class Trails(ViewSet):
     @action(detail=False, method=['get'])
     def Trail_List(self, request):
         try:
-            current_user = get_user(request)
+            # current_user = get_user(request)
+            current_user = request.user
 
             if current_user.is_authenticated:
                 # print("if")
@@ -1097,7 +1109,8 @@ class ReportsView(ViewSet):
     @action(detail=False, method=['get'])
     def Report_List(self, request):
         try:
-            current_user =get_user(request)
+            # current_user =get_user(request)
+            current_user =request.user
             # print('current_user',current_user)
             if current_user.is_authenticated:
                 # print("if")
@@ -1172,7 +1185,7 @@ class ReportsView(ViewSet):
             else:
                 # print("else")
                 return JsonResponse({"status":"login_required"})
-        except Token.DoesNotExist:
+        except :
             return JsonResponse({"status": "login_required"})
 
 
@@ -1182,13 +1195,14 @@ class ReportsView(ViewSet):
     @action(detail=False, methods=['post'])
     def Reports(self, request):
         try:
-            current_user = get_user(request)
+            # current_user = get_user(request)
+            current_user = request.user
             if current_user.is_authenticated:
-                try:#remove try and except for next push
-                    request_data = request.data
-                    # print('request_data',request_data)
-                except json.JSONDecodeError:
-                    return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
+                # try:#remove try and except for next push
+                #     request_data = request.data
+                #     # print('request_data',request_data)
+                # except json.JSONDecodeError:
+                #     return JsonResponse({"error": "Invalid JSON data."}, status=status.HTTP_400_BAD_REQUEST)
 
                 # Extract user-selected parameters
                 kpi_name = request.data.get('report_type')
@@ -1222,7 +1236,7 @@ class ReportsView(ViewSet):
                 # Check if the user has access to the selected machine and KPI name
                 try:
                     machine_data = all_Machine_data.objects.filter(machine_id__machine_id=machine_id, user_name__username=current_user,kpi__kpi_name=kpi_name)
-                    # print('machine_data',machine_data)
+                    print('machine_data',machine_data)
                     if not machine_data:
                         # print('No data available.')
                         return JsonResponse({"status": "No data available"}, status=status.HTTP_400_BAD_REQUEST)
@@ -1268,7 +1282,7 @@ class ReportsView(ViewSet):
 
             else:
                 return JsonResponse({"status": "login_required"})
-        except Token.DoesNotExist:
+        except :
             return JsonResponse({"status": "login_required"})
 
 
