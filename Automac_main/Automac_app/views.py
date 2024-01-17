@@ -363,6 +363,10 @@ class Dashboard(ViewSet):
 
                 return JsonResponse({"count_card_data": count_card_data, "bar_graph": final_data})
 
+            else:
+                # print("else")
+                return JsonResponse({"status": "login_required"})
+
         except Token.DoesNotExist:
             # print("else")
             return JsonResponse({"status": "login_required"})
@@ -379,55 +383,60 @@ class MachinesView(ViewSet):
     @action(detail=False, methods=['get'])
     def machine_list(self, request):
         try:
-            # if request.user.is_authenticated:
-            # print('requesttttttt',request.META)
+            current_user = request.user
+            if current_user.is_authenticated:
+                # print('requesttttttt',request.META)
 
-            # print('userssss', request.user)
-            # user_data=get_user(request)
-            user_data=request.user
-            # print('user_data',user_data)
+                # print('userssss', request.user)
+                # user_data=get_user(request)
+                # user_data=request.user
+                # print('user_data',user_data)
 
-            unique_data=all_Machine_data.objects.filter(user_name__username=user_data).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
-                .distinct('machine_id__machine_id','plant_name__plant_name','model_name__model_name')
-            # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
+                unique_data=all_Machine_data.objects.filter(user_name__username=current_user).values('machine_id__machine_id','plant_name__plant_name','model_name__model_name','company_name__company_name','line_name__line_name','machine_id__machine_name')\
+                    .distinct('machine_id__machine_id','plant_name__plant_name','model_name__model_name')
+                # unique_data=all_Machine_data.objects.values('machine_id','plant_name','model_name','company_name','line_name')
 
-            # print('unique_data',unique_data)
+                # print('unique_data',unique_data)
 
-            unique_data_json =json.dumps(list(unique_data))
-            unique_machine_data=json.loads(unique_data_json)
-            # unique_data_json =serializers.serialize('json',unique_data)
-            # print('unique_data_json',unique_data_json)
-            # print('unique_machine_data',unique_machine_data)
+                unique_data_json =json.dumps(list(unique_data))
+                unique_machine_data=json.loads(unique_data_json)
+                # unique_data_json =serializers.serialize('json',unique_data)
+                # print('unique_data_json',unique_data_json)
+                # print('unique_machine_data',unique_machine_data)
 
-            machine_list_data=[]
-            # # for data in get_user_data_s_data:
-            # #     machine_id=data.plant_name.plant_name if get_user_data[ i].plant_name is not None else "None"
-            # print("--------------------> ",unique_machine_data[0]['line_name__line_name'])
-            for i in range(0,len(unique_machine_data)):
-                machine_id = unique_machine_data[i]['machine_id__machine_id'] if unique_machine_data[
-                                                                                 i]['machine_id__machine_id'] is not None else "None"
-                company_name = unique_machine_data[i]['company_name__company_name'] if unique_machine_data[
-                                                                                 i]['company_name__company_name'] is not None else "None"
-                plant_name = unique_machine_data[i]['plant_name__plant_name'] if unique_machine_data[
-                                                                           i]['plant_name__plant_name'] is not None else "None"
-                model_name = unique_machine_data[i]['model_name__model_name'] if unique_machine_data[
-                                                                           i]['model_name__model_name'] is not None else "None"
-                line_name = unique_machine_data[i]['line_name__line_name'] if unique_machine_data[i]['line_name__line_name'] is not None else "None"
-                machine_name = unique_machine_data[i]['machine_id__machine_name'] if unique_machine_data[
-                                                                               i]['machine_id__machine_name'] is not None else "None"
+                machine_list_data=[]
+                # # for data in get_user_data_s_data:
+                # #     machine_id=data.plant_name.plant_name if get_user_data[ i].plant_name is not None else "None"
+                # print("--------------------> ",unique_machine_data[0]['line_name__line_name'])
+                for i in range(0,len(unique_machine_data)):
+                    machine_id = unique_machine_data[i]['machine_id__machine_id'] if unique_machine_data[
+                                                                                     i]['machine_id__machine_id'] is not None else "None"
+                    company_name = unique_machine_data[i]['company_name__company_name'] if unique_machine_data[
+                                                                                     i]['company_name__company_name'] is not None else "None"
+                    plant_name = unique_machine_data[i]['plant_name__plant_name'] if unique_machine_data[
+                                                                               i]['plant_name__plant_name'] is not None else "None"
+                    model_name = unique_machine_data[i]['model_name__model_name'] if unique_machine_data[
+                                                                               i]['model_name__model_name'] is not None else "None"
+                    line_name = unique_machine_data[i]['line_name__line_name'] if unique_machine_data[i]['line_name__line_name'] is not None else "None"
+                    machine_name = unique_machine_data[i]['machine_id__machine_name'] if unique_machine_data[
+                                                                                   i]['machine_id__machine_name'] is not None else "None"
 
 
-                machine_list_data.append({
-                        "company_name": company_name,
-                        "plant_name": plant_name,
-                        "machine_id": machine_id,
-                        "model_name": model_name,
-                        "line_name": line_name,
-                        "machine_name": machine_name
-                    })
-                # print('machine_list_data',machine_list_data)
+                    machine_list_data.append({
+                            "company_name": company_name,
+                            "plant_name": plant_name,
+                            "machine_id": machine_id,
+                            "model_name": model_name,
+                            "line_name": line_name,
+                            "machine_name": machine_name
+                        })
+                    # print('machine_list_data',machine_list_data)
 
-            return JsonResponse({"machine_list": machine_list_data})
+                return JsonResponse({"machine_list": machine_list_data})
+            else:
+                # print("else")
+                return JsonResponse({"status": "login_required"})
+
 
         except Token.DoesNotExist:
             return JsonResponse({"status": "login_required"})
