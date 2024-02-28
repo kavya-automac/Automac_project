@@ -86,6 +86,7 @@ def on_connect_1(client_1, userdata, flags, rc):
        # print('Connected successfully on aws')
        client_1.subscribe('Maithri/Device_7inch')
        client_1.subscribe('Maithri_test')
+       client.subscribe('machine_data')
    else:
        print('Bad connection. Code:', rc)
 
@@ -110,6 +111,11 @@ def on_message_1(client_1, userdata, msg):
 
         physical_keys_values.Device_7inch(mqtt_machines_data)
     if topic == "Maithri_test":
+        from . import physical_keys_values
+
+
+        physical_keys_values.demo_app_to_channels(mqtt_machines_data)
+    if topic == "machine_data":
         from . import physical_keys_values
 
 

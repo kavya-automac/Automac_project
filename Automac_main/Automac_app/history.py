@@ -24,6 +24,7 @@ def history_fun(machine_id,date):
     serializer = machineSerializer(machine_value_data, many=True)
 
     r_s_d = serializer.data
+
     # print('r_s_d',r_s_d)
     digital_input_value = []
     digital_output_value = []
